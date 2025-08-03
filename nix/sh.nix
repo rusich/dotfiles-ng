@@ -2,9 +2,9 @@
 let
   myAliases = {
     ".." = "cd ..";
-    "hms" = "home-manager switch --flake ~/.dotfiles/";
+    "hms" = "home-manager switch --flake ~/.dotfiles/nix/";
     "aaa" = userSettings.username;
-    "nos" = "sudo nixos-rebuild switch --flake ~/.dotfiles/";
+    "nos" = "sudo nixos-rebuild switch --flake ~/.dotfiles/nix/";
   };
 in
 {

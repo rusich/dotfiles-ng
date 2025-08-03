@@ -24,7 +24,12 @@
     nixosConfigurations = {
       matebook = lib.nixosSystem {
         inherit system;
-	modules = [ ./configuration.nix ];
+	modules = [ 
+	  ./system/configuration.nix 
+	  # device-specific
+	  # ./system/hosts/matebook/settings.nix
+	  ./system/hosts/matebook/hardware-configuration.nix
+	];
 	specialArgs = {
 	  inherit userSettings;
 	  inherit unstable;
@@ -35,7 +40,7 @@
     homeConfigurations = {
        ${userSettings.username} = home-manager.lib.homeManagerConfiguration {
          inherit pkgs;
-	 modules = [ ./home.nix ];
+	 modules = [ ./user/home.nix ];
 	 extraSpecialArgs = {
 	   inherit userSettings;
 	   inherit unstable;

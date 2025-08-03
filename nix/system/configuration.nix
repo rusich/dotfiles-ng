@@ -2,13 +2,14 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, lib, pkgs, unstable, userSettings, ... }:
+{ config, lib, pkgs, unstable, userSettings,  ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  # imports =
+  #   [ # Include the results of the hardware scan.
+  #     # /etc/nixos/hardware-configuration.nix
+  #     (builtins.fetchFile /etc/nixos/hardware-configuration.nix)
+  #   ];
   
   options = {
     my.arbitrary.option = lib.mkOption {
@@ -23,7 +24,6 @@
     boot.loader.efi.canTouchEfiVariables = true;
     boot.plymouth.enable = true;
   
-    boot.initrd.luks.devices."luks-55fbf46f-d4a0-4795-b9c6-a80e06c7e86a".device = "/dev/disk/by-uuid/55fbf46f-d4a0-4795-b9c6-a80e06c7e86a";
     networking.hostName = "matebook"; # Define your hostname.
     # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   
@@ -130,7 +130,8 @@
       gnomeExtensions.wireguard-vpn-extension
       v2rayn
       remmina
-      unstable.rustup
+      # unstable.rustup
+      stow
     ];
   
     programs.nix-ld.enable = true; # what's the heck it's this...

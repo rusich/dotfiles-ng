@@ -75,17 +75,17 @@
 
 
   # Custom config files
-  home.file.".editorconfig".source = ./configs/editorconfig;
+  # home.file.".editorconfig".source = ./configs/editorconfig;
 
-  # Programs
-  programs.git = {
-    enable = true;
-    userName = "Ruslan Sergin";
-    userEmail = "ruslan.sergin@gmail.com";
-    extraConfig = {
-      init.defaultBranch = "main";
-    };
-  };
+  # # Programs
+  # programs.git = {
+  #   enable = true;
+  #   userName = "Ruslan Sergin";
+  #   userEmail = "ruslan.sergin@gmail.com";
+  #   extraConfig = {
+  #     init.defaultBranch = "main";
+  #   };
+  # };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

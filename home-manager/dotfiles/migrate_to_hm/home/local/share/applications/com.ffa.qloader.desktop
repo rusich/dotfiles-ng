@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=QLoader
+Comment=Launch QLoader
+Exec=/home/rusich/Games/VR/QLoader/Loader
+Icon=/home/rusich/Games/VR/QLoader/Loader.png
+Terminal=false
+Type=Application
+Categories=Game;
+Path=/home/rusich/Games/VR/QLoader

@@ -106,11 +106,15 @@
       curl
       htop
       git
+      ripgrep
+      fzf
+      gcc
+      unzip
+      nodejs_24 # for neovim 
       pkgs.nix-ld
-      stow
       home-manager
       elinks
-      # v2rayn
+      v2rayn
       # remmina
       # unstable.rustup
       # nextcloud-client

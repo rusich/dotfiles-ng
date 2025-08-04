@@ -1,0 +1,96 @@
+[{
+    "output": ["DP-1","eDP-1"],
+    "include": "~/.config/waybar/modules",
+    "layer": "top",
+    // "mode": "dock",
+    "exclusive": true,
+    "passthrough": false,
+    "position": "top",
+    "spacing": 5,
+    "fixed-center": true,
+    "ipc": true,
+    "margin-top": 6,
+    "margin-left": 6,
+    "margin-right": 6,
+    "margin-bottom": 0,
+
+    "modules-left": [
+        //"image#appicon",
+        "hyprland/workspaces", 
+        "hyprland/submap",
+        "custom/separator",
+        "hyprland/window", 
+    ],
+
+    "modules-center": [
+    ], 
+
+    "modules-right": [
+        "cpu", 
+        "memory", 
+        "disk",
+        "temperature", 
+        "network",
+        "battery", 
+        "backlight",
+        "custom/separator",
+        //"custom/colorpicker",
+        "custom/pomodoro",
+        "tray", 
+        "pulseaudio#output",
+        "pulseaudio#input", 
+        "custom/updater",
+        //"custom/weather",
+        "custom/weather2",
+        "custom/notifications", 
+        "hyprland/language",
+        "clock#3", 
+        "custom/khal",
+        "custom/power",
+    ],
+},
+    {
+        "output": "DP-2",
+        "include": "~/.config/waybar/modules",
+        "layer": "top",
+        // "mode": "dock",
+        "exclusive": true,
+        "passthrough": false,
+        "position": "top",
+        "spacing": 0,
+        "fixed-center": true,
+        "ipc": true,
+        "margin-top": 6,
+        "margin-left": 6,
+        "margin-right": 6,
+        "margin-bottom": 0,
+
+        "modules-left": [
+            "hyprland/submap",
+            "hyprland/workspaces",
+            "hyprland/window"
+            // "cpu", 
+            // "memory", 
+            // "disk",
+            // "temperature", 
+        ],
+
+        "modules-center": [
+        ], 
+
+        "modules-right": [
+            //"network",
+            //"battery", 
+            //"backlight",
+            //"wireplumber", 
+            "pulseaudio#output",
+            "pulseaudio#input", 
+            "hyprland/language",
+            "custom/weather",
+            "custom/notifications",
+            "clock#3",
+            "custom/power",
+        ],
+    }]
+
+// vim:ft=json

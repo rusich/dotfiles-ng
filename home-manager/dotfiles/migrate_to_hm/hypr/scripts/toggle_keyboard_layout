@@ -1,0 +1,16 @@
+#!/bin/bash
+# shellcheck disable=2086
+
+iDIR="$HOME/.config/dunst/icons"
+
+OLD_LAYOUT=$(hyprctl devices -j | jq -r '.keyboards[] | .active_keymap' | sort | tail -n1)
+
+if [[ "$1" == "--toggle" ]]; then
+    hyprctl switchxkblayout at-translated-set-2-keyboard next
+    hyprctl switchxkblayout keychron-k3-pro-keyboard next
+    hyprctl switchxkblayout keychron-keychron-k3-pro next
+fi
+# LAYOUT SWITCHING BY HYPRLAND ITSELF. THERE IS ONLY NOTIFICATION!!!
+NEW_LAYOUT=$(hyprctl devices -j | jq -r '.keyboards[] | .active_keymap' | sort | tail -n1)
+# notify-send -h string:x-canonical-private-synchronous:sys-notify -u low -i "$iDIR/keyboard.png" "$LAYOUT"
+avizo-client --image-path="$HOME/.local/share/avizo/keyboard_white.png" --disable-progress --text="$NEW_LAYOUT"

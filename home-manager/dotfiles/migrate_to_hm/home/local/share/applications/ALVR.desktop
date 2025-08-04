@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=ALVR Launcher
+Icon=/home/rusich/Games/VR/alvr_launcher_linux/ALVR Logo.svg
+# StartupWMClass=avantgarde
+Comment=ALVR Launcher
+Exec="/home/rusich/Games/VR/alvr_launcher_linux/start.sh"
+Version=1.0
+Type=Application
+Terminal=false
+StartupNotify=true

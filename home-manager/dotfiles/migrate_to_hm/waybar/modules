@@ -1,0 +1,403 @@
+{ 
+    "backlight": {
+        "interval": 2,
+        "align": 0,
+        "rotate": 0,
+        "format": "<small>{percent}</small> {icon} ",
+        "format-icons": [
+            "󰃞",
+            "󰃟",
+            "󰃠"
+        ],
+        //"format-icons": ["", ""] 
+        "on-click": "",
+        "on-click-middle": "",
+        "on-click-right": "",
+        "on-update": "",
+        "on-scroll-up": "~/.config/avizo/scripts/lightctl up",
+        "on-scroll-down": "~/.config/avizo/scripts/lightctl down",
+        "smooth-scrolling-threshold": 1,
+    },
+    "hyprland/submap": {
+        "format": "<span style=\"italic\">  {}</span>",
+        "tooltip": false
+    },
+    "hyprland/window": {
+        "format": "{title}",
+        "max-length": 360,
+        "separate-outputs": true,
+        //"separate-outputs": false,
+        "rewrite": {
+            "nvim (.*)": " $1",
+            "(.*) — Mozilla Firefox": " $1",
+            "(.*) - Google Chrome": "  $1",
+            "(.*) — Dolphin": "  $1",
+            "^~(.*)": "󰞷 ~$1",
+            "^/(.*)": " /$1",
+            //"(.*) - fish": "> [$1]"
+        },
+    },
+    "cpu": {
+        //"interval": 5,
+        "format": "<small>{usage}% 󰻠</small>",
+        "interval": 1,
+        "on-click": "kitty -e htop",
+        "format-alt": "<small>{usage}% {icon0}{icon1}{icon2}{icon3}</small>",
+        "format-alt-click": "click-right",
+        "format-icons": [
+            "▁",
+            "▂",
+            "▃",
+            "▄",
+            "▅",
+            "▆",
+            "▇",
+            "█"
+        ],
+        "states": {
+            "warning": 50,
+            "critical": 80 
+        },
+    },
+    "memory": {
+        "interval": 30,
+        "format": "<small>{used:0.1f}G 󰘚</small>",
+        "on-click": "kitty -e htop",
+        "states": {
+            "warning": 70,
+            "critical": 80 
+        },
+        "format-warning": "<small>{used:0.1f}G 󰘚</small>",
+        "format-critical": "<small>{used:0.1f}G 󰘚</small>"
+    },
+    "disk": {
+        "interval": 30,
+        "format": "<small>{free} 🖴</small>",
+        "on-click": "baobab",
+        "states": {
+            "warning": 70,
+            "critical": 80 
+        },
+    },
+    "temperature": {
+        "interval": 10,
+        "tooltip": true,
+        "hwmon-path": [
+            "/sys/class/hwmon/hwmon4/temp3_input",
+            "/sys/class/hwmon/hwmon3/temp1_input"
+        ],
+        //"thermal-zone": 0,
+        "critical-threshold": 75,
+        "format-critical": "<small>{temperatureC}°</small>",
+        "format": "<small>{temperatureC}°</small>",
+        //"format-icons": [
+        //    ""
+        //],
+        //"on-click": "kitty --hold -e sensors"
+        //"on-click": "kitty -e bash -c 'sensors && read -n 1'"
+        "on-click": "kitty -e watch -n1 sensors",
+        "states": {
+            "warning": 10,
+            "critical": 70 
+        },
+    },
+    "custom/menu": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "$HOME/.config/hypr/scripts/menu",
+        "on-click-right": "~/.config/hypr/scripts/waybar-style-change"
+    },
+    "custom/weather": {
+        "format": "{}",
+        //"format-alt": "{alt}: {}",
+        //"format-alt-click": "click-right",
+        "on-click-right": "xdg-open https://gismeteo.ru/",
+        "on-click": "xdg-open https://wttr.in/",
+        "interval": 3600,
+        "return-type": "json",
+        "exec": "~/.config/waybar/scripts/waybar-wttr.py",
+        "exec-if": "ping wttr.in -c1",
+        "signal": 4,
+    },
+    "custom/weather2": {
+        "exec": "python ~/.config/waybar/scripts/new_weather.py",
+        "restart-interval": 300,
+        "return-type": "json",
+        "on-click": "xdg-open https://weather.com/ru_RU/weather/today/l/e8fa6ddea41b1751507ef9d61b6ca37d7e3f5d28e469948e991b6e24ec2e4523",
+        //"format-alt": "{alt}",
+    },
+    "hyprland/workspaces": {
+        //"format": "{name}",
+        "format": "{icon}",
+        "on-click": "activate",
+        "all-outputs": false,
+        "sort-by-number": true,
+        "format-icons": {
+            //         
+            "1": "󰆍",
+            "2": "󰖟",
+            "3": "",
+            "4": "",
+            "5": "󱫋",
+            "6": "",
+            //"7": "<span color='#ecc6d9'><small><sub>7</sub></small></span>",
+            "7": "",
+            "8": "",
+            "9": "",
+            "10": "󱜸",
+            "chatgpt": "󱜸",
+            //"focused": "",
+            //"default": "",
+        },
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1",
+    },
+    "battery": {
+        "interval": 60,
+        "align": 0,
+        "rotate": 0,
+        //"bat": "BAT1",
+        //"adapter": "ACAD",
+        "full-at": 100,
+        "design-capacity": false,
+        "states": {
+            "good": 95,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} <small>{capacity}</small>%",
+        "format-charging": "<small>{capacity}%</small>",
+        "format-plugged": " <small>{capacity}%</small>",
+        "format-full": "{icon}",
+        //"format-good": "",
+        "format-alt": "{icon} {time}",
+        "format-icons": [
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],
+        "format-time": "{H}h {M}min",
+        "tooltip": true,
+        "on-click-right": "~/.config/hypr/scripts/glassmorphismToggle"
+    },
+    "clock": {
+        //"interval": 60,
+        "align": 0,
+        "rotate": 0,
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format": "{: %H:%M   %a, %e %b}",
+        //"format-alt": " {:%a %b %d, %G}",
+        "on-click-middle": "~/.config/hypr/scripts/changeWallpaper",
+    },
+    "clock#2": {
+        "format": "{:  %H:%M}",
+        "tooltip": true,
+        "tooltip-format": "{:  %A,  %e %B %Y}",
+        "on-click-middle": "~/.config/hypr/scripts/changeWallpaper",
+    },
+    "clock#3": {
+        "format": "{:%H:%M}",
+        "format-alt": " {:%H:%M   %Y, %d %B, %A}",
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        //"on-click-middle": "~/.config/hypr/scripts/changeWallpaper",
+        "calendar": {
+            "mode": "year",
+            "mode-mon-col": 3,
+            "weeks-pos": "right",
+            "on-scroll": 1,
+            "on-click-right": "mode",
+            "format": {
+                "months": "<span color='#ffead3'><b>{}</b></span>",
+                "days": "<span color='#ecc6d9'><b>{}</b></span>",
+                "weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+                "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+                "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+            }
+        },
+        "actions": {
+            "on-click-right": "mode",
+            "on-click-forward": "tz_up",
+            "on-click-backward": "tz_down",
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down"
+        }
+    },
+
+    "custom/khal": {
+        //"format": "{:%H:%M}",
+        //"format": "{}"
+        "tooltip": true,
+        //"on-click-right": "xdg-open https://gismeteo.ru/",
+        "on-click": "gnome-calendar",
+        "interval": 600,
+        "return-type": "json",
+        "exec": "~/.config/waybar/scripts/khal.py",
+    },
+    "custom/power": {
+        "format": " ",
+        "tooltip": false,
+        "on-click": "sh -c '(sleep 0.5s; wlogout --protocol layer-shell -b 5 -T 400 -B 400)' & disown",
+        //"on-click-right": "~/.config/hypr/scripts/glassmorphismToggle"
+    },
+    "network": {
+        "interval": 5,
+        "format-wifi": "<small>{essid}</small> ",
+        "format-ethernet": "",
+        "format-linked": "<small>{ifname} (No IP)</small> ",
+        //"format-disconnected": "睊 Disconnected",
+        "format-disconnected": "󰌙",
+        //"format-disabled": "睊 Disabled",
+        "format-disabled": "󰲜",
+        "format-alt": "<small>{bandwidthDownBits} {bandwidthUpBits}</small>",
+        "tooltip-format": " {ipaddr} on {ifname} via {gwaddr}",
+    },
+    "custom/cycle_wall": {
+        "format": "",
+        "on-click": "~/.config/hypr/scripts/changeWallpaper",
+        "tooltip-format": "Change wallpaper",
+    },
+    "pulseaudio#output": {
+        "format": "<small>{volume}%</small> {icon} ",
+        "format-muted": " ",
+        "format-bluetooth": "<small>{volume}%</small> 󰂰",
+        "format-bluetooth-muted": "󰂲",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": [
+                "",
+                "",
+                ""
+            ],
+        },
+        "scroll-step": 5.0,
+        "on-click": "~/.config/avizo/scripts/volumectl toggle-mute",
+        "on-click-right": "pavucontrol",
+        "on-scroll-up": "~/.config/avizo/scripts/volumectl -b up",
+        "on-scroll-down": "~/.config/avizo/scripts/volumectl -b down",
+        "smooth-scrolling-threshold": 1,
+    },
+    "pulseaudio#input": {
+        "format": "{format_source}",
+        "format-source": "<small>{volume}%</small> ",
+        "format-source-muted": "",
+        "on-click": "~/.config/avizo/scripts/volumectl -m toggle-mute",
+        "on-click-right": "pavucontrol",
+        "on-scroll-up": "~/.config/avizo/scripts/volumectl -m up",
+        "on-scroll-down": "~/.config/avizo/scripts/volumectl -m down",
+        "smooth-scrolling-threshold": 1,
+    },
+    "wireplumber": {
+        "format": "{volume}% {icon}",
+        "format-muted": " ",
+        "on-click": "~/.config/hypr/scripts/volume --toggle",
+        "on-click-right": "pavucontrol",
+        "on-scroll-up": "~/.config/hypr/scripts/volume --inc",
+        "on-scroll-down": "~/.config/hypr/scripts/volume --dec",
+        "format-icons": [
+            "",
+            "",
+            ""
+        ],
+    },
+    "tray": {
+        "icon-size": 20,
+        "spacing": 4,
+    },
+    "custom/lock_screen": {
+        "format": "",
+        "on-click": "~/.config/hypr/scripts/lockscreen",
+        "on-click-right": "~/.config/hypr/scripts/changeWallpaper2",
+        "tooltip": false,
+    },
+    "custom/keybindings": {
+        "format": "爵",
+        "tooltip": false,
+        "on-click": "~/.config/hypr/scripts/keyhint",
+    },
+    //note: pacman-contrib should be installed
+    "custom/updater": {
+        "format": "{}",
+        "exec": "~/.config/waybar/scripts/pacman_updates.py",
+        "exec-if": "which checkupdates",
+        "interval": 21600,
+        "on-click": "kitty -e sudo pacman -Syu; pkill -RTMIN+4 waybar",
+        "signal": 4,
+        "return-type": "json",
+
+    },
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "",
+            "deactivated": "",
+        },
+    },
+    "hyprland/language": {
+        "format": "{}",
+        "format-en": "EN",
+        "format-ru": "RU",
+        "on-click": "~/.config/hypr/scripts/toggle_keyboard_layout --toggle"
+    },
+    "custom/notifications": {
+        "tooltip": false,
+        //"format": "<small><sub>{}</sub></small> {icon} ",
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "<span foreground='red'><sup></sup></span> ",
+            "none": " ",
+            "dnd-notification": "<span foreground='red'><sup></sup></span> ",
+            "dnd-none": " ",
+            "inhibited-notification": "<span foreground='red'><sup></sup></span> ",
+            "inhibited-none": " ",
+            "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span> ",
+            "dnd-inhibited-none": "  "
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
+    },
+    "custom/pomodoro": {
+        "format": "{} {icon}",
+        "return-type": "json",
+        "format-icons": {
+            "work": "󰔟",
+            "break": "",
+        },
+        "exec": "waybar-module-pomodoro",
+        "on-click": "waybar-module-pomodoro toggle",
+        "on-click-right": "waybar-module-pomodoro reset",
+    },
+    "user": {
+        "format": "{user} (up {work_d} days ↑)",
+        "interval": 60,
+        "height": 30,
+        "width": 30,
+        "icon": true,
+    },
+    "image#appicon": {
+        "exec":"~/.config/waybar/scripts/appicon.sh",
+        "size": 22,
+        "interval": 1,  
+    },
+    "custom/colorpicker": {
+        "format": "",
+        "on-click": "hyprpicker --autocopy",
+    },
+
+    "custom/separator": {
+        "format": "|",
+        "interval": "once",
+        "tooltip": false
+    },
+}
+// vim:ft=json

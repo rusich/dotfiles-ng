@@ -1,0 +1,17 @@
+#!/bin/bash
+# shellcheck disable=2086
+
+iDIR="$HOME/.config/dunst/icons"
+
+CURRENT_LAYOUT=$(hyprctl getoption general:layout -j | jq -r '.str')
+if [[ "$CURRENT_LAYOUT" == "master" ]]; then
+    hyprctl keyword general:layout dwindle
+else
+    hyprctl keyword general:layout master
+fi
+
+CURRENT_LAYOUT=$(hyprctl getoption general:layout -j | jq -r '.str')
+
+THEME="white"
+# notify-send -h string:x-canonical-private-synchronous:sys-notify -u low -i "$iDIR/wm_layout_$CURRENT_LAYOUT.png" "$CURRENT_LAYOUT"
+avizo-client --image-path="wm_layout_$CURRENT_LAYOUT.png" --disable-progress --text="Layout: $CURRENT_LAYOUT"

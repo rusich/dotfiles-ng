@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=SideQuest
+Exec=/home/rusich/Games/VR/SideQuest-0.10.42/sidequest
+Icon=~/Games/VR/SideQuest-0.10.42/resources/app.asar.unpacked/build/icons/512x512.png
+Type=Application
+Categories=Game;

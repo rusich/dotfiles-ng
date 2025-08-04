@@ -1,0 +1,51 @@
+[include] 
+        path = ~/.config/delta/themes.gitconfig
+[delta]
+    features = mellow-barbet
+    navigate = true
+    side-by-side = false
+    line-numbers = true
+    hyperlinks = true
+    hyperlinks-file-link-format = file-line-column://{path}:{line}
+[user]
+  email = ruslan.sergin@gmail.com
+  name = Ruslan Sergin
+[difftool]
+    prompt = false
+[diff]
+    tool = nvimdiff
+[difftool "nvimdiff"]
+    ; cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+    cmd = "nvim -c DiffviewOpen"
+[gpg]
+  program = gpg2
+[commit]
+  gpgsign = false
+[core]
+  autocrlf = input
+  pager = delta
+	trustctime = false
+; [color]
+;   pager = no
+; [pager]
+;   diff = nvim -R
+[interactive]
+    diffFilter = delta --color-only
+[init]
+    defaultBranch = main
+[pull]
+    ff = true
+[merge]
+    tool = diffview
+    ; conflictstyle = diff3
+[mergetool "diffview"]
+    cmd = "nvim -c DiffviewOpen"
+    trustExitCode = true
+[mergetool]
+    keepBackup = false
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Nekobox
+# StartupWMClass=avantgarde
+Comment=Nekobox
+Exec=/home/rusich/Nextcloud/AppImages/nekobox/launcher
+Icon=/home/rusich/Nextcloud/AppImages/nekobox/nekobox.png
+Version=1.0
+Type=Application
+Terminal=false
+StartupNotify=true
+Categories=Network;

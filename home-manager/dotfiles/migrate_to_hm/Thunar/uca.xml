@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <action>
+        <icon>utilities-terminal</icon>
+        <name>Открыть терминал</name>
+        <submenu></submenu>
+        <unique-id>1627820702303511-1</unique-id>
+        <command>exo-open --working-directory %f --launch TerminalEmulator</command>
+        <description>Пример особого действия</description>
+        <range></range>
+        <patterns>*</patterns>
+        <startup-notify />
+        <directories />
+    </action>
+    <action>
+        <icon>checkbox</icon>
+        <name>Check md5sum</name>
+        <submenu></submenu>
+        <unique-id>1526736788575383-2</unique-id>
+        <command>zenity --info --title=&quot;Check md5 for %n&quot; --text=&quot;$(md5sum %f)&quot;</command>
+        <description>Check md5sum</description>
+        <range></range>
+        <patterns>*.iso;*.ISO;*.tar.gz;*.TAR.GZ;*.zip;*.ZIP</patterns>
+        <other-files />
+    </action>
+    <action>
+        <icon>preferences-desktop-wallpaper</icon>
+        <name>Set Hyprland wallpaper</name>
+        <submenu></submenu>
+        <unique-id>1526736788575383-3</unique-id>
+        <command>rwpspread -b wpaperd -l hyprlock -i %f</command>
+        <description>Set Hyprland wallpaper</description>
+        <range></range>
+        <patterns>*</patterns>
+        <image-files />
+    </action>
+</actions>

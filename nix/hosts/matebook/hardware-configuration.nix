@@ -8,12 +8,11 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-    # Bootloader.
-    boot.loader.systemd-boot.enable = true;
-    boot.loader.efi.canTouchEfiVariables = true;
+  # Bootloader.
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
-    boot.initrd.luks.devices."luks-d9bcbff1-eb67-4532-8f9a-6ab7d847bd63".device = "/dev/disk/by-uuid/d9bcbff1-eb67-4532-8f9a-6ab7d847bd63";
-    # networking.hostName = "matebook"; # Define your hostname.
+  boot.initrd.luks.devices."luks-d9bcbff1-eb67-4532-8f9a-6ab7d847bd63".device = "/dev/disk/by-uuid/d9bcbff1-eb67-4532-8f9a-6ab7d847bd63";
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];

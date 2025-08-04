@@ -8,7 +8,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";  
    };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
   let 
     lib = nixpkgs.lib;
     system = "x86_64-linux";
@@ -20,20 +20,44 @@
       username = "rusich";
       name = "Ruslan Sergin";
     };
-  in {
-    nixosConfigurations = {
-      matebook = lib.nixosSystem {
-        inherit system;
-	modules = [ 
-	  ./system/configuration.nix 
-	  ./system/hosts/matebook/hardware-configuration.nix
-	];
-	specialArgs = {
-	  inherit userSettings;
-	  inherit unstable;
-	};
+
+    hosts = [
+      { hostname = "matebook"; stateVersion = "25.05"; }
+    ];
+
+    makeSystem = { hostname, stateVersion, }: nixpkgs.lib.nixosSystem {
+      system = system;
+      specialArgs = {
+        inherit inputs hostname stateVersion userSettings unstable;
       };
+      modules = [
+        ./system/configuration.nix
+	./hosts/${hostname}/configuration.nix
+      ];
     };
+
+
+  in {
+    nixosConfigurations = nixpkgs.lib.foldl' (configs: host:
+      configs // {
+        "${host.hostname}" = makeSystem {
+	  inherit (host) hostname stateVersion;
+	};
+      }) {} hosts;
+	# Simple configuration example
+	#    nixosConfigurations = {
+	#      matebook = lib.nixosSystem {
+	#        inherit system;
+	# modules = [ 
+	#   ./system/configuration.nix 
+	#   ./system/hosts/matebook/hardware-configuration.nix
+	# ];
+	# specialArgs = {
+	#   inherit userSettings;
+	#   inherit unstable;
+	# };
+	#      };
+	#    };
     
     homeConfigurations = {
        ${userSettings.username} = home-manager.lib.homeManagerConfiguration {

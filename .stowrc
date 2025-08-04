@@ -1,0 +1,6 @@
+--target=~/.config
+--ignore="^nix/"
+--ignore="^README.md"
+--ignore="^.stowrc"
+--ignore="^.git/"
+

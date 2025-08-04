@@ -64,7 +64,7 @@
     homeConfigurations = {
        ${userSettings.username} = home-manager.lib.homeManagerConfiguration {
          inherit pkgs;
-	 modules = [ ./user/home.nix ];
+	 modules = [ ./home-manager/home.nix ];
 	 extraSpecialArgs = {
 	   inherit userSettings unstable inputs;
 	 };

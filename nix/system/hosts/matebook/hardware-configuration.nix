@@ -8,26 +8,33 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" ];
+    # Bootloader.
+    boot.loader.systemd-boot.enable = true;
+    boot.loader.efi.canTouchEfiVariables = true;
+
+    boot.initrd.luks.devices."luks-d9bcbff1-eb67-4532-8f9a-6ab7d847bd63".device = "/dev/disk/by-uuid/d9bcbff1-eb67-4532-8f9a-6ab7d847bd63";
+    # networking.hostName = "matebook"; # Define your hostname.
+
+  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/ac3aaa1b-1e4c-41a4-b95d-2801f4d591a1";
+    { device = "/dev/disk/by-uuid/e5148cf5-02eb-4f5c-96e3-90a186397822";
       fsType = "ext4";
     };
 
-  boot.initrd.luks.devices."luks-fdf41ed1-6396-4e3e-b5c7-e7ce3c3e7b50".device = "/dev/disk/by-uuid/fdf41ed1-6396-4e3e-b5c7-e7ce3c3e7b50";
+  boot.initrd.luks.devices."luks-d5958331-a570-4e63-9be7-892389a8ea20".device = "/dev/disk/by-uuid/d5958331-a570-4e63-9be7-892389a8ea20";
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/7EBC-497F";
+    { device = "/dev/disk/by-uuid/0D78-B0A1";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/5d1d0acb-bd1c-43ce-bee5-a88200ebc69d"; }
+    [ { device = "/dev/disk/by-uuid/35a99ef6-e035-446b-8035-9244015a3c45"; }
     ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
@@ -39,4 +46,6 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+
 }

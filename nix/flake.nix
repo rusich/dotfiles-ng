@@ -26,8 +26,6 @@
         inherit system;
 	modules = [ 
 	  ./system/configuration.nix 
-	  # device-specific
-	  # ./system/hosts/matebook/settings.nix
 	  ./system/hosts/matebook/hardware-configuration.nix
 	];
 	specialArgs = {

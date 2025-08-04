@@ -23,6 +23,7 @@
 
     hosts = [
       { hostname = "matebook"; stateVersion = "25.05"; }
+      { hostname = "nixos-vm"; stateVersion = "25.05"; }
     ];
 
     makeSystem = { hostname, stateVersion, }: nixpkgs.lib.nixosSystem {
@@ -33,6 +34,7 @@
       modules = [
         ./nixos/configuration.nix
 	./nixos/hosts/${hostname}/configuration.nix
+	./nixos/hosts/${hostname}/hardware-configuration.nix
       ];
     };
 

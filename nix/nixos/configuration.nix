@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, lib, pkgs, unstable, userSettings,  ... }:
+{ config, lib, pkgs, hostname, unstable, userSettings,  ... }:
 
 {
   options = {
@@ -15,6 +15,7 @@
   config = {
 
   
+    networking.hostName = hostname;
     # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   
     # Configure network proxy if necessary
@@ -44,7 +45,7 @@
   
     console = {
       earlySetup = true;
-      font = "ter-v32b";
+      font = lib.mkDefault "ter-v14b";
       packages = [ pkgs.terminus_font ];
       useXkbConfig = true;
     };

@@ -6,14 +6,11 @@
 
   # Host-specific configuration
 
-  console = {
-    font = "ter-v32b";
-  };
-
   # Host-specific packages
   environment.systemPackages = with pkgs; [
     # some useful stuff...
   ];
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

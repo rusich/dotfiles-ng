@@ -66,8 +66,7 @@
          inherit pkgs;
 	 modules = [ ./user/home.nix ];
 	 extraSpecialArgs = {
-	   inherit userSettings;
-	   inherit unstable;
+	   inherit userSettings unstable inputs;
 	 };
       };
     };

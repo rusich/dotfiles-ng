@@ -51,6 +51,7 @@
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
+    # ".config/home-manager/home.nix".source = ./home.nix;
   };
 
   # Home Manager can also manage your environment variables through
@@ -73,9 +74,6 @@
     # EDITOR = "emacs";
   };
 
-
-  # Custom config files
-  # home.file.".editorconfig".source = ./configs/editorconfig;
 
   # # Programs
   # programs.git = {

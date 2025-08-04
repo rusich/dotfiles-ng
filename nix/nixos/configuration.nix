@@ -123,6 +123,7 @@
       # remmina
       # unstable.rustup
       stow
+      home-manager
     ];
   
     programs.nix-ld.enable = true; # what's the heck it's this...

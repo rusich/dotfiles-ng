@@ -20,7 +20,7 @@
     };
   };
 
-  boot.initrd.luks.devices."luks-d9bcbff1-eb67-4532-8f9a-6ab7d847bd63".device = "/dev/disk/by-uuid/d9bcbff1-eb67-4532-8f9a-6ab7d847bd63";
+  boot.initrd.luks.devices."luks-52a00d0e-a2c5-4fe1-84ed-3d2c487e1f54".device = "/dev/disk/by-uuid/52a00d0e-a2c5-4fe1-84ed-3d2c487e1f54";
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
@@ -28,20 +28,20 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/e5148cf5-02eb-4f5c-96e3-90a186397822";
+    { device = "/dev/disk/by-uuid/7262435d-2094-4ce5-9188-6293fea25076";
       fsType = "ext4";
     };
 
-  boot.initrd.luks.devices."luks-d5958331-a570-4e63-9be7-892389a8ea20".device = "/dev/disk/by-uuid/d5958331-a570-4e63-9be7-892389a8ea20";
+  boot.initrd.luks.devices."luks-b9794106-dcfc-4ba9-b9c2-9c3996f554d0".device = "/dev/disk/by-uuid/b9794106-dcfc-4ba9-b9c2-9c3996f554d0";
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/0D78-B0A1";
+    { device = "/dev/disk/by-uuid/8CE5-A880";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/35a99ef6-e035-446b-8035-9244015a3c45"; }
+    [ { device = "/dev/disk/by-uuid/9b175e36-bde9-45d6-89cd-668ccd8b569d"; }
     ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking

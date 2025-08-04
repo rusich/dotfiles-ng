@@ -9,8 +9,16 @@
     ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot = {
+    loader.systemd-boot.enable = true;
+    # loader.grub.enable = true;
+    loader.efi.canTouchEfiVariables = true;
+    # loader.grub.device = "/dev/nvme0n1";
+    # loader.grub.useOSProber = true;
+    plymouth = {
+      enable = true;
+    };
+  };
 
   boot.initrd.luks.devices."luks-d9bcbff1-eb67-4532-8f9a-6ab7d847bd63".device = "/dev/disk/by-uuid/d9bcbff1-eb67-4532-8f9a-6ab7d847bd63";
 

@@ -31,8 +31,8 @@
         inherit inputs hostname stateVersion userSettings unstable;
       };
       modules = [
-        ./system/configuration.nix
-	./hosts/${hostname}/configuration.nix
+        ./nixos/configuration.nix
+	./nixos/hosts/${hostname}/configuration.nix
       ];
     };
 

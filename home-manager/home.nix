@@ -45,6 +45,16 @@
   home.file = {
   # Old dotfiles wrapping with home-manager (instead manually using `stow`)
   ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/nvim";
+  ".config/bat".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/bat";
+  ".config/delta".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/delta";
+  # ".config/fish".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/fish";
+  ".config/git".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/git";
+  ".config/hypr".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/hypr";
+  ".config/keepassxc".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/keepassxc";
+  ".config/kitty".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/kitty";
+  ".config/rofi".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/rofi";
+  ".config/waybar".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/waybar";
+  ".config/wlogout".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/wlogout";
 
     # # Building this configuration will create a copy of 'dotfiles/screenrc' in
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a

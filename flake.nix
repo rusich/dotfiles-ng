@@ -24,6 +24,7 @@
     hosts = [
       { hostname = "matebook"; stateVersion = "25.05"; }
       { hostname = "nixos-vm"; stateVersion = "25.05"; }
+      { hostname = "darkstar"; stateVersion = "25.05"; }
     ];
 
     makeSystem = { hostname, stateVersion, }: nixpkgs.lib.nixosSystem {

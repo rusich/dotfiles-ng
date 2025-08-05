@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, lib, pkgs, hostname, unstable, userSettings,  ... }:
+{ config, lib, pkgs, hostname, unstable, userSettings, ... }:
 
 {
   options = {
@@ -11,26 +11,35 @@
       default = "stuff";
     };
   };
-  
+
   config = {
 
-  
+    hardware.bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+      settings = {
+        General = {
+          Experimental = true; # Show battery charge of Bluetooth devices
+        };
+      };
+    };
+
     networking.hostName = hostname;
     # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  
+
     # Configure network proxy if necessary
     # networking.proxy.default = "http://user:password@proxy:port/";
     # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-  
+
     # Enable networking
     networking.networkmanager.enable = true;
-  
+
     # Set your time zone.
     time.timeZone = "Asia/Yakutsk";
-  
+
     # Select internationalisation properties.
     i18n.defaultLocale = "ru_RU.UTF-8";
-  
+
     i18n.extraLocaleSettings = {
       LC_ADDRESS = "ru_RU.UTF-8";
       LC_IDENTIFICATION = "ru_RU.UTF-8";
@@ -42,28 +51,31 @@
       LC_TELEPHONE = "ru_RU.UTF-8";
       LC_TIME = "ru_RU.UTF-8";
     };
-  
+
     console = {
       earlySetup = true;
       font = lib.mkDefault "ter-v14b";
       packages = [ pkgs.terminus_font ];
       useXkbConfig = true;
     };
-  
+
     # Enable the X11 windowing system.
     services.xserver.enable = true;
-  
+
     # Enable the GNOME Desktop Environment.
     services.xserver.displayManager.gdm.enable = true;
     services.xserver.desktopManager.gnome.enable = true;
-  
+
+    # Hyprland
+    programs.hyprland.enable = true;
+
     # Configure keymap in X11
     services.xserver.xkb = {
       layout = "us,ru";
       model = "pc105";
       options = "grp:caps_toggle,grp_led:caps";
     };
-  
+
     # Enable CUPS to print documents.
     services.printing.enable = false;
 
@@ -82,23 +94,23 @@
       # no need to redefine it in your config for now)
       #media-session.enable = true;
     };
-  
+
     # Enable touchpad support (enabled default in most desktopManager).
     services.libinput.enable = true;
-  
+
     # Define a user account. Don't forget to set a password with ‘passwd’.
     users.users.${userSettings.username} = {
       isNormalUser = true;
       description = userSettings.name;
       extraGroups = [ "networkmanager" "wheel" ];
     };
-  
+
     # Install firefox.
     programs.firefox.enable = true;
-  
+
     # Allow unfree packages
     nixpkgs.config.allowUnfree = true;
-  
+
     # List packages installed in system profile. To search, run:
     # $ nix search wget
     environment.systemPackages = with pkgs; [
@@ -110,20 +122,22 @@
       fzf
       gcc
       unzip
-      nodejs_24 # for neovim 
+      nodejs_24 # for neovim
       pkgs.nix-ld
       home-manager
       elinks
       v2rayn
+      kitty
+      python3
       # remmina
       # unstable.rustup
       # nextcloud-client
       # wireguard-tools
-      gnomeExtensions.wireguard-vpn-extension
+      # gnomeExtensions.wireguard-vpn-extension
     ];
-  
+
     programs.nix-ld.enable = true; # what's the heck it's this...
-  
+
     # Some programs need SUID wrappers, can be configured further or are
     # started in user sessions.
     # programs.mtr.enable = true;
@@ -131,19 +145,18 @@
     #   enable = true;
     #   enableSSHSupport = true;
     # };
-  
+
     # List services that you want to enable:
-  
+
     # Enable the OpenSSH daemon.
     services.openssh.enable = true;
-  
+
     # Open ports in the firewall.
     # networking.firewall.allowedTCPPorts = [ ... ];
     # networking.firewall.allowedUDPPorts = [ ... ];
     # Or disable the firewall altogether.
     # networking.firewall.enable = false;
-  
-  
+
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
   };
 }

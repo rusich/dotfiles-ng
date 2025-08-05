@@ -32,6 +32,11 @@ indent_size = 2
 [*.lua]
 indent_size = 2
 
+
+# NIX files
+[*.nix]
+indent_size = 2
+
 # Powershell files
 [*.ps1]
 indent_size = 2

@@ -1,8 +1,5 @@
-{ config, pkgs, userSettings, ... }:
-{
-  imports = [
-    ./sh.nix
-  ];
+{ config, pkgs, userSettings, ... }: {
+  imports = [ ./sh.nix ];
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = userSettings.username;
@@ -19,12 +16,34 @@
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
+  home.packages = with pkgs; [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
-    pkgs.hello
-    pkgs.cowsay
-    pkgs.cht-sh
+    cht-sh
+    bat
+    wl-clipboard
+    luarocks
+    rustup
+    rofi-wayland
+    swaynotificationcenter
+    waybar
+    waylock
+    libnotify
+    nerd-fonts.iosevka
+    nerd-fonts.iosevka-term # neovim
+    nerd-fonts.fantasque-sans-mono # waybar
+    ripgrep
+    fzf
+    delta
+    jq
+    wlogout
+    hyprlock
+    hypridle
+    wpaperd
+    blueman
+    pamixer
+    pavucontrol
+    keepassxc
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -43,18 +62,34 @@
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
-  # Old dotfiles wrapping with home-manager (instead manually using `stow`)
-  ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/nvim";
-  ".config/bat".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/bat";
-  ".config/delta".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/delta";
-  # ".config/fish".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/fish";
-  ".config/git".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/git";
-  ".config/hypr".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/hypr";
-  ".config/keepassxc".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/keepassxc";
-  ".config/kitty".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/kitty";
-  ".config/rofi".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/rofi";
-  ".config/waybar".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/waybar";
-  ".config/wlogout".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/wlogout";
+    # Old dotfiles wrapping with home-manager (instead manually using `stow`)
+    ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/nvim";
+    ".config/bat".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/bat";
+    ".config/delta".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/delta";
+    # ".config/fish".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/fish";
+    ".config/git".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/git";
+    ".config/hypr".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/hypr";
+    ".config/keepassxc".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/keepassxc";
+    ".config/kitty".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/kitty";
+    ".config/rofi".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/rofi";
+    ".config/waybar".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/waybar";
+    ".config/wlogout".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/wlogout";
+    ".config/wpaperd".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/wpaperd";
+    ".editorconfig".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/home/editorconfig";
+    ".config/avizo".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/migrate_to_hm/avizo";
 
     # # Building this configuration will create a copy of 'dotfiles/screenrc' in
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a
@@ -88,7 +123,6 @@
   home.sessionVariables = {
     # EDITOR = "emacs";
   };
-
 
   # # Programs
   # programs.git = {

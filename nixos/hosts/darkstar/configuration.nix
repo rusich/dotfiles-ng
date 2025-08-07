@@ -16,6 +16,7 @@
   programs.steam.enable = true;
   programs.steam.gamescopeSession.enable = true;
   programs.gamemode.enable = true;
+  services.desktopManager.plasma6.enable = true;
 
   # Host-specific packages
   environment.systemPackages = with pkgs; [ mangohud ];

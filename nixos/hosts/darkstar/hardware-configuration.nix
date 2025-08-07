@@ -4,46 +4,49 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
-    ];
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   # Bootloader.
   boot = {
     loader.systemd-boot.enable = true;
-    # loader.grub.enable = true;
+    # loader.systemd-boot.edk2-uefi-shell.enable = true;
+    loader.systemd-boot.windows = {
+      "11" = {
+        title = "Windows 11";
+        efiDeviceHandle = "HD0b";
+      };
+    };
     loader.efi.canTouchEfiVariables = true;
     # loader.grub.device = "/dev/nvme0n1";
+    # loader.grub.enable = true;
     # loader.grub.useOSProber = true;
-    plymouth = {
-      enable = true;
-    };
+    plymouth = { enable = true; };
   };
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules =
+    [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/365afdc1-f245-4b72-9a7b-f14d2fce2120";
-      fsType = "ext4";
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/365afdc1-f245-4b72-9a7b-f14d2fce2120";
+    fsType = "ext4";
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/35A0-4F68";
-      fsType = "vfat";
-      options = [ "fmask=0077" "dmask=0077" ];
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/35A0-4F68";
+    fsType = "vfat";
+    options = [ "fmask=0077" "dmask=0077" ];
+  };
 
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/51151b59-1706-287b-bf7b-15701f287c4b";
-      fsType = "ext4";
-    };
+  fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/51151b59-1706-287b-bf7b-15701f287c4b";
+    fsType = "ext4";
+  };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/f5b8a423-df99-4cad-97a6-6f1248a72db1"; }
-    ];
+    [{ device = "/dev/disk/by-uuid/f5b8a423-df99-4cad-97a6-6f1248a72db1"; }];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -53,5 +56,6 @@
   # networking.interfaces.eno1.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.cpu.amd.updateMicrocode =
+    lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

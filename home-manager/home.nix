@@ -45,6 +45,13 @@
     pavucontrol
     keepassxc
     nodejs_24 # for neovim
+    nextcloud-client
+    kitty
+    yazi
+    ncdu
+    nautilus
+    nautilus-python # nextcloud integration
+    nautilus-open-any-terminal
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -59,6 +66,9 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
   ];
+
+  # Install firefox.
+  programs.firefox.enable = true;
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.

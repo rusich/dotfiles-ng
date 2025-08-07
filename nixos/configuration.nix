@@ -5,6 +5,7 @@
 { config, lib, pkgs, hostname, unstable, userSettings, ... }:
 
 {
+
   options = {
     my.arbitrary.option = lib.mkOption {
       type = lib.types.str;
@@ -64,7 +65,6 @@
     # Enable KDE Plasma as the desktop environment.
     services.displayManager.sddm.enable = true;
     services.displayManager.sddm.wayland.enable = true;
-    services.desktopManager.plasma6.enable = true;
     # Enable the GNOME Desktop Environment.
     # services.xserver.displayManager.gdm.enable = true;
     # services.xserver.desktopManager.gnome.enable = true;
@@ -108,16 +108,12 @@
       extraGroups = [ "networkmanager" "wheel" ];
     };
 
-    # Install firefox.
-    programs.firefox.enable = true;
-
     # Allow unfree packages
     nixpkgs.config.allowUnfree = true;
 
     # List packages installed in system profile. To search, run:
     # $ nix search wget
     environment.systemPackages = with pkgs; [
-      neovim
       curl
       htop
       git
@@ -126,16 +122,15 @@
       gcc
       unzip
       pkgs.nix-ld
-      home-manager
       elinks
       v2rayn
-      kitty
       python3
       killall
-      nextcloud-client
+      neovim
+      firefox
+      home-manager
       # remmina
       # unstable.rustup
-      # nextcloud-client
       # wireguard-tools
       # gnomeExtensions.wireguard-vpn-extension
     ];

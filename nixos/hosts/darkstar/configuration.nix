@@ -4,9 +4,9 @@
   imports = [ ];
 
   # Host-specific configuration
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
   };
 
   console = { font = "ter-v24b"; };
@@ -19,6 +19,12 @@
 
   # Host-specific packages
   environment.systemPackages = with pkgs; [ mangohud ];
+
+  users.users.zaychik = {
+    isNormalUser = true;
+    description = "Sakhaya Sergina";
+    extraGroups = [ "networkmanager" ];
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

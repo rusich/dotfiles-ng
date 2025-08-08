@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 DATABASE=$HOME"/Nextcloud/Configs/Passwords.kdbx"
 

@@ -1,5 +1,5 @@
 { config, pkgs, userSettings, ... }: {
-  imports = [ ./sh.nix ];
+  imports = [ ./shell.nix ./git.nix ];
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = userSettings.username;
@@ -25,6 +25,7 @@
     luarocks
     rustup
     rofi-wayland
+    wofi
     swaynotificationcenter
     waybar
     waylock
@@ -55,6 +56,7 @@
     eza
     kdePackages.dolphin
     kdePackages.dolphin-plugins
+    networkmanagerapplet
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -71,7 +73,7 @@
   ];
 
   # Install firefox.
-  programs.firefox.enable = true;
+  # programs.firefox.enable = true;
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
@@ -79,31 +81,31 @@
     # Old dotfiles wrapping with home-manager (instead manually using `stow`)
     ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/nvim";
-    ".config/bat".source = config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/bat";
-    ".config/delta".source = config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/delta";
+    # ".config/bat".source = config.lib.file.mkOutOfStoreSymlink
+    #   "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/bat";
+    # ".config/delta".source = config.lib.file.mkOutOfStoreSymlink
+    # "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/delta";
     # ".config/fish".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/fish";
-    ".config/git".source = config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/git";
-    ".config/hypr".source = config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/hypr";
+    # ".config/git".source = config.lib.file.mkOutOfStoreSymlink
+    #   "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/git";
+    # ".config/hypr".source = config.lib.file.mkOutOfStoreSymlink
+    #   "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/hypr";
     ".config/keepassxc".source = config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/keepassxc";
     ".config/kitty".source = config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/kitty";
-    ".config/rofi".source = config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/rofi";
-    ".config/waybar".source = config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/waybar";
-    ".config/wlogout".source = config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/wlogout";
-    ".config/wpaperd".source = config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/wpaperd";
+    # ".config/rofi".source = config.lib.file.mkOutOfStoreSymlink
+    #   "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/rofi";
+    # ".config/waybar".source = config.lib.file.mkOutOfStoreSymlink
+    #   "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/waybar";
+    # ".config/wlogout".source = config.lib.file.mkOutOfStoreSymlink
+    #   "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/wlogout";
+    # ".config/wpaperd".source = config.lib.file.mkOutOfStoreSymlink
+    #   "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/wpaperd";
     ".editorconfig".source = config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/home/editorconfig";
-    ".config/avizo".source = config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/avizo";
+    # ".config/avizo".source = config.lib.file.mkOutOfStoreSymlink
+    #   "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/avizo";
 
     # # Building this configuration will create a copy of 'dotfiles/screenrc' in
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a

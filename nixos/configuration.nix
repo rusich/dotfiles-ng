@@ -108,6 +108,7 @@
       isNormalUser = true;
       description = userSettings.name;
       extraGroups = [ "networkmanager" "wheel" ];
+      shell = userSettings.shell;
     };
 
     # Allow unfree packages
@@ -123,9 +124,9 @@
       fzf
       gcc
       unzip
-      pkgs.nix-ld
       elinks
-      v2rayn
+      # v2rayn
+      nix-index
       python3
       killall
       neovim
@@ -134,14 +135,32 @@
       kitty
       sddm-chili-theme
       libreoffice
-
+      mtr
+      traceroute
       # remmina
-      # unstable.rustup
       # wireguard-tools
       # gnomeExtensions.wireguard-vpn-extension
     ];
 
     programs.nix-ld.enable = true; # what's the heck it's this...
+    programs.fish.enable = true;
+
+    programs.nekoray = {
+      enable = true;
+      tunMode.enable = true;
+      #   # tunMode.setuid = true;
+    };
+    services.resolved.enable = true; # nekoray
+    networking.firewall.checkReversePath = "loose"; # nekoray
+
+    # security.wrappers = {
+    #   nekobox_core = {
+    #     owner = "root";
+    #     group = "root";
+    #     source = "${pkgs.nekoray.nekobox-core}/bin/nekobox_core";
+    #     capabilities = "cap_net_admin=ep";
+    #   };
+    # };
 
     # Some programs need SUID wrappers, can be configured further or are
     # started in user sessions.

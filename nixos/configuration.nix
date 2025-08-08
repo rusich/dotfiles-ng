@@ -126,7 +126,6 @@
       unzip
       elinks
       # v2rayn
-      nix-index
       python3
       killall
       neovim
@@ -137,6 +136,7 @@
       libreoffice
       mtr
       traceroute
+      nix-index
       # remmina
       # wireguard-tools
       # gnomeExtensions.wireguard-vpn-extension

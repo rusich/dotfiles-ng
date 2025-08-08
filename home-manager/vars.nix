@@ -16,5 +16,26 @@
   #
   #  /etc/profiles/per-user/rusich/etc/profile.d/hm-session-vars.sh
   #
-  home.sessionVariables = { EDITOR = "nvim"; };
+
+  home.sessionVariables = {
+
+    EDITOR = "nvim";
+    PAGER = "less";
+    MANPAGER = "sh -c 'col -bx | bat --theme Dracula -l man -p'";
+    OVERRIDE_TERMINAL_CMD = "kitty sh -c ";
+    MANROFFOPT = "-c";
+    # Android + Flutter
+    ANDROID_HOME = "$HOME/dev/android-sdk";
+    # JAVA_HOME="/usr/lib/jvm/java-17-openjdk
+    # umask 0077
+    # export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+    # # for virsh
+    # export LIBVIRT_DEFAULT_URI="qemu:///system"
+    # # ssh-agent init
+    # eval $(ssh-agent)
+    #
+    # # Luarocks fix for busted
+    # eval $(nluarocks path --no-bin)
+    #
+  };
 }

@@ -1,5 +1,6 @@
 { config, pkgs, userSettings, ... }: {
-  imports = [ ./shell.nix ./git.nix ./pkgs.nix ./file.nix ./vars.nix ];
+  imports =
+    [ ./shell.nix ./git.nix ./pkgs.nix ./file.nix ./vars.nix ./path.nix ];
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = userSettings.username;
@@ -16,16 +17,6 @@
 
   # Install firefox.
   # programs.firefox.enable = true;
-
-  # # Programs
-  # programs.git = {
-  #   enable = true;
-  #   userName = "Ruslan Sergin";
-  #   userEmail = "ruslan.sergin@gmail.com";
-  #   extraConfig = {
-  #     init.defaultBranch = "main";
-  #   };
-  # };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

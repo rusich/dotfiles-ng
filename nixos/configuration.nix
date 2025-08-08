@@ -65,6 +65,8 @@
     # Enable KDE Plasma as the desktop environment.
     services.displayManager.sddm.enable = true;
     services.displayManager.sddm.wayland.enable = true;
+    # Set SDD theme
+    services.displayManager.sddm.theme = "chili";
     # Enable the GNOME Desktop Environment.
     # services.xserver.displayManager.gdm.enable = true;
     # services.xserver.desktopManager.gnome.enable = true;
@@ -129,6 +131,10 @@
       neovim
       firefox
       home-manager
+      kitty
+      sddm-chili-theme
+      libreoffice
+
       # remmina
       # unstable.rustup
       # wireguard-tools

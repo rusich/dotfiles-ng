@@ -8,7 +8,7 @@ end
 
 vim.g.last_input_kb_layout = get_kb_layout()
 
-local layout_toggle_tool = vim.fn.expand '$HOME/.config/hypr/scripts/toggle_keyboard_layout'
+local layout_toggle_tool = vim.fn.expand '$HOME/.dotfiles/home-manager/dotfiles/hypr/scripts/toggle_keyboard_layout'
 
 -- Save used input keyboard layout when leaving insert mode
 vim.api.nvim_create_autocmd('InsertLeave', {

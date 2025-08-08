@@ -1,6 +1,13 @@
 { config, pkgs, userSettings, ... }: {
-  imports =
-    [ ./shell.nix ./git.nix ./pkgs.nix ./file.nix ./vars.nix ./path.nix ];
+  imports = [
+    ./shell.nix
+    ./git.nix
+    ./pkgs.nix
+    ./file.nix
+    ./vars.nix
+    ./path.nix
+    ./dircolors.nix
+  ];
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = userSettings.username;

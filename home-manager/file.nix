@@ -3,6 +3,8 @@
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
+    ".config/mimeapps.list".source = config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/mimeapps.list";
     # Old dotfiles wrapping with home-manager (instead manually using `stow`)
     ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/nvim";

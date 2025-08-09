@@ -72,7 +72,10 @@
     # services.xserver.desktopManager.gnome.enable = true;
 
     # Hyprland
-    programs.hyprland.enable = true;
+    programs.hyprland = {
+      enable = true;
+      xwayland.enable = true;
+    };
 
     # Configure keymap in X11
     services.xserver.xkb = {

@@ -18,7 +18,7 @@
   #
 
   home.sessionVariables = {
-
+    NIXOS_OZONE_WL = "1"; # hyprland electron apps fix
     EDITOR = "nvim";
     PAGER = "less";
     MANPAGER = "sh -c 'col -bx | bat --theme Dracula -l man -p'";

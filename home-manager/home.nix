@@ -8,6 +8,20 @@
     ./path.nix
     ./dircolors.nix
   ];
+
+  xdg.portal = {
+    enable = true;
+    config = { common = { default = [ "gtk" ]; }; };
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  };
+
+  gtk = {
+    enable = true;
+    theme.name = "Adwaita";
+    cursorTheme.name = "Bibata-Modern-Classic";
+    iconTheme.name = "GruvboxPlus";
+  };
+
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = userSettings.username;
@@ -22,8 +36,26 @@
   # release notes.
   home.stateVersion = "25.05"; # Please read the comment before changing.
 
-  # Install firefox.
-  # programs.firefox.enable = true;
+  programs.firefox = {
+    enable = true;
+
+    profiles.${userSettings.username} = {
+      settings = {
+        "dom.security.https_only_mode" = true;
+        "browser.translations.enable" = false;
+      };
+      bookmarks = {
+        force = true;
+        settings = [{
+          name = "wikipedia";
+          tags = [ "wiki" ];
+          keyword = "wiki";
+          url = "https://en.wikipedia.org/wiki/Main_Page";
+
+        }];
+      };
+    };
+  };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

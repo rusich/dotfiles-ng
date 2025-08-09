@@ -111,7 +111,6 @@
       isNormalUser = true;
       description = userSettings.name;
       extraGroups = [ "networkmanager" "wheel" ];
-      shell = userSettings.shell;
     };
 
     # Allow unfree packages
@@ -120,6 +119,9 @@
     # List packages installed in system profile. To search, run:
     # $ nix search wget
     environment.systemPackages = with pkgs; [
+      nix-output-monitor # beautify nix output
+      nvd
+      nh # nix helper
       curl
       htop
       git
@@ -128,11 +130,8 @@
       gcc
       unzip
       elinks
-      # v2rayn
       python3
       killall
-      neovim
-      firefox
       home-manager
       kitty
       sddm-chili-theme
@@ -140,13 +139,15 @@
       mtr
       traceroute
       nix-index
-      # remmina
-      # wireguard-tools
-      # gnomeExtensions.wireguard-vpn-extension
     ];
 
+    programs.firefox.enable = true;
     programs.nix-ld.enable = true; # what's the heck it's this...
     programs.fish.enable = true;
+    programs.neovim = {
+      enable = true;
+      defaultEditor = true;
+    };
 
     programs.nekoray = {
       enable = true;

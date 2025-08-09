@@ -19,13 +19,14 @@
 
   home.sessionVariables = {
     NIXOS_OZONE_WL = "1"; # hyprland electron apps fix
-    EDITOR = "nvim";
     PAGER = "less";
     MANPAGER = "sh -c 'col -bx | bat --theme Dracula -l man -p'";
     OVERRIDE_TERMINAL_CMD = "kitty sh -c ";
     MANROFFOPT = "-c";
-    # Android + Flutter
     ANDROID_HOME = "$HOME/dev/android-sdk";
+    NH_FLAKE = "$HOME/.dotfiles";
+    # EDITOR = "nvim";
+    # Android + Flutter
     # JAVA_HOME="/usr/lib/jvm/java-17-openjdk
     # umask 0077
     # export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'

@@ -12,6 +12,7 @@
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-colors.url = "github:misterio77/nix-colors";
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
@@ -25,7 +26,6 @@
       userSettings = rec { # rec - for reqursive
         username = "rusich";
         name = "Ruslan Sergin";
-        shell = pkgs.fish;
       };
 
       hosts = [

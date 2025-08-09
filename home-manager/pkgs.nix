@@ -5,6 +5,10 @@
   home.packages = with pkgs; [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
+    neofetch
+    fastfetch
+    microfetch
+    breeze-hacked-cursor-theme
     whitesur-gtk-theme
     whitesur-icon-theme
     nwg-look

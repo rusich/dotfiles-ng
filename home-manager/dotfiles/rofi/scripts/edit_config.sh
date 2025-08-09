@@ -6,21 +6,16 @@ function gen_configs_list() {
   IFS=$'\n'
 
   for file in $({
-    find . -maxdepth 1 -type f &
-    find ~/.config -type f
+    find ~/.dotfiles/ -type f
   }); do
     echo $file
   done
 }
 
 CONFIG_FILE=$(
-  (gen_configs_list) | grep -Fv \
-    -e ".config/libreoffice" \
-    -e ".config/YandexBrowser" \
-    -e ".config/yandex-browser" |
-    rofi -i -dmenu -p "Edit config file"
+  (gen_configs_list) | rofi -i -dmenu -p "Edit config file"
 )
 
 if [ -n "${CONFIG_FILE}" ]; then
-  GIT_DIR="$HOME/.cfg" GIT_WORK_TREE="$HOME" kitty -e nvim "${CONFIG_FILE}"
+  kitty -e nvim "${CONFIG_FILE}"
 fi

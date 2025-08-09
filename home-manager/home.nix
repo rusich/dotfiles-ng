@@ -7,7 +7,12 @@
     ./vars.nix
     ./path.nix
     ./dircolors.nix
+    inputs.nix-colors.homeManagerModules.default
+    ./theming-example/alacritty.nix
   ];
+
+  # set color scheme from base16 (https://github.com/tinted-theming/schemes) 
+  colorScheme = inputs.nix-colors.colorSchemes.oxocarbon-light;
 
   xdg.portal = {
     enable = true;
@@ -15,11 +20,12 @@
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
+  # Theming
   gtk = {
     enable = true;
     theme.name = "WhiteSur-Dark";
-    cursorTheme.name = "Bibata-Modern-Classic";
-    iconTheme.name = "WhiteSur-Dark";
+    cursorTheme.name = "Breeze Hacked";
+    iconTheme.name = "WhiteSur-dark";
   };
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -161,6 +167,26 @@
             icon =
               "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
             definedAliases = [ "@mn" ];
+          };
+
+          "Nixhub" = {
+            urls = [{ template = "https://www.nixhub.io/packages/"; }];
+            icon =
+              "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+            definedAliases = [ "@nh" ];
+          };
+
+          "Home-manager options" = {
+            urls = [{
+              template = "https://home-manager-options.extranix.com/";
+              params = [{
+                name = "query";
+                value = "{searchTerms}";
+              }];
+            }];
+            icon =
+              "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+            definedAliases = [ "@hm" ];
           };
 
           # A good way to find genuine discussion

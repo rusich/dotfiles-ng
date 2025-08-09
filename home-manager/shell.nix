@@ -3,8 +3,10 @@ let
   myAliases = {
     # Standard
     "home-manager" = "home-manager --flake ~/.dotfiles/";
-    "ns" = "sudo nixos-rebuild switch --flake ~/.dotfiles/";
-    "hs" = "home-manager switch --flake ~/.dotfiles/";
+    # "ns" = "sudo nixos-rebuild switch --flake ~/.dotfiles/";
+    # "hs" = "home-manager switch --flake ~/.dotfiles/";
+    "os" = "nh os switch";
+    "hs" = "nh home switch";
     "mc" = "/usr/bin/mc --nosubshell";
 
     #fzf use preview
@@ -39,6 +41,13 @@ in {
   programs.bash = {
     enable = true;
     shellAliases = myAliases;
+    initExtra = ''
+      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
+      then
+        shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+        exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
+      fi
+    '';
   };
 
   # Fish 
@@ -46,5 +55,8 @@ in {
     enable = true;
     shellAliases = myAliases;
   };
+
+  # Starship
+  programs.starship.enable = true;
 
 }

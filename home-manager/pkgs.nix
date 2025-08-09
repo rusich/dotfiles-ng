@@ -5,6 +5,9 @@
   home.packages = with pkgs; [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
+    whitesur-gtk-theme
+    whitesur-icon-theme
+    nwg-look
     libsecret
     gnome-calculator
     cht-sh

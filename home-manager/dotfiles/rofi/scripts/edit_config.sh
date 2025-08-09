@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function gen_configs_list() {
   # store full file path with spaces in for loop variable

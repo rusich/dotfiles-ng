@@ -4,8 +4,14 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
-    home-manager.url = "github:nix-community/home-manager/release-25.05";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
@@ -56,26 +62,12 @@
           "${host.hostname}" =
             makeSystem { inherit (host) hostname stateVersion; };
         }) { } hosts;
-      # Simple configuration example
-      #    nixosConfigurations = {
-      #      matebook = lib.nixosSystem {
-      #        inherit system;
-      # modules = [ 
-      #   ./system/configuration.nix 
-      #   ./system/hosts/matebook/hardware-configuration.nix
-      # ];
-      # specialArgs = {
-      #   inherit userSettings;
-      #   inherit unstable;
-      # };
-      #      };
-      #    };
 
       homeConfigurations = {
         ${userSettings.username} = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [ ./home-manager/home.nix ];
-          extraSpecialArgs = { inherit userSettings unstable inputs; };
+          extraSpecialArgs = { inherit userSettings unstable inputs system; };
         };
       };
     };

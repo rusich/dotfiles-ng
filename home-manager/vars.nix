@@ -21,10 +21,11 @@
     NIXOS_OZONE_WL = "1"; # hyprland electron apps fix
     ANDROID_HOME = "$HOME/dev/android-sdk";
     NH_FLAKE = "$HOME/.dotfiles";
-    # PAGER = "less";
-    # OVERRIDE_TERMINAL_CMD = "kitty sh -c ";
-    # MANROFFOPT = "-c";
+    PAGER = "less";
+    MANROFFOPT = "-c";
     # MANPAGER = "sh -c 'col -bx | bat --theme Dracula -l man -p'";
+    MANPAGER = "sh -c 'col -bx | bat -l man -p'";
+    # OVERRIDE_TERMINAL_CMD = "kitty sh -c ";
     # EDITOR = "nvim";
     # Android + Flutter
     # JAVA_HOME="/usr/lib/jvm/java-17-openjdk

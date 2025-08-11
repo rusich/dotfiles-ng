@@ -39,6 +39,18 @@ let
   };
 in {
 
+  # Delta
+  programs.git.delta = { enable = true; };
+
+  # Zoxide
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
+    enableBashIntegration = true;
+    enableZshIntegration = true;
+    options = [ "--cmd cd" ];
+  };
+
   # Starship
   programs.starship = {
     enable = true;
@@ -69,21 +81,34 @@ in {
     enable = true;
     shellAliases = myAliases;
     interactiveShellInit = ''
-      set fish_greeting # Disable greeting
-      set -U FZF_LEGACY_KEYBINDINGS 0
-      complete -c cht.sh -xa '(curl -s cheat.sh/:list)'
-    '';
-    plugins = [
+        set fish_greeting # Disable greeting
+        set -U FZF_LEGACY_KEYBINDINGS 0
+        complete -c cht.sh -xa '(curl -s cheat.sh/:list)'
 
+      if not set -q TMUX
+          colorscript random
+      end
+
+    '';
+
+    # # fzf-fish: diff highlighter
+    # set fzf_diff_highlighter delta --paging=never --width=20
+    # set fzf_fd_opts --hidden 
+    # function rg
+    # /usr/bin/env rg --json -C 2 $argv[1] | delta
+    # end
+    plugins = [
       # custom plugins here. see wiki
     ];
   };
 
+  # Fish dependencies
   home.packages = with pkgs; [
+    dwt1-shell-color-scripts
     fishPlugins.done # system notify when task is done
     fishPlugins.fzf-fish # https://github.com/PatrickF1/fzf.fish
     fishPlugins.grc # colorase common cli utilities output. Very cool!
-    fishPlugins.colored-man-pages
+    # fishPlugins.colored-man-pages # doesnt work
     fzf
     grc
     # fishPlugins.forgit # https://github.com/wfxr/forgit

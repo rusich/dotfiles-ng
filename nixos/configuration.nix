@@ -144,6 +144,7 @@
     programs.firefox.enable = true;
     programs.nix-ld.enable = true; # what's the heck it's this...
     programs.fish.enable = true;
+    programs.zsh.enable = true;
     programs.neovim = {
       enable = true;
       defaultEditor = true;

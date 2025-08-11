@@ -1,10 +1,15 @@
-{ config, pkgs, userSettings, ... }: {
-
+{
+  config,
+  pkgs,
+  userSettings,
+  ...
+}: {
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
+    playerctl
     neofetch
     fastfetch
     microfetch
@@ -68,4 +73,3 @@
     # '')
   ];
 }
-

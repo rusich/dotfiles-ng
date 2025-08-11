@@ -8,10 +8,11 @@ let
     "os" = "nh os switch";
     "hs" = "nh home switch";
     "mc" = "/usr/bin/mc --nosubshell";
+    "s" = "os && hs";
 
-    #fzf use preview
-    "fzf" =
-      "fzf --preview 'bat --color=always --style=numbers --line-range=:500 {}'";
+    # #fzf use preview
+    # "fzf" =
+    #   "fzf --preview 'bat --color=always --style=numbers --line-range=:500 {}'";
     # ls and tree replacement with eza
     "ls" = "eza --icons --group-directories-first";
     "tree" = "eza --tree --icons --group-directories-first";
@@ -37,6 +38,19 @@ let
     #alias bat="PAGER='less' /usr/bin/bat --theme Dracula"
   };
 in {
+
+  # Starship
+  programs.starship = {
+    enable = true;
+    enableFishIntegration = true;
+    enableInteractive = true;
+    settings = {
+      add_newline = false;
+      line_break.disabled = true;
+      scan_timeout = 10;
+    };
+  };
+
   # Bash 
   programs.bash = {
     enable = true;
@@ -54,9 +68,37 @@ in {
   programs.fish = {
     enable = true;
     shellAliases = myAliases;
+    interactiveShellInit = ''
+      set fish_greeting # Disable greeting
+      set -U FZF_LEGACY_KEYBINDINGS 0
+      complete -c cht.sh -xa '(curl -s cheat.sh/:list)'
+    '';
+    plugins = [
+
+      # custom plugins here. see wiki
+    ];
   };
 
-  # Starship
-  programs.starship.enable = true;
+  home.packages = with pkgs; [
+    fishPlugins.done # system notify when task is done
+    fishPlugins.fzf-fish # https://github.com/PatrickF1/fzf.fish
+    fishPlugins.grc # colorase common cli utilities output. Very cool!
+    fishPlugins.colored-man-pages
+    fzf
+    grc
+    # fishPlugins.forgit # https://github.com/wfxr/forgit
+    # fishPlugins.hydro # prompt instead of starship. https://github.com/jorgebucaran/hydro
+  ];
+
+  # Zsh
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+
+    shellAliases = myAliases;
+    history.size = 10000;
+  };
 
 }

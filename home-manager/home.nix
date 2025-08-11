@@ -11,6 +11,7 @@
     ./theming-example/alacritty.nix
   ];
 
+  wayland.windowManager.hyprland.systemd.enableXdgAutostart = true;
   # set color scheme from base16 (https://github.com/tinted-theming/schemes) 
   colorScheme = inputs.nix-colors.colorSchemes.oxocarbon-light;
 
@@ -58,6 +59,7 @@
         "sidebar.verticalTabs" = true;
         # "sidebar.visibility" = "expand-on-hover";
         "browser.toolbars.bookmarks.visibility" = "never";
+        "identity.fxaccounts.enabled" = false;
 
       };
 
@@ -166,7 +168,7 @@
             }];
             icon =
               "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = [ "@mn" ];
+            definedAliases = [ "@ny" ];
           };
 
           "Nixhub" = {
@@ -176,7 +178,7 @@
             definedAliases = [ "@nh" ];
           };
 
-          "Home-manager options" = {
+          "HM options" = {
             urls = [{
               template = "https://home-manager-options.extranix.com/";
               params = [{
@@ -186,7 +188,20 @@
             }];
             icon =
               "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = [ "@hm" ];
+            definedAliases = [ "@nm" ];
+          };
+
+          "Nix func" = {
+            urls = [{
+              template = "https://noogle.dev/q";
+              params = [{
+                name = "term";
+                value = "{searchTerms}";
+              }];
+            }];
+            icon =
+              "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+            definedAliases = [ "@nf" ];
           };
 
           # A good way to find genuine discussion

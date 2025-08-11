@@ -81,7 +81,8 @@
     services.xserver.xkb = {
       layout = "us,ru";
       model = "pc105";
-      options = "grp:caps_toggle,grp_led:caps";
+      # options = "grp:caps_toggle,grp_led:caps";
+      options = "grp:alt_shift_toggle,grp_led:caps";
     };
 
     # Enable CUPS to print documents.

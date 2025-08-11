@@ -11,6 +11,10 @@
     ./theming-example/alacritty.nix
   ];
 
+  # SwayOSD 
+  services.swayosd.enable = true;
+
+  # Hyprland
   wayland.windowManager.hyprland.systemd.enableXdgAutostart = true;
   # set color scheme from base16 (https://github.com/tinted-theming/schemes) 
   colorScheme = inputs.nix-colors.colorSchemes.oxocarbon-light;

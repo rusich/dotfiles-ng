@@ -1,19 +1,24 @@
 { pkgs, unstable, stateVersion, ... }:
 
 {
-  imports = [
-    ];
+  imports = [ ];
 
   # Host-specific configuration
+  console = { font = "ter-v32b"; };
 
-  console = {
-    font = "ter-v32b";
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
   };
 
+  environment.systemPackages = with pkgs; [ mangohud ];
+
+  services.xserver.videoDrivers = [ "amdgpu" ];
   # Host-specific packages
-  environment.systemPackages = with pkgs; [
-    # some useful stuff...
-  ];
+  programs.steam.enable = true;
+  programs.steam.gamescopeSession.enable = true;
+  programs.gamemode.enable = true;
+  services.desktopManager.plasma6.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

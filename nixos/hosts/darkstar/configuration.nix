@@ -4,22 +4,21 @@
   imports = [ ];
 
   # Host-specific configuration
+  console = { font = "ter-v24b"; };
+
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
 
-  console = { font = "ter-v24b"; };
+  environment.systemPackages = with pkgs; [ mangohud ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
-
+  # Host-specific packages
   programs.steam.enable = true;
   programs.steam.gamescopeSession.enable = true;
   programs.gamemode.enable = true;
   services.desktopManager.plasma6.enable = true;
-
-  # Host-specific packages
-  environment.systemPackages = with pkgs; [ mangohud ];
 
   users.users.zaychik = {
     isNormalUser = true;

@@ -22,12 +22,6 @@
       "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/rofi";
     ".config/wlogout".source = config.lib.file.mkOutOfStoreSymlink
       "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/wlogout";
-    # ".config/user-dirs.dirs".source = config.lib.file.mkOutOfStoreSymlink
-    #   "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/user-dirs.dirs";
-    # ".config/user-dirs.conf".source = config.lib.file.mkOutOfStoreSymlink
-    #   "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/user-dirs.conf";
-    # ".config/user-dirs.locale".source = config.lib.file.mkOutOfStoreSymlink
-    #   "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/user-dirs.locale";
 
     # ".config/bat".source = config.lib.file.mkOutOfStoreSymlink
     #   "${config.home.homeDirectory}/.dotfiles/home-manager/dotfiles/bat";

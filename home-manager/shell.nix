@@ -37,7 +37,8 @@ let
 
     #alias bat="PAGER='less' /usr/bin/bat --theme Dracula"
   };
-in {
+in
+{
 
   # Delta
   programs.git.delta = { enable = true; };

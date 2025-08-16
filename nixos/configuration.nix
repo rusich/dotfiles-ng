@@ -120,10 +120,13 @@
     # List packages installed in system profile. To search, run:
     # $ nix search wget
     environment.systemPackages = with pkgs; [
+      pkg-config
+      openssl
       nix-output-monitor # beautify nix output
       nvd
       nh # nix helper
       curl
+      wget
       htop
       git
       ripgrep

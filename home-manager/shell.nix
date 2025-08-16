@@ -17,6 +17,9 @@ let
     "ls" = "eza --icons --group-directories-first";
     "tree" = "eza --tree --icons --group-directories-first";
 
+    # Nix packages online
+    "lumen" = "nix run github:jnsahaj/lumen -- ";
+
     # OLD and almost unneeded
 
     # enable color support of ls and also add handy aliases
@@ -37,8 +40,7 @@ let
 
     #alias bat="PAGER='less' /usr/bin/bat --theme Dracula"
   };
-in
-{
+in {
 
   # Delta
   programs.git.delta = { enable = true; };

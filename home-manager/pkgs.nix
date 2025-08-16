@@ -1,9 +1,11 @@
-{ config, pkgs, userSettings, ... }: {
+{ config, pkgs, system, userSettings, unstable, inputs, ... }: {
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
+    mdcat # pretty md print
+    unstable.gemini-cli
     xdg-user-dirs
     playerctl
     neofetch

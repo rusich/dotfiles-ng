@@ -89,8 +89,10 @@
       };
 
       extensions = {
-        packages = with inputs.firefox-addons.packages.${system};
-          [ keepassxc-browser ];
+        packages = with inputs.firefox-addons.packages.${system}; [
+          keepassxc-browser
+          simple-translate
+        ];
       };
 
       search = {

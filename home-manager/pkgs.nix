@@ -18,7 +18,6 @@
     libsecret
     gnome-calculator
     cht-sh
-    bat
     wl-clipboard
     luarocks
     rustup

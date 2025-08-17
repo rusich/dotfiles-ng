@@ -1,4 +1,4 @@
-{ config, pkgs, userSettings, ... }:
+{ config, pkgs, lib, userSettings, ... }:
 let
   myAliases = {
     # Standard
@@ -43,7 +43,68 @@ let
 in {
 
   # Delta
-  programs.git.delta = { enable = true; };
+
+  # try to separate file delta.nix (first try stylix!)
+  # options.programs.git.include = lib.mkOption {
+  #   type = lib.types.str; # Type of the custom option
+  #   default = ""; # Default value (empty string)
+  #   description =
+  #     "Custom Git configuration setting."; # Description of the option
+  # };
+
+  programs.git = {
+    # include.path = "./dotfiles/delta/themes.gitconfig";
+    delta = {
+      enable = true;
+      options = {
+        custom-theme = {
+          dark = "true";
+          syntax-theme = "TwoDark"; # from `bat` themes
+          line-numbers = "true";
+          side-by-side = "true";
+          file-style = "brightwhite";
+          file-decoration-style = "none";
+          file-added-label = "[+]";
+          file-copied-label = "[==]";
+          file-modified-label = "[*]";
+          file-removed-label = "[-]";
+          file-renamed-label = "[->]";
+          hunk-header-decoration-style = "#3e3e43 box ul";
+          plus-style = "brightgreen black";
+          plus-emph-style = "black green";
+          minus-style = "brightred black";
+          minus-emph-style = "black red";
+          line-numbers-minus-style = "brightred";
+          line-numbers-plus-style = "brightgreen";
+          line-numbers-left-style = "#3e3e43";
+          line-numbers-right-style = "#3e3e43";
+          line-numbers-zero-style = "#57575f";
+          zero-style = "syntax";
+          whitespace-error-style = "black bold";
+          blame-code-style = "syntax";
+          blame-palette = "#161617 #1b1b1d #2a2a2d #3e3e43";
+          merge-conflict-begin-symbol = "~";
+          merge-conflict-end-symbol = "~";
+          merge-conflict-ours-diff-header-style = "yellow bold";
+          merge-conflict-ours-diff-header-decoration-style = "#3e3e43 box";
+          merge-conflict-theirs-diff-header-style = "yellow bold";
+          merge-conflict-theirs-diff-header-decoration-style = "#3e3e43 box";
+        };
+        features = "custom-theme";
+        navigate = true;
+        side-by-side = false;
+        line-numbers = true;
+        hyperlinks = true;
+        hyperlinks-file-link-format = "file-line-column://{path}:{line}";
+      };
+    };
+  };
+
+  # Bat
+  programs.bat = {
+    enable = true;
+    config = { theme = "Dracula"; };
+  };
 
   # Zoxide
   programs.zoxide = {

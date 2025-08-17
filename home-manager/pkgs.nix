@@ -5,7 +5,7 @@
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     mdcat # pretty md print
-    unstable.gemini-cli
+    unstable.opencode
     xdg-user-dirs
     playerctl
     neofetch

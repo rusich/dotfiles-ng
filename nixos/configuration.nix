@@ -15,6 +15,37 @@
 
   config = {
 
+    # List packages installed in system profile. To search, run:
+    # $ nix search wget
+    environment.systemPackages = with pkgs; [
+      pkg-config
+      openssl
+      nix-output-monitor # beautify nix output
+      nvd
+      nh # nix helper
+      curl
+      wget
+      htop
+      git
+      ripgrep
+      fzf
+      gcc
+      unzip
+      elinks
+      python3
+      killall
+      home-manager
+      kitty
+      sddm-chili-theme
+      sddm-astronaut
+      sddm-sugar-dark
+      libreoffice
+      mtr
+      traceroute
+      nix-index
+      lm_sensors
+    ];
+
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = true;
@@ -61,15 +92,14 @@
     };
 
     # Enable the X11 windowing system.
-    services.xserver.enable = true;
-    # Enable KDE Plasma as the desktop environment.
-    services.displayManager.sddm.enable = true;
-    services.displayManager.sddm.wayland.enable = true;
-    # Set SDD theme
-    # services.displayManager.sddm.theme = "chili";
+    # services.xserver.enable = true;
     # Enable the GNOME Desktop Environment.
     # services.xserver.displayManager.gdm.enable = true;
     # services.xserver.desktopManager.gnome.enable = true;
+
+    # SDDM
+    services.displayManager.sddm.enable = true;
+    services.displayManager.sddm.wayland.enable = true;
 
     # Hyprland
     programs.hyprland = {
@@ -116,34 +146,6 @@
 
     # Allow unfree packages
     nixpkgs.config.allowUnfree = true;
-
-    # List packages installed in system profile. To search, run:
-    # $ nix search wget
-    environment.systemPackages = with pkgs; [
-      pkg-config
-      openssl
-      nix-output-monitor # beautify nix output
-      nvd
-      nh # nix helper
-      curl
-      wget
-      htop
-      git
-      ripgrep
-      fzf
-      gcc
-      unzip
-      elinks
-      python3
-      killall
-      home-manager
-      kitty
-      sddm-chili-theme
-      libreoffice
-      mtr
-      traceroute
-      nix-index
-    ];
 
     programs.firefox.enable = true;
     programs.nix-ld.enable = true; # what's the heck it's this...

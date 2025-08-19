@@ -7,7 +7,7 @@ let
     # "hs" = "home-manager switch --flake ~/.dotfiles/";
     "os" = "nh os switch";
     "hs" = "nh home switch";
-    "mc" = "/usr/bin/mc --nosubshell";
+    # "mc" = "/usr/bin/mc --nosubshell";
     "s" = "os && hs";
 
     # #fzf use preview
@@ -103,7 +103,7 @@ in {
   # Bat
   programs.bat = {
     enable = true;
-    config = { theme = "Dracula"; };
+    # config = { theme = "Dracula"; };
   };
 
   # Zoxide

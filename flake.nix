@@ -16,10 +16,12 @@
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-colors.url = "github:misterio77/nix-colors";
+    # nix-colors.url = "github:misterio77/nix-colors";
+    stylix.url = "github:nix-community/stylix/release-25.05";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
+  outputs =
+    { self, stylix, nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
@@ -54,6 +56,8 @@
             inherit inputs hostname stateVersion userSettings unstable;
           };
           modules = [
+            stylix.nixosModules.stylix
+            ./common/theme.nix
             ./nixos/configuration.nix
             ./nixos/hosts/${hostname}/configuration.nix
             ./nixos/hosts/${hostname}/hardware-configuration.nix
@@ -70,7 +74,11 @@
       homeConfigurations = {
         ${userSettings.username} = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
-          modules = [ ./home-manager/home.nix ];
+          modules = [
+            stylix.homeModules.stylix
+            ./common/theme.nix
+            ./home-manager/home.nix
+          ];
           extraSpecialArgs = { inherit userSettings unstable inputs system; };
         };
       };

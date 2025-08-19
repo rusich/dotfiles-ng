@@ -7,9 +7,11 @@
     ./vars.nix
     ./path.nix
     ./dircolors.nix
-    inputs.nix-colors.homeManagerModules.default
-    ./theming-example/alacritty.nix
+    # inputs.nix-colors.homeManagerModules.default
+    # ./theming-example/alacritty.nix
   ];
+
+  programs.alacritty.enable = true;
 
   # Включаем управление XDG User Directories (но с кастомными путями)
   xdg.userDirs = {
@@ -38,7 +40,7 @@
   # Hyprland
   wayland.windowManager.hyprland.systemd.enableXdgAutostart = true;
   # set color scheme from base16 (https://github.com/tinted-theming/schemes) 
-  colorScheme = inputs.nix-colors.colorSchemes.oxocarbon-light;
+  # colorScheme = inputs.nix-colors.colorSchemes.oxocarbon-light;
 
   xdg.portal = {
     enable = true;
@@ -46,13 +48,13 @@
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
-  # Theming
-  gtk = {
-    enable = true;
-    theme.name = "WhiteSur-Dark";
-    cursorTheme.name = "Breeze Hacked";
-    iconTheme.name = "WhiteSur-dark";
-  };
+  # # Theming
+  # gtk = {
+  #   enable = true;
+  #   theme.name = "WhiteSur-Dark";
+  #   cursorTheme.name = "Breeze Hacked";
+  #   iconTheme.name = "WhiteSur-dark";
+  # };
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -66,7 +68,14 @@
   # You should not change this value, even if you update Home Manager. If you do
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
-  home.stateVersion = "25.05"; # Please read the comment before changing.
+  home.stateVersion = "25.05";
+
+  stylix.targets.firefox = {
+    enable = true;
+    profileNames = [ "${userSettings.username}" ];
+    colorTheme.enable = true;
+    # firefoxGnomeTheme.enable = true;
+  };
 
   programs.firefox = {
     enable = true;
@@ -89,6 +98,7 @@
       };
 
       extensions = {
+        force = true;
         packages = with inputs.firefox-addons.packages.${system}; [
           keepassxc-browser
           simple-translate

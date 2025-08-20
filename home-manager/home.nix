@@ -70,11 +70,18 @@
   # release notes.
   home.stateVersion = "25.05";
 
+  # Stylix
+  stylix.targets.kde.enable = true;
   stylix.targets.firefox = {
     enable = true;
     profileNames = [ "${userSettings.username}" ];
     colorTheme.enable = true;
     # firefoxGnomeTheme.enable = true;
+  };
+  stylix.cursor = {
+    package = pkgs.whitesur-cursors;
+    size = 24;
+    name = "WhiteSur Cursors";
   };
 
   programs.firefox = {

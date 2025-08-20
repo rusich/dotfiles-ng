@@ -29,7 +29,8 @@
       unstable = nixpkgs-unstable.legacyPackages.${system};
 
       # My vars
-      userSettings = rec { # rec - for reqursive
+      userSettings = rec {
+        # rec - for reqursive
         username = "rusich";
         name = "Ruslan Sergin";
       };
@@ -57,19 +58,23 @@
           };
           modules = [
             stylix.nixosModules.stylix
-            ./common/theme.nix
+            # ./common/theme.nix
             ./nixos/configuration.nix
             ./nixos/hosts/${hostname}/configuration.nix
             ./nixos/hosts/${hostname}/hardware-configuration.nix
           ];
         };
 
-    in {
-      nixosConfigurations = nixpkgs.lib.foldl' (configs: host:
-        configs // {
-          "${host.hostname}" =
-            makeSystem { inherit (host) hostname stateVersion; };
-        }) { } hosts;
+    in
+    {
+      nixosConfigurations = nixpkgs.lib.foldl'
+        (configs: host:
+          configs // {
+            "${host.hostname}" =
+              makeSystem { inherit (host) hostname stateVersion; };
+          })
+        { }
+        hosts;
 
       homeConfigurations = {
         ${userSettings.username} = home-manager.lib.homeManagerConfiguration {

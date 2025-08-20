@@ -2,6 +2,9 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    kdePackages.breeze
+    libsForQt5.qt5ct
+    qt6ct
     mdcat # pretty md print
     unstable.opencode
     xdg-user-dirs

@@ -18,6 +18,7 @@
   programs.steam.enable = true;
   programs.steam.gamescopeSession.enable = true;
   programs.gamemode.enable = true;
+  powerManagement.enable = true;
   powerManagement.powertop.enable = true;
 
   services.displayManager.sddm.theme = "chili";

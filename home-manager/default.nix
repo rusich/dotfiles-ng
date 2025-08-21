@@ -21,7 +21,6 @@
     ./modules/bash.nix
     ./modules/bat.nix
     ./modules/delta.nix
-    ./modules/files/default.nix
     ./modules/firefox.nix
     ./modules/fish.nix
     ./modules/git.nix

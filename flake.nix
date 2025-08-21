@@ -96,7 +96,7 @@
           modules = [
             stylix.homeModules.stylix
             ./common/theme.nix
-            ./home-manager/home.nix
+            ./home-manager
           ];
           extraSpecialArgs = {
             inherit

@@ -9,23 +9,24 @@
 }:
 {
   imports = [
-    ./git.nix
-    ./packages.nix
-    ./vars.nix
-    ./path.nix
+    ./aliases.nix
+    ./base.nix
     ./dircolors.nix
-    ./modules/files/default.nix
-    ./modules/base.nix
-    ./modules/xdg.nix
-    ./modules/stylix.nix
-    ./modules/firefox.nix
-    ./modules/aliases.nix
-    ./modules/git-delta.nix
-    ./modules/bat.nix
-    ./modules/zoxide.nix
-    ./modules/starship.nix
+    ./dotfiles.nix
+    ./packages.nix
+    ./path.nix
+    ./stylix.nix
+    ./vars.nix
+    ./xdg.nix
     ./modules/bash.nix
+    ./modules/bat.nix
+    ./modules/delta.nix
+    ./modules/files/default.nix
+    ./modules/firefox.nix
     ./modules/fish.nix
+    ./modules/git.nix
+    ./modules/starship.nix
+    ./modules/zoxide.nix
     ./modules/zsh.nix
     # inputs.nix-colors.homeManagerModules.default
     # ./theming-example/alacritty.nix

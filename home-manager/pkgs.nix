@@ -5,6 +5,7 @@
   userSettings,
   unstable,
   inputs,
+  nixpkgs,
   ...
 }:
 {
@@ -15,6 +16,7 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    vlc
     nixfmt-rfc-style
     nixd
     kdePackages.breeze

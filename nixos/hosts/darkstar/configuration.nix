@@ -1,17 +1,35 @@
-{ pkgs, unstable, stateVersion, ... }:
+{
+  pkgs,
+  unstable,
+  stateVersion,
+  lib,
+  ...
+}:
 
 {
   imports = [ ];
 
   # Host-specific configuration
-  console = { font = "ter-v24b"; };
+  console = {
+    font = "ter-v24b";
+  };
 
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
 
-  environment.systemPackages = with pkgs; [ mangohud ];
+  nixpkgs.config.allowUnfree = true;
+  environment.systemPackages = with pkgs; [
+    mangohud
+    tonelib-jam
+    tonelib-metal
+    pavucontrol
+    qjackctl
+    gmetronome
+    guitarix
+    audacity
+  ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
   # Host-specific packages
@@ -20,6 +38,41 @@
   programs.gamemode.enable = true;
   services.desktopManager.plasma6.enable = true;
 
+  # audio override
+  security.rtkit.enable = true;
+
+  # Disable Pulseaudio because Pipewire is used.
+  # hardware.pulseaudio.enable = lib.mkForce false;
+  # sound.enable = false; # Only meant for ALSA-based configurations.
+  # hardware.alsa.enable = false;
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    jack.enable = true;
+
+    wireplumber = {
+      enable = true;
+      package = pkgs.wireplumber;
+    };
+  };
+
+  # services.jack = {
+  #   jackd.enable = true;
+  #   # support ALSA only programs via ALSA JACK PCM plugin
+  #   alsa.enable = false;
+  #   # support ALSA only programs via loopback device (supports programs like Steam)
+  #   loopback = {
+  #     enable = true;
+  #     # buffering parameters for dmix device to work with ALSA only semi-professional sound programs
+  #     #dmixConfig = ''
+  #     #  period_size 2048
+  #     #'';
+  #   };
+  # };
+  #
   users.users.zaychik = {
     isNormalUser = true;
     description = "Sakhaya Sergina";

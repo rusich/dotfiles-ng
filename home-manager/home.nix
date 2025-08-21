@@ -48,14 +48,6 @@
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
-  # # Theming
-  # gtk = {
-  #   enable = true;
-  #   theme.name = "WhiteSur-Dark";
-  #   cursorTheme.name = "Breeze Hacked";
-  #   iconTheme.name = "WhiteSur-dark";
-  # };
-
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = userSettings.username;
@@ -78,11 +70,45 @@
     colorTheme.enable = true;
     # firefoxGnomeTheme.enable = true;
   };
+
   stylix.cursor = {
-    package = pkgs.whitesur-cursors;
+    package = pkgs.bibata-cursors;
     size = 24;
-    name = "WhiteSur Cursors";
+    name = "Bibata-Modern-Ice";
   };
+
+  stylix.fonts = {
+
+    monospace = {
+      # package =  pkgs.nerd-fonts._0xproto.override { fonts = [ "JetBrainsMono" ]; };
+      package = pkgs.nerd-fonts.iosevka-term;
+      name = "Iosevka Nerd Font Mono";
+    };
+    sansSerif = {
+      package = pkgs.dejavu_fonts;
+      name = "DejaVu Sans";
+    };
+    serif = {
+      package = pkgs.dejavu_fonts;
+      name = "DejaVu Serif";
+    };
+  };
+
+  stylix.fonts.sizes = {
+    applications = 12;
+    terminal = 15;
+    desktop = 10;
+    popups = 10;
+  };
+
+  stylix.opacity = {
+    applications = 1.0;
+    terminal = 1.0;
+    desktop = 1.0;
+    popups = 0.7;
+  };
+
+  services.remmina.enable = true;
 
   programs.firefox = {
     enable = true;

@@ -1,7 +1,22 @@
-{ config, pkgs, system, userSettings, unstable, inputs, ... }: {
+{
+  config,
+  pkgs,
+  system,
+  userSettings,
+  unstable,
+  inputs,
+  ...
+}:
+{
+
+  # for nixd
+  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    nixfmt-rfc-style
+    nixd
     kdePackages.breeze
     libsForQt5.qt5ct
     qt6ct
@@ -70,4 +85,5 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
   ];
+
 }

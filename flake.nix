@@ -21,7 +21,14 @@
   };
 
   outputs =
-    { self, stylix, nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
+    {
+      self,
+      stylix,
+      nixpkgs,
+      nixpkgs-unstable,
+      home-manager,
+      ...
+    }@inputs:
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
@@ -50,11 +57,18 @@
         }
       ];
 
-      makeSystem = { hostname, stateVersion, }:
+      makeSystem =
+        { hostname, stateVersion }:
         nixpkgs.lib.nixosSystem {
           system = system;
           specialArgs = {
-            inherit inputs hostname stateVersion userSettings unstable;
+            inherit
+              inputs
+              hostname
+              stateVersion
+              userSettings
+              unstable
+              ;
           };
           modules = [
             stylix.nixosModules.stylix
@@ -67,14 +81,13 @@
 
     in
     {
-      nixosConfigurations = nixpkgs.lib.foldl'
-        (configs: host:
-          configs // {
-            "${host.hostname}" =
-              makeSystem { inherit (host) hostname stateVersion; };
-          })
-        { }
-        hosts;
+      nixosConfigurations = nixpkgs.lib.foldl' (
+        configs: host:
+        configs
+        // {
+          "${host.hostname}" = makeSystem { inherit (host) hostname stateVersion; };
+        }
+      ) { } hosts;
 
       homeConfigurations = {
         ${userSettings.username} = home-manager.lib.homeManagerConfiguration {
@@ -84,7 +97,14 @@
             ./common/theme.nix
             ./home-manager/home.nix
           ];
-          extraSpecialArgs = { inherit userSettings unstable inputs system; };
+          extraSpecialArgs = {
+            inherit
+              userSettings
+              unstable
+              inputs
+              system
+              ;
+          };
         };
       };
     };

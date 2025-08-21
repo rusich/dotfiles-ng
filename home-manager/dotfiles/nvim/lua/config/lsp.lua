@@ -1,3 +1,6 @@
+-- Custom lsp servers setup (in ~/.config/nvim/lsp/)
+vim.lsp.enable("nixd")
+
 -- -- Using blink.cmp instead
 -- vim.api.nvim_create_autocmd('LspAttach', {
 --   callback = function(ev)

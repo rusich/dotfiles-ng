@@ -1,4 +1,11 @@
-{ config, pkgs, lib, userSettings, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  userSettings,
+  stylix,
+  ...
+}:
 let
   myAliases = {
     # Standard
@@ -40,7 +47,8 @@ let
 
     #alias bat="PAGER='less' /usr/bin/bat --theme Dracula"
   };
-in {
+in
+{
 
   # Delta
 
@@ -127,7 +135,7 @@ in {
     };
   };
 
-  # Bash 
+  # Bash
   programs.bash = {
     enable = true;
     shellAliases = myAliases;
@@ -140,7 +148,7 @@ in {
     '';
   };
 
-  # Fish 
+  # Fish
   programs.fish = {
     enable = true;
     shellAliases = myAliases;
@@ -157,7 +165,7 @@ in {
 
     # # fzf-fish: diff highlighter
     # set fzf_diff_highlighter delta --paging=never --width=20
-    # set fzf_fd_opts --hidden 
+    # set fzf_fd_opts --hidden
     # function rg
     # /usr/bin/env rg --json -C 2 $argv[1] | delta
     # end

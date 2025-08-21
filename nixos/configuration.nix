@@ -2,7 +2,15 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, lib, pkgs, hostname, unstable, userSettings, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  hostname,
+  unstable,
+  userSettings,
+  ...
+}:
 
 {
 
@@ -141,7 +149,10 @@
     users.users.${userSettings.username} = {
       isNormalUser = true;
       description = userSettings.name;
-      extraGroups = [ "networkmanager" "wheel" ];
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+      ];
     };
 
     # Allow unfree packages
@@ -192,6 +203,9 @@
     # Or disable the firewall altogether.
     # networking.firewall.enable = false;
 
-    nix.settings.experimental-features = [ "nix-command" "flakes" ];
+    nix.settings.experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 }

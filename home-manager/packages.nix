@@ -58,7 +58,6 @@
     pamixer
     pavucontrol
     keepassxc
-    nodejs_24
     nextcloud-client
     yazi
     ncdu

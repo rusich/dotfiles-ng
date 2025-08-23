@@ -34,6 +34,7 @@
       curl
       wget
       htop
+      btop
       git
       ripgrep
       fzf

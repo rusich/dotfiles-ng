@@ -29,6 +29,7 @@
     gmetronome
     guitarix
     audacity
+    lmstudio
   ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];

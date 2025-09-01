@@ -17,6 +17,7 @@
     whitesur-gtk-theme
     whitesur-icon-theme
     nwg-look
+    yandex-music
     # fonts
     nerd-fonts.iosevka
     nerd-fonts.iosevka-term

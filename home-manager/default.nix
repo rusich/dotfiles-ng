@@ -33,4 +33,11 @@
 
   # for nixd
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+      allowUnfreePredicate = (_: true);
+    };
+  };
 }

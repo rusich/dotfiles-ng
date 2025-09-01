@@ -287,7 +287,7 @@
         "format": "{format_source}",
         "format-source": "<small>{volume}%</small> ",
         "format-source-muted": "",
-        "on-click": "~/.config/avizo/scripts/volumectl -m toggle-mute",
+        "on-click": "~/.config/hypr/scripts/volume --toggle-mic",
         "on-click-right": "pavucontrol",
         "on-scroll-up": "~/.config/avizo/scripts/volumectl -m up",
         "on-scroll-down": "~/.config/avizo/scripts/volumectl -m down",

@@ -2,6 +2,7 @@
   config,
   pkgs,
   unstable,
+  inputs,
   nixpkgs,
   ...
 }:
@@ -18,6 +19,7 @@
     whitesur-icon-theme
     nwg-look
     yandex-music
+    inputs.yandex-browser.packages.x86_64-linux.yandex-browser-stable
     # fonts
     nerd-fonts.iosevka
     nerd-fonts.iosevka-term

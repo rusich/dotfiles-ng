@@ -19,6 +19,11 @@
     # nix-colors.url = "github:misterio77/nix-colors";
     stylix.url = "github:nix-community/stylix/release-25.05";
 
+    yandex-browser = {
+      url = "github:miuirussia/yandex-browser.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =

@@ -11,7 +11,7 @@
     enable32Bit = true;
   };
 
-  environment.systemPackages = with pkgs; [ mangohud brightnessctl powertop ];
+  environment.systemPackages = with pkgs; [ brightnessctl powertop ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
   # Host-specific packages

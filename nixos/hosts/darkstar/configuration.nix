@@ -21,15 +21,26 @@
 
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
-    mangohud
     tonelib-jam
     tonelib-metal
-    pavucontrol
+    mangohud
     qjackctl
     gmetronome
     guitarix
     audacity
     lmstudio
+    sidequest
+    # dotnet-sdk_8
+    # dotnet-runtime_8
+    # wine-wayland
+    # winetricks
+    # dotnetCorePackages.runtime_9_0-bin
+    # dotnetCorePackages.sdk_9_0-bin
+    # dotnetPackages.Nuget
+    # icu
+    # skia
+    # fontconfig
+    # freetype
   ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];

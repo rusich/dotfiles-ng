@@ -49,10 +49,14 @@
       sddm-astronaut
       sddm-sugar-dark
       libreoffice
+      hunspell
+      hunspellDicts.en_US
+      hunspellDicts.ru_RU
       mtr
       traceroute
       nix-index
       lm_sensors
+      pavucontrol
     ];
 
     hardware.bluetooth = {

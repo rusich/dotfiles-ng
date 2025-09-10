@@ -40,6 +40,8 @@
     hypridle
     wpaperd
     blueman
+    # misc
+    grimblast
     # base
     vlc
     nixfmt-rfc-style
@@ -54,12 +56,10 @@
     luarocks
     rustup
     libnotify
-    ripgrep
-    fzf
+
     delta
     jq
     pamixer
-    pavucontrol
     keepassxc
     nextcloud-client
     yazi

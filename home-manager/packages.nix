@@ -54,7 +54,9 @@
     cht-sh
     wl-clipboard
     luarocks
-    rustup
+    # rustup
+    cargo
+    rustc
     libnotify
 
     delta

@@ -1,4 +1,10 @@
-{ config, pkgs, userSettings, ... }: {
+{
+  config,
+  pkgs,
+  userSettings,
+  ...
+}:
+{
 
   # Home Manager can also manage your environment variables through
   # 'home.sessionVariables'. These will be explicitly sourced when using a
@@ -25,6 +31,7 @@
     MANROFFOPT = "-c";
     # MANPAGER = "sh -c 'col -bx | bat --theme Dracula -l man -p'";
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
+    PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
     # OVERRIDE_TERMINAL_CMD = "kitty sh -c ";
     # EDITOR = "nvim";
     # Android + Flutter

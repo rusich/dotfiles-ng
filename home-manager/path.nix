@@ -1,7 +1,13 @@
-{ config, pkgs, userSettings, ... }: {
+{
+  config,
+  pkgs,
+  userSettings,
+  ...
+}:
+{
 
   home.sessionPath = [
-    "$HOME/bin/"
+    "$HOME/.cargo/bin/"
     "$HOME/dev/flutter/bin"
     "$ANDROID_HOME/platform-tools"
     "$ANDROID_HOME/cmdline-tools/latest/bin"

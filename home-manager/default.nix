@@ -27,6 +27,7 @@
     ./modules/starship.nix
     ./modules/zoxide.nix
     ./modules/zsh.nix
+    ./modules/direnv.nix
     # inputs.nix-colors.homeManagerModules.default
     # ./theming-example/alacritty.nix
   ];

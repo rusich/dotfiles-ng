@@ -31,7 +31,7 @@
     MANROFFOPT = "-c";
     # MANPAGER = "sh -c 'col -bx | bat --theme Dracula -l man -p'";
     MANPAGER = "sh -c 'col -bx | bat -l man -p'";
-    PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+    # PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
     # OVERRIDE_TERMINAL_CMD = "kitty sh -c ";
     # EDITOR = "nvim";
     # Android + Flutter

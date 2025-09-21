@@ -57,6 +57,8 @@
       nix-index
       lm_sensors
       pavucontrol
+      polkit_gnome
+      gparted
     ];
 
     hardware.bluetooth = {
@@ -164,6 +166,7 @@
     # Allow unfree packages
     nixpkgs.config.allowUnfree = true;
 
+    programs.corectrl.enable = true;
     programs.firefox.enable = true;
     programs.nix-ld.enable = true; # what's the heck it's this...
     programs.fish.enable = true;
@@ -208,6 +211,35 @@
     # networking.firewall.allowedUDPPorts = [ ... ];
     # Or disable the firewall altogether.
     # networking.firewall.enable = false;
+
+    security.polkit = {
+      enable = true;
+    };
+
+    systemd = {
+      user.services.polkit-gnome-authentication-agent-1 = {
+        description = "polkit-gnome-authentication-agent-1";
+        wantedBy = [ "graphical-session.target" ];
+        wants = [ "graphical-session.target" ];
+        after = [ "graphical-session.target" ];
+        serviceConfig = {
+          Type = "simple";
+          ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+          Restart = "on-failure";
+          RestartSec = 1;
+          TimeoutStopSec = 10;
+        };
+      };
+    };
+
+    # for WiVRn
+    services.avahi = {
+      enable = true;
+      publish = {
+        enable = true;
+        userServices = true;
+      };
+    };
 
     nix.settings.experimental-features = [
       "nix-command"

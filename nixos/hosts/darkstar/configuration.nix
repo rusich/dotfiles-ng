@@ -30,17 +30,10 @@
     audacity
     lmstudio
     sidequest
-    # dotnet-sdk_8
-    # dotnet-runtime_8
-    # wine-wayland
-    # winetricks
-    # dotnetCorePackages.runtime_9_0-bin
-    # dotnetCorePackages.sdk_9_0-bin
-    # dotnetPackages.Nuget
-    # icu
-    # skia
-    # fontconfig
-    # freetype
+    # envision
+    # librsvg # wivrn
+    # cairo # librsvg, wivrn
+    # wivrn
   ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
@@ -49,6 +42,11 @@
   programs.steam.gamescopeSession.enable = true;
   programs.gamemode.enable = true;
   services.desktopManager.plasma6.enable = true;
+  services.wivrn = {
+    enable = true;
+    openFirewall = true;
+    # highPriority = true;
+  };
 
   # audio override
   security.rtkit.enable = true;

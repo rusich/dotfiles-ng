@@ -55,8 +55,8 @@
     wl-clipboard
     luarocks
     # rustup
-    cargo
-    rustc
+    # cargo
+    # rustc
     libnotify
 
     delta

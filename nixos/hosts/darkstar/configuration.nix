@@ -3,9 +3,15 @@
   unstable,
   stateVersion,
   lib,
+  config,
   ...
 }:
-
+let
+  amdgpu-kernel-module = pkgs.callPackage ./amdgpu-kernel-module.nix {
+    # Make sure the module targets the same kernel as your system is using.
+    kernel = config.boot.kernelPackages.kernel;
+  };
+in
 {
   imports = [ ];
 
@@ -30,10 +36,9 @@
     audacity
     lmstudio
     sidequest
-    # envision
-    # librsvg # wivrn
-    # cairo # librsvg, wivrn
-    # wivrn
+    librsvg # wivrn
+    cairo # librsvg, wivrn
+    opencomposite
   ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
@@ -42,11 +47,19 @@
   programs.steam.gamescopeSession.enable = true;
   programs.gamemode.enable = true;
   services.desktopManager.plasma6.enable = true;
+
   services.wivrn = {
     enable = true;
     openFirewall = true;
-    # highPriority = true;
+    defaultRuntime = true;
+    package = unstable.wivrn;
   };
+
+  boot.extraModulePackages = [
+    (amdgpu-kernel-module.overrideAttrs (_: {
+      patches = [ ./patches/cap_sys_nice_begone.mypatch ];
+    }))
+  ];
 
   # audio override
   security.rtkit.enable = true;

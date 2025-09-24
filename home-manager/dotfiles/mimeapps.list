@@ -16,6 +16,7 @@ application/x-kdeuser2=nvim.desktop;
 application/x-shellscript=vim.desktop;nvim.desktop;
 application/x-yaml=emacs.desktop;
 application/xhtml+xml=yandex-browser.desktop;chromium.desktop;google-chrome.desktop;zen.desktop;firefox.desktop;
+application/zip=org.kde.ark.desktop;
 audio/3gpp=mpv.desktop;
 audio/3gpp2=mpv.desktop;
 audio/AMR=mpv.desktop;
@@ -117,6 +118,7 @@ application/x-ms-dos-executable;application/x-wine-extension-msp;application/x-m
 application/x-ms-dos-executable;application/x-wine-extension-msp;application/x-msi;application/x-msdos-program;text/win-bat;=PortProton.desktop
 application/x-shellscript=nvim.desktop
 application/xhtml+xml=firefox.desktop
+application/zip=org.kde.ark.desktop;
 audio/3gpp=mpv.desktop
 audio/3gpp2=mpv.desktop
 audio/AMR=mpv.desktop

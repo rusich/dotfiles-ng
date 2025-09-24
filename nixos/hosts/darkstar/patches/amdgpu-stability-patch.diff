@@ -1,0 +1,65 @@
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
+index 1d155463d044b2..54705017ded8c2 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
+@@ -784,7 +784,7 @@ int amdgpu_gfx_enable_kgq(struct amdgpu_device *adev, int xcc_id)
+ 
+ void amdgpu_gfx_off_ctrl(struct amdgpu_device *adev, bool enable)
+ {
+-	unsigned long delay = GFX_OFF_DELAY_ENABLE;
++	unsigned long delay = GFX_OFF_NO_DELAY;
+ 
+ 	if (!(adev->pm.pp_feature & PP_GFXOFF_MASK))
+ 		return;
+@@ -1991,6 +1991,16 @@ void amdgpu_gfx_enforce_isolation_ring_begin_use(struct amdgpu_ring *ring)
+ 	u32 idx;
+ 	bool sched_work = false;
+ 
++	/* Disable powergating before ringing doorbell for compute */
++	const struct amdgpu_ring_funcs *funcs = ring->funcs;
++	if (funcs) {
++		if (funcs->type == AMDGPU_RING_TYPE_COMPUTE) {
++			amdgpu_device_ip_set_powergating_state(
++				adev, AMD_IP_BLOCK_TYPE_GFX,
++				AMD_PG_STATE_UNGATE);
++		}
++	}
++
+ 	if (!adev->gfx.enable_cleaner_shader)
+ 		return;
+ 
+@@ -2023,7 +2033,7 @@ void amdgpu_gfx_enforce_isolation_ring_end_use(struct amdgpu_ring *ring)
+ 	bool sched_work = false;
+ 
+ 	if (!adev->gfx.enable_cleaner_shader)
+-		return;
++		goto out;
+ 
+ 	if (ring->xcp_id == AMDGPU_XCP_NO_PARTITION)
+ 		idx = 0;
+@@ -2031,7 +2041,7 @@ void amdgpu_gfx_enforce_isolation_ring_end_use(struct amdgpu_ring *ring)
+ 		idx = ring->xcp_id;
+ 
+ 	if (idx >= MAX_XCP)
+-		return;
++		goto out;
+ 
+ 	mutex_lock(&adev->enforce_isolation_mutex);
+ 	if (adev->enforce_isolation[idx]) {
+@@ -2042,6 +2052,16 @@ void amdgpu_gfx_enforce_isolation_ring_end_use(struct amdgpu_ring *ring)
+ 
+ 	if (sched_work)
+ 		amdgpu_gfx_kfd_sch_ctrl(adev, idx, true);
++
++out:
++	/* Restore powergating after ringing doorbell for compute */
++	const struct amdgpu_ring_funcs *funcs = ring->funcs;
++	if (funcs) {
++		if (funcs->type == AMDGPU_RING_TYPE_COMPUTE) {
++			amdgpu_device_ip_set_powergating_state(
++				adev, AMD_IP_BLOCK_TYPE_GFX, AMD_PG_STATE_GATE);
++		}
++	}
+ }
+ 
+ /*

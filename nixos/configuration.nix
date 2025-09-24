@@ -214,6 +214,19 @@
 
     security.polkit = {
       enable = true;
+      extraConfig = ''
+
+        /* Allow regular users to run corectrl as root */
+        polkit.addRule(function(action, subject) {
+            if ((action.id == "org.corectrl.helper.init" ||
+                 action.id == "org.corectrl.helperkiller.init") &&
+                subject.local == true &&
+                subject.active == true &&
+                subject.isInGroup("users")) {
+                    return polkit.Result.YES;
+            }
+        });
+      '';
     };
 
     systemd = {
@@ -240,6 +253,16 @@
         enable = true;
         userServices = true;
       };
+    };
+
+    # Exec AppImage files directly
+    boot.binfmt.registrations.appimage = {
+      wrapInterpreterInShell = false;
+      interpreter = "${pkgs.appimage-run}/bin/appimage-run";
+      recognitionType = "magic";
+      offset = 0;
+      mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
+      magicOrExtension = ''\x7fELF....AI\x02'';
     };
 
     nix.settings.experimental-features = [

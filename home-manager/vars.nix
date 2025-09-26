@@ -39,7 +39,7 @@
     # umask 0077
     # export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
     # # for virsh
-    # export LIBVIRT_DEFAULT_URI="qemu:///system"
+    LIBVIRT_DEFAULT_URI = "qemu:///system";
     # # ssh-agent init
     # eval $(ssh-agent)
     #

@@ -53,6 +53,7 @@ in
     opencomposite
     wlx-overlay-s
     protontricks
+    virt-manager
   ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
@@ -60,6 +61,9 @@ in
   programs.steam.enable = true;
   programs.steam.gamescopeSession.enable = true;
   programs.gamemode.enable = true;
+  programs.steam.extraCompatPackages = with pkgs; [
+    proton-ge-bin
+  ];
   services.desktopManager.plasma6.enable = true;
 
   services.wivrn = {
@@ -136,19 +140,47 @@ in
     extraGroups = [ "networkmanager" ];
   };
 
-  boot.supportedFilesystems = [ "ntfs" ];
-  fileSystems."/mnt/Windows" = {
-    device = "/dev/disk/by-uuid/01D8DB3D26BCE030";
-    fsType = "ntfs-3g";
+  boot.supportedFilesystems = [
+    "ntfs"
+    "btrfs"
+    "exfat"
+  ];
+
+  fileSystems."/mnt/nvme500g" = {
+    device = "/dev/disk/by-uuid/b7151f12-1952-4203-bd86-d34947399474";
+    fsType = "ext4";
     options = [
-      "users"
+      "defaults"
       "nofail"
-      "rw"
-      "uid=1000"
-      "gid=100"
+      "noatime"
+      "users"
       "exec"
+      # "nosuid"
+      # "nodev"
+      # "x-gfvs-show"
     ];
   };
+
+  # fileSystems."/mnt/SteamLibAS/SteamLibrary/steamapps/compatdata" = {
+  #   device = "/home/rusich/Games/SteamLibrary/steamapps/compatdata/";
+  #   depends = [ "/mnt/SteamLibAS" ];
+  #   fsType = "none";
+  #   options = [
+  #     "bind"
+  #     "rw"
+  #     "uid=1000"
+  #     "gid=100"
+  #     "umask=000"
+  #   ];
+  # };
+
+  virtualisation.libvirtd.enable = true;
+
+  boot.extraModprobeConfig = ''
+    options kvm_intel nested=1
+    options kvm_intel emulate_invalid_guest_state=0
+    options kvm ignore_msrs=1
+  '';
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

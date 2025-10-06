@@ -54,6 +54,7 @@ in
     wlx-overlay-s
     protontricks
     virt-manager
+    jstest-gtk
   ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
@@ -144,7 +145,10 @@ in
     "ntfs"
     "btrfs"
     "exfat"
+    "zfs"
   ];
+
+  networking.hostId = "69cfd900"; # for zfs support
 
   fileSystems."/mnt/nvme500g" = {
     device = "/dev/disk/by-uuid/b7151f12-1952-4203-bd86-d34947399474";

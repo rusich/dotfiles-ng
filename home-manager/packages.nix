@@ -18,7 +18,7 @@
     whitesur-gtk-theme
     whitesur-icon-theme
     nwg-look
-    yandex-music
+    # yandex-music
     inputs.yandex-browser.packages.x86_64-linux.yandex-browser-stable
     # fonts
     nerd-fonts.iosevka
@@ -39,7 +39,6 @@
     hyprlock
     hypridle
     wpaperd
-    blueman
     # misc
     grimblast
     # base

@@ -59,6 +59,9 @@
       pavucontrol
       polkit_gnome
       gparted
+      gimp
+      kdePackages.kolourpaint
+      inetutils
     ];
 
     hardware.bluetooth = {
@@ -67,9 +70,15 @@
       settings = {
         General = {
           Experimental = true; # Show battery charge of Bluetooth devices
+          FastConnectable = true;
+        };
+        Policy = {
+          AutoEnable = true;
         };
       };
     };
+
+    services.blueman.enable = true;
 
     networking.hostName = hostname;
     # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -161,6 +170,8 @@
         "wheel"
         "jackaudio"
         "libvirtd"
+        "kvm"
+        "input"
       ];
     };
 

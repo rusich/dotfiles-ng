@@ -71,6 +71,7 @@
     fd
     eza
     networkmanagerapplet
+    nodejs_24
   ];
 
 }

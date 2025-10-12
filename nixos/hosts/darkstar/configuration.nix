@@ -52,19 +52,28 @@ in
     # cairo # librsvg, wivrn
     opencomposite
     wlx-overlay-s
-    protontricks
     virt-manager
     jstest-gtk
+    quickemu
+    quickgui
+    spice
+    spice-gtk
+    virt-viewer
+    gamemode
+    gamescope
+    protonup-qt
+    android-tools
+    cifs-utils # for smb share mount
   ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
   # Host-specific packages
   programs.steam.enable = true;
   programs.steam.gamescopeSession.enable = true;
+  programs.steam.protontricks.enable = true;
   programs.gamemode.enable = true;
-  programs.steam.extraCompatPackages = with pkgs; [
-    proton-ge-bin
-  ];
+  # programs.steam.extraCompatPackages = with pkgs; [ proton-ge-bin ];
+
   services.desktopManager.plasma6.enable = true;
 
   services.wivrn = {
@@ -150,8 +159,27 @@ in
 
   networking.hostId = "69cfd900"; # for zfs support
 
-  fileSystems."/mnt/nvme500g" = {
-    device = "/dev/disk/by-uuid/b7151f12-1952-4203-bd86-d34947399474";
+  fileSystems."/mnt/nvme500g/wt" = {
+    device = "/dev/disk/by-uuid/2B52D7E135A3AB06";
+    fsType = "ntfs";
+    options = [
+      "defaults"
+      "nofail"
+      "noatime"
+      "users"
+      "exec"
+      "rw"
+      "uid=1000"
+      "gid=100"
+      # "umask=000"
+      # "nosuid"
+      # "nodev"
+      # "x-gfvs-show"
+    ];
+  };
+
+  fileSystems."/mnt/nvme500g/dcs" = {
+    device = "/dev/disk/by-uuid/8432d060-bbd1-48e2-b45a-a7c27239c39c";
     fsType = "ext4";
     options = [
       "defaults"
@@ -159,12 +187,45 @@ in
       "noatime"
       "users"
       "exec"
+      "rw"
+    ];
+  };
+
+  fileSystems."/mnt/windows" = {
+    device = "/dev/disk/by-uuid/01DC2D1572919960";
+    fsType = "ntfs";
+    options = [
+      "defaults"
+      "nofail"
+      "noatime"
+      "users"
+      "exec"
+      "rw"
+      "uid=1000"
+      "gid=100"
+      # "umask=000"
       # "nosuid"
       # "nodev"
       # "x-gfvs-show"
     ];
   };
 
+  fileSystems."/mnt/truenas_public" = {
+    device = "//192.168.5.3/public";
+    fsType = "cifs";
+    options =
+      let
+        # this line prevents hanging on network split
+        automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
+
+      in
+      [ "${automount_opts},credentials=/etc/smb-secrets,uid=1000,gid=100" ];
+  };
+
+  environment.etc.smb-secrets.text = ''
+    username=guest
+    password=guest
+  '';
   # fileSystems."/mnt/SteamLibAS/SteamLibrary/steamapps/compatdata" = {
   #   device = "/home/rusich/Games/SteamLibrary/steamapps/compatdata/";
   #   depends = [ "/mnt/SteamLibAS" ];

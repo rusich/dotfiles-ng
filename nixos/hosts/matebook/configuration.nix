@@ -1,17 +1,27 @@
-{ pkgs, unstable, stateVersion, ... }:
+{
+  pkgs,
+  unstable,
+  stateVersion,
+  ...
+}:
 
 {
   imports = [ ];
 
   # Host-specific configuration
-  console = { font = "ter-v32b"; };
+  console = {
+    font = "ter-v32b";
+  };
 
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
 
-  environment.systemPackages = with pkgs; [ brightnessctl powertop ];
+  environment.systemPackages = with pkgs; [
+    brightnessctl
+    powertop
+  ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
   # Host-specific packages
@@ -22,6 +32,9 @@
   powerManagement.powertop.enable = true;
 
   services.displayManager.sddm.theme = "chili";
+  # services.devmon.enable = true;
+  # services.gvfs.enable = true;
+  services.udisks2.enable = true;
   # services.displayManager.sddm.theme = "sugar-dark";
 
   # This value determines the NixOS release from which the default

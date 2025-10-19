@@ -9,6 +9,7 @@
   hostname,
   unstable,
   userSettings,
+  inputs,
   ...
 }:
 
@@ -128,8 +129,12 @@
     # Hyprland
     programs.hyprland = {
       enable = true;
+      package = inputs.hyprland.packages."${pkgs.system}".hyprland;
       xwayland.enable = true;
     };
+
+    # Niri
+    programs.niri.enable = true;
 
     # Configure keymap in X11
     services.xserver.xkb = {

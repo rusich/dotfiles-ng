@@ -1,4 +1,64 @@
 { pkgs, lib, ... }:
+let
+  switch_workspace_script = pkgs.pkgs.writeShellScriptBin "switch_workspace" ''
+
+    #!/usr/bin/env bash
+    # SPDX-License-Identifier: CC0-1.0
+    set -euo pipefail
+
+    get_number_of_monitors() {
+        jq -r '.|length'
+    }
+
+    get_active_monitor() {
+        jq -r '[.[]|select(.focused == true)][0].id'
+    }
+
+    get_passive_monitor_with_workspace() {
+        local workspace="$1"
+        jq -r '[.[]|select(.focused == false and .activeWorkspace.id == '"$workspace"')][0].id'
+    }
+
+    switch_to_workspace() {
+        local workspace="$1"
+        if [[ $# -eq 2 ]]; then
+            local activemonitor="$2"
+            hyprctl dispatch moveworkspacetomonitor "$workspace $activemonitor"
+        fi
+        hyprctl dispatch workspace "$workspace"
+    }
+
+    swap_active_workspaces() {
+        local activemonitor="$1"
+        local passivemonitor="$2"
+        hyprctl dispatch swapactiveworkspaces "$activemonitor" "$passivemonitor"
+    }
+
+    main() {
+        if [[ $# -ne 1 ]]; then
+            echo "Usage: $0 <workspace>" >&2
+            exit 1
+        fi
+        local workspace=$1
+        local monitors="$(hyprctl -j monitors)"
+
+        if [[ $(echo "$monitors" | get_number_of_monitors) -eq 1 ]]; then
+            switch_to_workspace "$workspace"
+        fi
+
+        local activemonitor="$(echo "$monitors" | get_active_monitor)"
+        local passivemonitor="$(echo "$monitors" | get_passive_monitor_with_workspace "$workspace")"
+
+        if [[ "$passivemonitor" == "null" ]]; then
+            switch_to_workspace "$workspace" "$activemonitor"
+        else
+            swap_active_workspaces "$activemonitor" "$passivemonitor"
+        fi
+    }
+
+    main "$@"
+  '';
+in
 {
 
   home.packages = with pkgs; [
@@ -90,25 +150,25 @@
         };
       };
 
-      # # Animations
-      # animations = {
-      #   enabled = true;
-      #   bezier = {
-      #     wind = "0.05, 0.9, 0.1, 1.05";
-      #     winIn = "0.1, 1.1, 0.1, 1.1";
-      #     winOut = "0.3, -0.3, 0, 1";
-      #     liner = "1, 1, 1, 1";
-      #   };
-      #   animation = {
-      #     windows = "1, 4, wind, slide";
-      #     windowsIn = "1, 2, winIn, slide";
-      #     windowsOut = "1, 4, winOut, slide";
-      #     windowsMove = "1, 4, wind, slide";
-      #     border = "1, 1, liner";
-      #     fade = "1, 10, default";
-      #     workspaces = "1, 4, wind";
-      #   };
-      # };
+      # Animations
+      animations = {
+        enabled = "yes";
+        bezier = [
+          "wind, 0.05, 0.9, 0.1, 1.05"
+          "winIn, 0.1, 1.1, 0.1, 1.1"
+          "winOut, 0.3, -0.3, 0, 1"
+          "liner, 1, 1, 1, 1"
+        ];
+        animation = [
+          "windows, 1, 4, wind, slide"
+          "windowsIn, 1, 2, winIn, slide"
+          "windowsOut, 1, 4, winOut, slide"
+          "windowsMove, 1, 4, wind, slide"
+          "border, 1, 1, liner"
+          "fade, 1, 10, default"
+          "workspaces, 1, 4, wind"
+        ];
+      };
 
       # Layouts
       dwindle = {
@@ -191,16 +251,16 @@
         "SUPER CTRL SHIFT, k, layoutmsg, orientationtop"
         "SUPER CTRL SHIFT, j, layoutmsg, orientationbottom"
         "SUPER CTRL SHIFT, return, layoutmsg, orientationcenter"
-        "SUPER, 1, exec, ~/.config/hypr/scripts/switch_workspace 1"
-        "SUPER, 2, exec, ~/.config/hypr/scripts/switch_workspace 2"
-        "SUPER, 3, exec, ~/.config/hypr/scripts/switch_workspace 3"
-        "SUPER, 4, exec, ~/.config/hypr/scripts/switch_workspace 4"
-        "SUPER, 5, exec, ~/.config/hypr/scripts/switch_workspace 5"
-        "SUPER, 6, exec, ~/.config/hypr/scripts/switch_workspace 6"
-        "SUPER, 7, exec, ~/.config/hypr/scripts/switch_workspace 7"
-        "SUPER, 8, exec, ~/.config/hypr/scripts/switch_workspace 8"
-        "SUPER, 9, exec, ~/.config/hypr/scripts/switch_workspace 9"
-        "SUPER, 0, exec, ~/.config/hypr/scripts/switch_workspace 10"
+        "SUPER, 1, exec, ''${switch_workspace_script}/bin/switch_workspace 1''"
+        "SUPER, 2, exec, ''${switch_workspace_script}/bin/switch_workspace 2''"
+        "SUPER, 3, exec, ''${switch_workspace_script}/bin/switch_workspace 3''"
+        "SUPER, 4, exec, ''${switch_workspace_script}/bin/switch_workspace 4''"
+        "SUPER, 5, exec, ''${switch_workspace_script}/bin/switch_workspace 5''"
+        "SUPER, 6, exec, ''${switch_workspace_script}/bin/switch_workspace 6''"
+        "SUPER, 7, exec, ''${switch_workspace_script}/bin/switch_workspace 7''"
+        "SUPER, 8, exec, ''${switch_workspace_script}/bin/switch_workspace 8''"
+        "SUPER, 9, exec, ''${switch_workspace_script}/bin/switch_workspace 9''"
+        "SUPER, 0, exec, ''${switch_workspace_script}/bin/switch_workspace 10''"
         "SUPER CTRL, j, workspace, e+1"
         "SUPER CTRL, k, workspace, e-1"
         "SUPER SHIFT, 1, movetoworkspace, 1"

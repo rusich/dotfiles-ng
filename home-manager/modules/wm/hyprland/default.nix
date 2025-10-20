@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 let
   switch_workspace_script = pkgs.pkgs.writeShellScriptBin "switch_workspace" ''
 
@@ -63,12 +68,42 @@ in
 
   home.packages = with pkgs; [
     brightnessctl
+    playerctl
+    grimblast
   ];
+
   wayland.windowManager.hyprland = {
     enable = true;
-    systemd.enableXdgAutostart = true;
+    systemd.enableXdgAutostart = false;
+    xwayland.enable = true;
+
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    portalPackage =
+      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    systemd.enable = true;
+
+    plugins = [
+      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
+      pkgs.hyprlandPlugins.hyprspace
+    ];
 
     settings = {
+      # Plugins configuration
+      plugin = {
+        hyprexpo = {
+          columns = 3;
+          gap_size = 5;
+          bg_col = "rgb(111111)";
+          workspace_method = "center current"; # [center/first] [workspace] e.g. first 1 or center m+1
+
+          gesture_distance = 300; # how far is the "max" for the gesture
+        };
+        hyprscrolling = {
+          column_width = 0.7;
+          fullscreen_on_one_column = true;
+        };
+      };
+
       # Autorun
       "exec-once" = [
         "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
@@ -121,7 +156,8 @@ in
         resize_on_border = true;
         # "col.active_border" = "rgba(7e5edcff) rgba(de00ff55) 45deg";
         # "col.inactive_border" = "rgba(595959ff)";
-        layout = "master";
+        # layout = "master";
+        layout = "scrolling";
       };
 
       # Decoration
@@ -184,7 +220,7 @@ in
       };
 
       # Gestures
-      gesture = "3, horizontal, workspace";
+      # gesture = "3, horizontal, workspace";
 
       # Key bindings
       "$term" = "kitty";
@@ -198,6 +234,7 @@ in
       ];
 
       bind = [
+        # "SUPER, z, overview:toggle"
         ", XF86AudioPrev, exec, playerctl previous"
         ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
         ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
@@ -251,28 +288,8 @@ in
         "SUPER CTRL SHIFT, k, layoutmsg, orientationtop"
         "SUPER CTRL SHIFT, j, layoutmsg, orientationbottom"
         "SUPER CTRL SHIFT, return, layoutmsg, orientationcenter"
-        "SUPER, 1, exec, ''${switch_workspace_script}/bin/switch_workspace 1''"
-        "SUPER, 2, exec, ''${switch_workspace_script}/bin/switch_workspace 2''"
-        "SUPER, 3, exec, ''${switch_workspace_script}/bin/switch_workspace 3''"
-        "SUPER, 4, exec, ''${switch_workspace_script}/bin/switch_workspace 4''"
-        "SUPER, 5, exec, ''${switch_workspace_script}/bin/switch_workspace 5''"
-        "SUPER, 6, exec, ''${switch_workspace_script}/bin/switch_workspace 6''"
-        "SUPER, 7, exec, ''${switch_workspace_script}/bin/switch_workspace 7''"
-        "SUPER, 8, exec, ''${switch_workspace_script}/bin/switch_workspace 8''"
-        "SUPER, 9, exec, ''${switch_workspace_script}/bin/switch_workspace 9''"
-        "SUPER, 0, exec, ''${switch_workspace_script}/bin/switch_workspace 10''"
         "SUPER CTRL, j, workspace, e+1"
         "SUPER CTRL, k, workspace, e-1"
-        "SUPER SHIFT, 1, movetoworkspace, 1"
-        "SUPER SHIFT, 2, movetoworkspace, 2"
-        "SUPER SHIFT, 3, movetoworkspace, 3"
-        "SUPER SHIFT, 4, movetoworkspace, 4"
-        "SUPER SHIFT, 5, movetoworkspace, 5"
-        "SUPER SHIFT, 6, movetoworkspace, 6"
-        "SUPER SHIFT, 7, movetoworkspace, 7"
-        "SUPER SHIFT, 8, movetoworkspace, 8"
-        "SUPER SHIFT, 9, movetoworkspace, 9"
-        "SUPER SHIFT, 0, movetoworkspace, 10"
         "SUPER, g, togglegroup,"
         "SUPER, tab, changegroupactive,"
         "SUPER, grave, togglespecialworkspace,"
@@ -280,7 +297,23 @@ in
 
         "SUPER, mouse_down, workspace, e+1"
         "SUPER, mouse_up, workspace, e-1"
-      ];
+      ]
+      ++ (
+        # workspaces
+        # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
+        builtins.concatLists (
+          builtins.genList (
+            i:
+            let
+              ws = i + 1;
+            in
+            [
+              "SUPER, code:1${toString i}, exec, ${switch_workspace_script}/bin/switch_workspace ${toString ws}"
+              "SUPER SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
+            ]
+          ) 9
+        )
+      );
 
       "$screenshotarea" =
         "hyprctl keyword animation \"fadeOut,0,0,default\"; grimblast --notify copysave area; hyprctl keyword animation \"fadeOut,1,4,default\"";

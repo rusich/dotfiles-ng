@@ -17,17 +17,17 @@
     ./stylix.nix
     ./vars.nix
     ./xdg.nix
-    ./modules/bash.nix
-    ./modules/bat.nix
-    ./modules/delta.nix
-    ./modules/firefox.nix
-    ./modules/fish.nix
-    ./modules/git.nix
-    ./modules/starship.nix
-    ./modules/zoxide.nix
-    ./modules/zsh.nix
-    ./modules/direnv.nix
-    ./modules/wm/hyprland
+    ./bash.nix
+    ./bat.nix
+    ./delta.nix
+    ./firefox.nix
+    ./fish.nix
+    ./git.nix
+    ./starship.nix
+    ./zoxide.nix
+    ./zsh.nix
+    ./direnv.nix
+    ./hyprland
     # inputs.nix-colors.homeManagerModules.default
     # ./theming-example/alacritty.nix
   ];

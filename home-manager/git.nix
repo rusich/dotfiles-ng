@@ -1,8 +1,19 @@
-{ config, pkgs, userSettings, ... }: {
+{
+  config,
+  pkgs,
+  userSettings,
+  ...
+}:
+{
   programs.git = {
     enable = true;
     userName = "Ruslan Sergin";
     userEmail = "ruslan.sergin@gmail.com";
-    extraConfig = { init.defaultBranch = "main"; };
+    extraConfig = {
+      init.defaultBranch = "main";
+      alias = {
+        "pr" = "pull --rebase";
+      };
+    };
   };
 }

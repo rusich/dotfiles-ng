@@ -70,6 +70,7 @@ in
     brightnessctl
     playerctl
     grimblast
+    jq
   ];
 
   wayland.windowManager.hyprland = {
@@ -82,9 +83,9 @@ in
       inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     systemd.enable = true;
 
-    plugins = [
-      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
-      pkgs.hyprlandPlugins.hyprspace
+    plugins = with inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}; [
+      hyprscrolling
+      hyprexpo
     ];
 
     settings = {
@@ -95,12 +96,15 @@ in
           gap_size = 5;
           bg_col = "rgb(111111)";
           workspace_method = "center current"; # [center/first] [workspace] e.g. first 1 or center m+1
-
           gesture_distance = 300; # how far is the "max" for the gesture
+          skip_empty = true;
         };
         hyprscrolling = {
-          column_width = 0.7;
           fullscreen_on_one_column = true;
+          column_width = 0.7;
+          explicit_column_widths = "0.333, 0.5, 0.667, 1.0";
+          focus_fit_method = 1;
+          folow_fucus = false;
         };
       };
 
@@ -234,7 +238,7 @@ in
       ];
 
       bind = [
-        # "SUPER, z, overview:toggle"
+        "SUPER, z, hyprexpo:expo, toggle"
         ", XF86AudioPrev, exec, playerctl previous"
         ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
         ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
@@ -258,7 +262,8 @@ in
         "SUPER SHIFT, Q, exit,"
         "SUPER CTRL, q, exec, wlogout --protocol layer-shell -b 5 -T 400 -B 400"
         "SUPER, t, togglefloating,"
-        "SUPER, f, fullscreen,"
+        "SUPER, f, fullscreenstate, 1"
+        "SUPER SHIFT, f, fullscreen,"
         "SUPER CTRL, p, pseudo,"
         "SUPER, s, togglesplit,"
         "SUPER, w, killactive,"
@@ -270,8 +275,11 @@ in
         "SUPER, j, movefocus, d"
         "SUPER CTRL, l, focusmonitor, -1"
         "SUPER CTRL, h, focusmonitor, +1"
-        "SUPER SHIFT, h, movewindow, l"
-        "SUPER SHIFT, l, movewindow, r"
+        # hyprscrolling niri mimics
+        "SUPER, Comma, movewindow, l"
+        "SUPER, Period, movewindow, r"
+        "SUPER SHIFT, h, layoutmsg, swapcol l"
+        "SUPER SHIFT, l, layoutmsg, swapcol r"
         "SUPER SHIFT, k, movewindow, u"
         "SUPER SHIFT, j, movewindow, d"
         "SUPER SHIFT, o, movewindow, mon:+1"
@@ -297,6 +305,9 @@ in
 
         "SUPER, mouse_down, workspace, e+1"
         "SUPER, mouse_up, workspace, e-1"
+        # hyprscrolling
+        "SUPER,R,layoutmsg,colresize +conf"
+        "SUPER SHIFT,R,layoutmsg,colresize -conf"
       ]
       ++ (
         # workspaces

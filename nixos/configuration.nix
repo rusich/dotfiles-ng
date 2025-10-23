@@ -129,13 +129,18 @@
     # Hyprland
     programs.hyprland = {
       enable = true;
-      package = unstable.hyprland;
-      portalPackage = unstable.xdg-desktop-portal-hyprland;
-      xwayland.enable = true;
+      package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      portalPackage =
+        inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+      # package = unstable.hyprland;
+      # portalPackage = unstable.xdg-desktop-portal-hyprland;
     };
 
     # Niri
     programs.niri.enable = true;
+
+    # MangoWC
+    programs.mango.enable = true;
 
     # Configure keymap in X11
     services.xserver.xkb = {

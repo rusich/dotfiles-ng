@@ -64,6 +64,8 @@ in
     protonup-qt
     android-tools
     cifs-utils # for smb share mount
+    kdePackages.kirigami # for KDE Plasma
+    kdePackages.qtstyleplugin-kvantum
   ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
@@ -74,6 +76,7 @@ in
   programs.gamemode.enable = true;
   # programs.steam.extraCompatPackages = with pkgs; [ proton-ge-bin ];
 
+  # KDE Plasma
   services.desktopManager.plasma6.enable = true;
 
   services.wivrn = {

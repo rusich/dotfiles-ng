@@ -24,6 +24,19 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Hyprland
+    hyprland.url = "github:hyprwm/Hyprland?tag=v0.50.1";
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+
+    # MangoWC
+    mango = {
+      url = "github:DreamMaoMao/mango";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -77,6 +90,7 @@
               ;
           };
           modules = [
+            inputs.mango.nixosModules.mango
             stylix.nixosModules.stylix
             # ./common/theme.nix
             ./nixos/configuration.nix
@@ -99,6 +113,7 @@
         ${userSettings.username} = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [
+            inputs.mango.hmModules.mango
             stylix.homeModules.stylix
             ./common/theme.nix
             ./home-manager

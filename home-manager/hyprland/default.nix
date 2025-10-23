@@ -74,18 +74,40 @@ in
     jq
   ];
 
+  home.sessionVariables = {
+    NIXOS_OZONE_WL = 1;
+    ELECTRON_OZONE_PLATFORM_HINT = "wayland";
+    XDG_CURRENT_DESKTOP = "Hyprland";
+    XDG_SESSION_DESKTOP = "Hyprland";
+    XDG_SESSION_TYPE = "wayland";
+    GDK_BACKEND = "wayland,x11,*";
+    QT_QPA_PLATFORM = "wayland;xcb";
+    #QT_QPA_PLATFORMTHEME = lib.mkForce "qt5ct";
+    QT_AUTO_SCREEN_SCALE_FACTOR = "1.25";
+    QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
+    CLUTTER_BACKEND = "wayland";
+    #GDK_PIXBUF_MODULE_FILE = "${pkgs.librsvg}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache";
+    #GSK_RENDERER = "gl";
+    GDK_DEBUG = "portals";
+    GTK_USE_PORTALS = 1;
+  };
+
   wayland.windowManager.hyprland = {
     enable = true;
+    systemd.enable = true;
     systemd.enableXdgAutostart = false;
     xwayland.enable = true;
 
-    package = unstable.hyprland;
-    portalPackage = unstable.xdg-desktop-portal-hyprland;
-    systemd.enable = true;
+    # package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    # portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    package = null;
+    portalPackage = null;
 
     plugins = [
-      unstable.hyprlandPlugins.hyprscrolling
-      unstable.hyprlandPlugins.hyprexpo
+      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
+      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprexpo
+      # unstable.hyprlandPlugins.hyprscrolling
+      # unstable.hyprlandPlugins.hyprexpo
     ];
 
     settings = {
@@ -110,7 +132,7 @@ in
 
       # Autorun
       "exec-once" = [
-        "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+        # "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "waybar"
         "swaync"
         "sleep 3 && kill -9 $(pgrep \"kwalletd6|ksecretd|gnome-keyring\"); keepassxc"
@@ -140,17 +162,17 @@ in
         sensitivity = 0;
       };
 
-      # Environment variables
-      env = [
-        "XCURSOR_SIZE,24"
-        "XDG_SESSION_TYPE,wayland"
-        "GDK_BACKEND,wayland,x11,*"
-        "SDL_VIDEODRIVER,wayland,x11"
-        "CLUTTER_BACKEND,wayland"
-        "XDG_CURRENT_DESKTOP,Hyprland"
-        "XDG_SESSION_TYPE,wayland"
-        "XDG_SESSION_DESKTOP,Hyprland"
-      ];
+      # # Environment variables
+      # env = [
+      #   "XCURSOR_SIZE,24"
+      #   "XDG_SESSION_TYPE,wayland"
+      #   "GDK_BACKEND,wayland,x11,*"
+      #   "SDL_VIDEODRIVER,wayland,x11"
+      #   "CLUTTER_BACKEND,wayland"
+      #   "XDG_CURRENT_DESKTOP,Hyprland"
+      #   "XDG_SESSION_TYPE,wayland"
+      #   "XDG_SESSION_DESKTOP,Hyprland"
+      # ];
 
       # General settings
       general = {
@@ -160,8 +182,8 @@ in
         resize_on_border = true;
         # "col.active_border" = "rgba(7e5edcff) rgba(de00ff55) 45deg";
         # "col.inactive_border" = "rgba(595959ff)";
-        # layout = "master";
-        layout = "scrolling";
+        layout = "master";
+        # layout = "scrolling";
       };
 
       # Decoration
@@ -238,7 +260,7 @@ in
       ];
 
       bind = [
-        "SUPER, z, hyprexpo:expo, toggle"
+        # "SUPER, z, hyprexpo:expo, toggle"
         ", XF86AudioPrev, exec, playerctl previous"
         ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
         ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
@@ -278,8 +300,10 @@ in
         # hyprscrolling niri mimics
         "SUPER, Comma, movewindow, l"
         "SUPER, Period, movewindow, r"
-        "SUPER SHIFT, h, layoutmsg, swapcol l"
-        "SUPER SHIFT, l, layoutmsg, swapcol r"
+        # "SUPER SHIFT, h, layoutmsg, swapcol l" # this is for scrolling
+        # "SUPER SHIFT, l, layoutmsg, swapcol r" # this is for scrolling
+        "SUPER SHIFT, h, movewindow, l"
+        "SUPER SHIFT, l, movewindow, r"
         "SUPER SHIFT, k, movewindow, u"
         "SUPER SHIFT, j, movewindow, d"
         "SUPER SHIFT, o, movewindow, mon:+1"

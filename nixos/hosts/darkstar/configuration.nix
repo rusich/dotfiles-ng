@@ -24,7 +24,9 @@ let
   # };
 in
 {
-  imports = [ ];
+  imports = [
+    ../../plasma6.nix
+  ];
 
   # Host-specific configuration
   console = {
@@ -75,9 +77,6 @@ in
   programs.steam.protontricks.enable = true;
   programs.gamemode.enable = true;
   # programs.steam.extraCompatPackages = with pkgs; [ proton-ge-bin ];
-
-  # KDE Plasma
-  services.desktopManager.plasma6.enable = true;
 
   services.wivrn = {
     enable = true;

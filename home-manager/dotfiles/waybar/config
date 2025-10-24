@@ -19,8 +19,8 @@
         "hyprland/workspaces", 
         "hyprland/submap",
         "custom/separator",
-        "ext/workspaces",
-        "custom/separator",
+        //"ext/workspaces",
+        //"custom/separator",
         "hyprland/window", 
     ],
 
@@ -70,9 +70,9 @@
         "modules-left": [
             "hyprland/submap",
             "hyprland/workspaces",
-            "hyprland/window",
             "custom/separator",
-            "ext/workspaces"
+            "hyprland/window"
+            //"ext/workspaces"
             // "cpu", 
             // "memory", 
             // "disk",

@@ -74,24 +74,6 @@ in
     jq
   ];
 
-  home.sessionVariables = {
-    NIXOS_OZONE_WL = 1;
-    ELECTRON_OZONE_PLATFORM_HINT = "wayland";
-    XDG_CURRENT_DESKTOP = "Hyprland";
-    XDG_SESSION_DESKTOP = "Hyprland";
-    XDG_SESSION_TYPE = "wayland";
-    GDK_BACKEND = "wayland,x11,*";
-    QT_QPA_PLATFORM = "wayland;xcb";
-    #QT_QPA_PLATFORMTHEME = lib.mkForce "qt5ct";
-    QT_AUTO_SCREEN_SCALE_FACTOR = "1.25";
-    QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
-    CLUTTER_BACKEND = "wayland";
-    #GDK_PIXBUF_MODULE_FILE = "${pkgs.librsvg}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache";
-    #GSK_RENDERER = "gl";
-    GDK_DEBUG = "portals";
-    GTK_USE_PORTALS = 1;
-  };
-
   wayland.windowManager.hyprland = {
     enable = true;
     systemd.enable = true;
@@ -111,6 +93,20 @@ in
     ];
 
     settings = {
+      env = [
+        "NIXOS_OZONE_WL,1"
+        "XDG_CURRENT_DESKTOP,Hyprland"
+        "XDG_SESSION_TYPE,wayland"
+        "XDG_SESSION_DESKTOP,Hyprland"
+        "ELECTRON_OZONE_PLATFORM_HINT,wayland"
+        "GDK_BACKEND,wayland,x11,*"
+        "QT_QPA_PLATFORM,wayland"
+        # "QT_AUTO_SCREEN_SCALE_FACTOR,1.25"
+        # "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
+        # "CLUTTER_BACKEND,wayland"
+        # "GDK_DEBUG,portals"
+        # "GTK_USE_PORTALS,1"
+      ];
       # Plugins configuration
       plugin = {
         hyprexpo = {

@@ -61,7 +61,6 @@
       polkit_gnome
       gparted
       gimp
-      kdePackages.kolourpaint
       inetutils
     ];
 

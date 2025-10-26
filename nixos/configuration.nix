@@ -128,18 +128,15 @@
     # Hyprland
     programs.hyprland = {
       enable = true;
-      package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-      portalPackage =
-        inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-      # package = unstable.hyprland;
-      # portalPackage = unstable.xdg-desktop-portal-hyprland;
+      # package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      # portalPackage =
+      #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+      package = unstable.hyprland;
+      portalPackage = unstable.xdg-desktop-portal-hyprland;
     };
 
     # Niri
     programs.niri.enable = true;
-
-    # MangoWC
-    programs.mango.enable = true;
 
     # Configure keymap in X11
     services.xserver.xkb = {
@@ -233,6 +230,10 @@
     # networking.firewall.allowedUDPPorts = [ ... ];
     # Or disable the firewall altogether.
     # networking.firewall.enable = false;
+
+    # services.devmon.enable = true;
+    services.gvfs.enable = true;
+    services.udisks2.enable = true;
 
     security.polkit = {
       enable = true;

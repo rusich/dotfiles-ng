@@ -6,6 +6,7 @@
   ...
 }:
 let
+  layout = "scrolling";
   switch_workspace_script = pkgs.pkgs.writeShellScriptBin "switch_workspace" ''
 
     #!/usr/bin/env bash
@@ -86,10 +87,11 @@ in
     portalPackage = null;
 
     plugins = [
-      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
-      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprexpo
-      # unstable.hyprlandPlugins.hyprscrolling
-      # unstable.hyprlandPlugins.hyprexpo
+      # inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
+      # inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprexpo
+      unstable.hyprlandPlugins.hyprscrolling
+      unstable.hyprlandPlugins.hyprexpo
+      unstable.hyprlandPlugins.hyprspace
     ];
 
     settings = {
@@ -178,8 +180,7 @@ in
         resize_on_border = true;
         # "col.active_border" = "rgba(7e5edcff) rgba(de00ff55) 45deg";
         # "col.inactive_border" = "rgba(595959ff)";
-        layout = "master";
-        # layout = "scrolling";
+        layout = layout;
       };
 
       # Decoration
@@ -256,7 +257,6 @@ in
       ];
 
       bind = [
-        # "SUPER, z, hyprexpo:expo, toggle"
         ", XF86AudioPrev, exec, playerctl previous"
         ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
         ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
@@ -296,10 +296,26 @@ in
         # hyprscrolling niri mimics
         "SUPER, Comma, movewindow, l"
         "SUPER, Period, movewindow, r"
-        # "SUPER SHIFT, h, layoutmsg, swapcol l" # this is for scrolling
-        # "SUPER SHIFT, l, layoutmsg, swapcol r" # this is for scrolling
-        "SUPER SHIFT, h, movewindow, l"
-        "SUPER SHIFT, l, movewindow, r"
+      ]
+      ++ (
+        if layout == "scrolling" then
+          [
+            # Scrolling layout specific bindings
+            # "SUPER SHIFT, h, layoutmsg, swapcol l"
+            # "SUPER SHIFT, l, layoutmsg, swapcol r"
+            "SUPER SHIFT, h, movewindow, l"
+            "SUPER SHIFT, l, movewindow, r"
+            "SUPER, z, hyprexpo:expo, toggle"
+            "SUPER SHIFT, z, overview:toggle, all"
+          ]
+        else
+          [
+            # Master layout specific bindings
+            "SUPER SHIFT, h, movewindow, l"
+            "SUPER SHIFT, l, movewindow, r"
+          ]
+      )
+      ++ [
         "SUPER SHIFT, k, movewindow, u"
         "SUPER SHIFT, j, movewindow, d"
         "SUPER SHIFT, o, movewindow, mon:+1"
@@ -325,10 +341,17 @@ in
 
         "SUPER, mouse_down, workspace, e+1"
         "SUPER, mouse_up, workspace, e-1"
-        # hyprscrolling
-        "SUPER,R,layoutmsg,colresize +conf"
-        "SUPER SHIFT,R,layoutmsg,colresize -conf"
       ]
+      ++ (
+        if layout == "scrolling" then
+          [
+            # Scrolling layout specific bindings
+            "SUPER,R,layoutmsg,colresize +conf"
+            "SUPER SHIFT,R,layoutmsg,colresize -conf"
+          ]
+        else
+          [ ]
+      )
       ++ (
         # workspaces
         # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}

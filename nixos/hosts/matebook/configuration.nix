@@ -32,9 +32,6 @@
   powerManagement.powertop.enable = true;
 
   services.displayManager.sddm.theme = "chili";
-  # services.devmon.enable = true;
-  # services.gvfs.enable = true;
-  services.udisks2.enable = true;
   # services.displayManager.sddm.theme = "sugar-dark";
 
   # This value determines the NixOS release from which the default

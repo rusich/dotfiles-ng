@@ -103,6 +103,7 @@ in
         "ELECTRON_OZONE_PLATFORM_HINT,wayland"
         "GDK_BACKEND,wayland,x11,*"
         "QT_QPA_PLATFORM,wayland"
+        "QT_QPA_PLATFORMTHEME,qt6ct"
         # "QT_AUTO_SCREEN_SCALE_FACTOR,1.25"
         # "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
         # "CLUTTER_BACKEND,wayland"
@@ -130,16 +131,15 @@ in
 
       # Autorun
       "exec-once" = [
-        # "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+        "blueman-applet"
+        "wl-clipboard-history -t"
+        "pasystray"
+        "systemctl --user start polkit-gnome-authentication-agent-1.service"
         "waybar"
         "swaync"
         "sleep 3 && kill -9 $(pgrep \"kwalletd6|ksecretd|gnome-keyring\"); keepassxc"
         "sleep 5 && nm-applet"
-        "blueman-applet"
-        "wl-clipboard-history -t"
-        "pasystray"
         "sleep 60 && nextcloud"
-        "systemctl --user start polkit-gnome-authentication-agent-1.service"
       ];
 
       # Monitors

@@ -28,6 +28,7 @@
     ./zsh.nix
     ./direnv.nix
     ./hyprland
+    ./noctalia.nix
     # inputs.nix-colors.homeManagerModules.default
     # ./theming-example/alacritty.nix
   ];

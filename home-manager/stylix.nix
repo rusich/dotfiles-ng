@@ -2,7 +2,7 @@
 
 {
   # Stylix
-  stylix.targets.kde.enable = true;
+  stylix.targets.kde.enable = false;
   stylix.targets.firefox = {
     enable = true;
     profileNames = [ "${config.home.username}" ];
@@ -44,3 +44,4 @@
     popups = 0.7;
   };
 }
+

@@ -15,6 +15,10 @@
 
 {
 
+  imports = [
+    inputs.noctalia.nixosModules.default
+  ];
+
   options = {
     my.arbitrary.option = lib.mkOption {
       type = lib.types.str;
@@ -62,7 +66,11 @@
       gparted
       gimp
       inetutils
+      inputs.noctalia.packages.${system}.default
+      inputs.quickshell.packages.${system}.default
     ];
+
+    # services.noctalia-shell.enable = true;
 
     hardware.bluetooth = {
       enable = true;

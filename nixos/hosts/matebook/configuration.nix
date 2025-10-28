@@ -8,6 +8,8 @@
 {
   imports = [ ];
 
+  hardware.cpu.intel.updateMicrocode = true;
+
   # Host-specific configuration
   console = {
     font = "ter-v32b";

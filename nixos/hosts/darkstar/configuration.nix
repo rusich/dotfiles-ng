@@ -39,6 +39,8 @@ in
   };
   hardware.amdgpu.initrd.enable = true;
 
+  hardware.cpu.amd.updateMicrocode = true;
+
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
     tonelib-jam

@@ -80,6 +80,8 @@ in
   programs.gamemode.enable = true;
   # programs.steam.extraCompatPackages = with pkgs; [ proton-ge-bin ];
 
+  programs.adb.enable = true;
+
   services.wivrn = {
     enable = true;
     openFirewall = true;

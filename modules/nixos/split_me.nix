@@ -6,10 +6,10 @@
   config,
   lib,
   pkgs,
-  hostname,
-  unstable,
-  userSettings,
+  userConfig,
   inputs,
+  outputs,
+  hostname,
   ...
 }:
 
@@ -27,6 +27,16 @@
   };
 
   config = {
+
+    nixpkgs = {
+      overlays = [
+        outputs.overlays.unstable-packages
+      ];
+
+      config = {
+        allowUnfree = true;
+      };
+    };
 
     # List packages installed in system profile. To search, run:
     # $ nix search wget
@@ -66,8 +76,6 @@
       gparted
       gimp
       inetutils
-      inputs.noctalia.packages.${system}.default
-      inputs.quickshell.packages.${system}.default
     ];
 
     # services.noctalia-shell.enable = true;
@@ -139,8 +147,8 @@
       # package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
       # portalPackage =
       #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-      package = unstable.hyprland;
-      portalPackage = unstable.xdg-desktop-portal-hyprland;
+      package = pkgs.unstable.hyprland;
+      portalPackage = pkgs.unstable.xdg-desktop-portal-hyprland;
     };
 
     # Niri
@@ -177,9 +185,9 @@
     services.libinput.enable = true;
 
     # Define a user account. Don't forget to set a password with ‘passwd’.
-    users.users.${userSettings.username} = {
+    users.users.${userConfig.username} = {
       isNormalUser = true;
-      description = userSettings.name;
+      description = userConfig.username;
       extraGroups = [
         "networkmanager"
         "wheel"
@@ -192,7 +200,6 @@
     };
 
     # Allow unfree packages
-    nixpkgs.config.allowUnfree = true;
 
     programs.corectrl.enable = true;
     programs.firefox.enable = true;

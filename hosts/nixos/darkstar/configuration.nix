@@ -1,9 +1,8 @@
 {
   pkgs,
-  unstable,
-  stateVersion,
   lib,
   config,
+  nixosModules,
   ...
 }:
 let
@@ -24,8 +23,13 @@ let
   # };
 in
 {
+  # Move this to common config?
+  system.stateVersion = "25.05";
+
   imports = [
-    ../../plasma6.nix
+    ./hardware-configuration.nix
+    "${nixosModules}/plasma6.nix"
+    "${nixosModules}/split_me.nix"
   ];
 
   # Host-specific configuration
@@ -86,7 +90,7 @@ in
     enable = true;
     openFirewall = true;
     defaultRuntime = true;
-    package = unstable.wivrn;
+    package = pkgs.unstable.wivrn;
   };
 
   # for corectrl full features
@@ -259,5 +263,4 @@ in
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = stateVersion; # Did you read the comment?
 }

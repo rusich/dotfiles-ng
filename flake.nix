@@ -1,17 +1,20 @@
 {
-  description = "My first flake!";
+  description = "NixOS, nix-darwin and home-manager config in one place!";
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
-    home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
-      # The `follows` keyword in inputs is used for inheritance.
-      # Here, `inputs.nixpkgs` of home-manager is kept consistent with
-      # the `inputs.nixpkgs` of the current flake,
-      # to avoid problems caused by different versions of nixpkgs.
+
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/nix-darwin-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     firefox-addons = {
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -41,87 +44,89 @@
       self,
       stylix,
       nixpkgs,
-      nixpkgs-unstable,
+      nix-darwin,
       home-manager,
       ...
     }@inputs:
     let
-      lib = nixpkgs.lib;
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-      unstable = nixpkgs-unstable.legacyPackages.${system};
+      inherit (self) outputs;
 
-      # My vars
-      userSettings = rec {
-        # rec - for reqursive
-        username = "rusich";
-        name = "Ruslan Sergin";
+      # Define user configuration
+      users = {
+        rusich = {
+          fullName = "Ruslan Sergin";
+          username = "rusich";
+          email = "ruslan.sergin@gmail.com";
+          # avatar = ./assets/avatar; # put actual file
+        };
       };
 
-      hosts = [
-        {
-          hostname = "matebook";
-          stateVersion = "25.05";
-        }
-        {
-          hostname = "nixos-vm";
-          stateVersion = "25.05";
-        }
-        {
-          hostname = "darkstar";
-          stateVersion = "25.05";
-        }
+      # This is a function that generates an attribute by calling a function you
+      # pass to it, with each system an argument
+      systems = [
+        "x86_64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
       ];
 
-      makeSystem =
-        { hostname, stateVersion }:
-        nixpkgs.lib.nixosSystem {
-          system = system;
-          specialArgs = {
-            inherit
-              inputs
-              hostname
-              stateVersion
-              userSettings
-              unstable
-              ;
-          };
-          modules = [
-            stylix.nixosModules.stylix
-            # ./common/theme.nix
-            ./nixos/configuration.nix
-            ./nixos/hosts/${hostname}/configuration.nix
-            ./nixos/hosts/${hostname}/hardware-configuration.nix
-          ];
-        };
-
+      forAllSystems = nixpkgs.lib.genAttrs systems;
     in
     {
-      nixosConfigurations = nixpkgs.lib.foldl' (
-        configs: host:
-        configs
-        // {
-          "${host.hostname}" = makeSystem { inherit (host) hostname stateVersion; };
-        }
-      ) { } hosts;
 
-      homeConfigurations = {
-        ${userSettings.username} = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [
-            stylix.homeModules.stylix
-            ./common/theme.nix
-            ./home-manager
-          ];
-          extraSpecialArgs = {
-            inherit
-              userSettings
-              unstable
-              inputs
-              system
-              ;
+      overlays = import ./overlays { inherit inputs; };
+
+      nixosConfigurations = builtins.listToAttrs (
+        map (host: {
+          name = host;
+          value = nixpkgs.lib.nixosSystem {
+            specialArgs = {
+              inherit inputs outputs;
+              userConfig = users.rusich;
+              nixosModules = "${self}/modules/nixos";
+              hostname = host;
+            };
+            modules = [
+              ./hosts/nixos/${host}/configuration.nix
+              stylix.nixosModules.stylix
+              # ./common/theme.nix
+            ];
           };
-        };
-      };
+        }) (builtins.attrNames (builtins.readDir ./hosts/nixos))
+      );
+
+      # Darwin configuration
+      darwinConfigurations = builtins.listToAttrs (
+        map (host: {
+          name = host;
+          value = nix-darwin.lib.darwinSystem {
+            specialArgs = {
+              inherit inputs outputs;
+              userConfig = users.rusich;
+              darwinModules = "${self}/modules/darwin";
+              hostname = host;
+            };
+            modules = [ ./hosts/darwin/${host}/configuration.nix ];
+          };
+        }) (builtins.attrNames (builtins.readDir ./hosts/darwin))
+      );
+
+      # homeConfigurations = {
+      #   ${userSettings.username} = home-manager.lib.homeManagerConfiguration {
+      #     inherit pkgs;
+      #     modules = [
+      #       stylix.homeModules.stylix
+      #       ./common/theme.nix
+      #       ./home-manager
+      #     ];
+      #     extraSpecialArgs = {
+      #       inherit
+      #         userSettings
+      #         unstable
+      #         inputs
+      #         system
+      #         ;
+      #     };
+      #   };
+      # };
     };
 }

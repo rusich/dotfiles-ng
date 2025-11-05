@@ -11,7 +11,7 @@
         "signon.rememberSignons" = false;
         "browser.places.importBookmarksHTML" = true;
         "browser.bookmarks.autoExportHTML" = true;
-        "browser.bookmarks.file" = "/home/${config.home.username}/Nextcloud/Configs/bookmarks.html";
+        "browser.bookmarks.file" = "/home/${system}/Nextcloud/Configs/bookmarks.html";
         # Look'n'feel
         "sidebar.verticalTabs" = true;
         "browser.toolbars.bookmarks.visibility" = "never";
@@ -20,7 +20,7 @@
 
       extensions = {
         force = true;
-        packages = with inputs.firefox-addons.packages.${system}; [
+        packages = with inputs.firefox-addons.packages.${pkgs.hostPlatform.system}; [
           keepassxc-browser
           simple-translate
         ];

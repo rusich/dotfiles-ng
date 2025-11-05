@@ -2,7 +2,6 @@
   pkgs,
   lib,
   inputs,
-  unstable,
   ...
 }:
 let
@@ -86,7 +85,7 @@ in
     package = null;
     portalPackage = null;
 
-    plugins = [
+    plugins = with pkgs; [
       # inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
       # inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprexpo
       unstable.hyprlandPlugins.hyprscrolling

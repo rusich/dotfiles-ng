@@ -110,6 +110,24 @@
         }) (builtins.attrNames (builtins.readDir ./hosts/darwin))
       );
 
+      # Home-manager configuration
+      legacyPackages = forAllSystems (system: {
+        homeConfigurations."rusich" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.${system};
+          modules = [
+            stylix.homeModules.stylix
+	    "${self}/modules/common/theme.nix"
+            "${self}/modules/home"
+          ];
+
+          extraSpecialArgs = {
+            inherit inputs outputs system;
+            userConfig = users.rusich;
+            homeModules = "${self}/modules/home";
+          };
+        };
+      });
+
       # homeConfigurations = {
       #   ${userSettings.username} = home-manager.lib.homeManagerConfiguration {
       #     inherit pkgs;

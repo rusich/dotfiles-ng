@@ -47,8 +47,8 @@ in
 
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
-    tonelib-jam
-    tonelib-metal
+    unstable.tonelib-jam
+    unstable.tonelib-metal
     mangohud
     qjackctl
     gmetronome
@@ -74,6 +74,8 @@ in
     cifs-utils # for smb share mount
     kdePackages.kirigami # for KDE Plasma
     kdePackages.qtstyleplugin-kvantum
+    wlr-randr
+    xorg.xrandr
   ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
@@ -256,6 +258,30 @@ in
     options kvm_intel emulate_invalid_guest_state=0
     options kvm ignore_msrs=1
   '';
+
+  # # Создаем скрипт для настройки дисплеев
+  # environment.etc."sddm/display_setup.sh" = {
+  #   text = ''
+  #     #!/bin/sh
+  #     sleep 3  # Ждем инициализации Wayland
+  #
+  #     # Меняем дисплеи местами (пример)
+  #     # wlr-randr --output DP-2 --left-of DP-1
+  #     wlr-randr --output DP-2 --pos 0,0 --output DP-1 --pos 2560,0
+  #     xrandr --output DP-2 --pos 0,0 --output DP-1 --pos 2560,0
+  #   '';
+  #   mode = "0755";
+  # };
+
+  services.displayManager.sddm = {
+    setupScript = ''
+      wlr-randr --output DP-2 --toggle
+    '';
+  };
+
+  # ${pkgs.wlr-randr}/bin/wlr-randr --output DP-2 --off
+  # ${pkgs.xrandr}/bin/xrandr --output DP-2 --left-of DP-1
+  # ${pkgs.wlr-randr}/bin/wlr-randr --output DP-1 --pos 0,0 --output DP-2 --pos 2560,0
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

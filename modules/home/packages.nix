@@ -26,8 +26,7 @@
     # kde packagers
     kdePackages.dolphin
     kdePackages.dolphin-plugins
-    # unstable
-    unstable.opencode
+    opencode
     # wayland
     rofi-wayland
     wofi

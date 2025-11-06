@@ -8,8 +8,6 @@
     ".editorconfig".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/legacy-configs/home/editorconfig";
     # apps
-    ".config/nvim".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/legacy-configs/nvim";
     # ".config/hypr".source =
     #   config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/legacy-configs/hypr";
     ".config/keepassxc".source =

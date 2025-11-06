@@ -18,7 +18,7 @@
     whitesur-icon-theme
     nwg-look
     # yandex-music
-    inputs.yandex-browser.packages.x86_64-linux.yandex-browser-stable
+    # inputs.yandex-browser.packages.x86_64-linux.yandex-browser-stable
     # fonts
     nerd-fonts.iosevka
     nerd-fonts.iosevka-term
@@ -26,7 +26,7 @@
     # kde packagers
     kdePackages.dolphin
     kdePackages.dolphin-plugins
-    opencode
+    unstable.opencode
     # wayland
     rofi-wayland
     wofi

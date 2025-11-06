@@ -47,14 +47,12 @@
   # for nixd
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
-
   # automatically import all home-manager modules
 
-imports =
+  imports =
     with builtins;
-    map
-      (fn: ./${fn})
-      (filter (fn: fn != "default.nix") (attrNames (readDir "${homeModules}" )));
-
+    map (fn: ./${fn}) (
+      filter (fn: fn != "default.nix" && fn != "disabled") (attrNames (readDir "${homeModules}"))
+    );
 
 }

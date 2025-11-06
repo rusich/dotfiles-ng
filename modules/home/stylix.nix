@@ -1,13 +1,25 @@
 { config, pkgs, ... }:
 
 {
-  # Stylix
-  stylix.targets.kde.enable = false;
-  stylix.targets.firefox = {
-    enable = true;
-    profileNames = [ "${config.home.username}" ];
-    colorTheme.enable = true;
+  stylix.enable = true;
+  stylix.targets = {
+  nixvim.enable = false;
+    gtk.enable = true;
+    qt.enable = true;
+    kde.enable = false;
+    firefox = {
+      enable = true;
+      profileNames = [ "${config.home.username}" ];
+      colorTheme.enable = true;
+    };
   };
+
+  stylix.polarity = "dark";
+  stylix.base16Scheme =
+    # "${pkgs.base16-schemes}/share/themes/oxocarbon-dark.yaml";
+    # "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
+    # "${pkgs.base16-schemes}/share/themes/windows-10-light.yaml";
+    "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
 
   stylix.cursor = {
     package = pkgs.bibata-cursors;
@@ -44,4 +56,3 @@
     popups = 0.7;
   };
 }
-

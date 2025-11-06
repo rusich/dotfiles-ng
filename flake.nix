@@ -19,6 +19,7 @@
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     # nix-colors.url = "github:misterio77/nix-colors";
     stylix.url = "github:nix-community/stylix/release-25.05";
 
@@ -27,14 +28,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    quickshell = {
-      url = "github:outfoxxed/quickshell";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-      inputs.quickshell.follows = "quickshell"; # Use same quickshell version
+    nixvim = {
+      url = "github:nix-community/nixvim/nixos-25.05";
+      # If using a stable channel you can use `url = "github:nix-community/nixvim/nixos-<version>"`
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
   };
@@ -43,6 +40,7 @@
     {
       self,
       stylix,
+      nixvim,
       nixpkgs,
       nix-darwin,
       home-manager,
@@ -87,7 +85,7 @@
             };
             modules = [
               ./hosts/nixos/${host}/configuration.nix
-              stylix.nixosModules.stylix
+              # stylix.nixosModules.stylix
               # ./common/theme.nix
             ];
           };
@@ -116,7 +114,7 @@
           pkgs = nixpkgs.legacyPackages.${system};
           modules = [
             stylix.homeModules.stylix
-	    "${self}/modules/common/theme.nix"
+            nixvim.homeModules.nixvim
             "${self}/modules/home"
           ];
 

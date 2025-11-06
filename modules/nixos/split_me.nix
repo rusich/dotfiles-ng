@@ -16,7 +16,6 @@
 {
 
   imports = [
-    inputs.noctalia.nixosModules.default
   ];
 
   options = {

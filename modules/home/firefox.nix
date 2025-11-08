@@ -1,4 +1,10 @@
-{ config, pkgs, inputs, system, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  userConfig,
+  ...
+}:
 
 {
   programs.firefox = {
@@ -11,7 +17,7 @@
         "signon.rememberSignons" = false;
         "browser.places.importBookmarksHTML" = true;
         "browser.bookmarks.autoExportHTML" = true;
-        "browser.bookmarks.file" = "/home/${system}/Nextcloud/Configs/bookmarks.html";
+        "browser.bookmarks.file" = "/home/${userConfig.username}/Nextcloud/Configs/bookmarks.html";
         # Look'n'feel
         "sidebar.verticalTabs" = true;
         "browser.toolbars.bookmarks.visibility" = "never";

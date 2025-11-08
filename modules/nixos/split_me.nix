@@ -75,6 +75,7 @@
       gparted
       gimp
       inetutils
+      xwayland-satellite
     ];
 
     # services.noctalia-shell.enable = true;
@@ -216,6 +217,8 @@
     };
     services.resolved.enable = false; # nekoray
     networking.firewall.checkReversePath = "loose"; # nekoray
+    networking.firewall.allowedTCPPorts = [ 10308 ];
+    networking.firewall.allowedUDPPorts = [ 10308 ];
 
     # security.wrappers = {
     #   nekobox_core = {

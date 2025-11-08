@@ -3,12 +3,13 @@
 {
   stylix.enable = true;
   stylix.targets = {
-  nixvim.enable = false;
-    gtk.enable = true;
-    qt.enable = true;
+    nixvim.enable = false;
+    gtk.enable = false;
+    qt.enable = false;
     kde.enable = false;
+    gnome.enable = false;
     firefox = {
-      enable = true;
+      enable = false;
       profileNames = [ "${config.home.username}" ];
       colorTheme.enable = true;
     };

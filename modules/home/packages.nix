@@ -30,7 +30,7 @@
     # wayland
     rofi-wayland
     wofi
-    swaynotificationcenter
+    # swaynotificationcenter
     waybar
     waylock
     wlogout

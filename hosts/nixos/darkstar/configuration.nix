@@ -30,6 +30,7 @@ in
     ./hardware-configuration.nix
     "${nixosModules}/plasma6.nix"
     "${nixosModules}/split_me.nix"
+    "${nixosModules}/gnome-online-accounts.nix"
   ];
 
   # Host-specific configuration

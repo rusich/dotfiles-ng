@@ -9,6 +9,12 @@
   services.vdirsyncer.enable = true;
   programs.vdirsyncer.enable = true;
 
+
+  # Чтобы это работало, необходимо использовать NixOS-модуль ../../nixos/gnome-online-accounts.nix
+  home.packages = with pkgs; [
+    gnome-calendar
+  ];
+
   programs.khal = {
     enable = true;
     locale = {
@@ -18,7 +24,6 @@
       datetimeformat = "%Y-%m-%d %H:%M";
       longdatetimeformat = "%Y-%m-%d %H:%M";
     };
-
     settings = {
       default = {
         default_calendar = "personal";
@@ -77,17 +82,6 @@
     };
   };
 
-  # Vorking variant with legacy config files
-  # home.packages = with pkgs; [
-  #   khal
-  #   vdirsyncer
-  # ];
-  # home.file = {
-  #   # khal
-  #   ".config/khal/config".source =
-  #     config.lib.file.mkOutOfStoreSymlink "${homeModules}/calendar/khal_config.toml";
-  #   # vdirsyncer
-  #   ".config/vdirsyncer/config".source =
-  #     config.lib.file.mkOutOfStoreSymlink "${homeModules}/calendar/vdirsyncer_config.toml";
-  # };
+
+
 }

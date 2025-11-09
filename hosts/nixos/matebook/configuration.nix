@@ -11,6 +11,7 @@
   imports = [
     ./hardware-configuration.nix
     "${nixosModules}/split_me.nix"
+    "${nixosModules}/gnome-online-accounts.nix"
   ];
 
   hardware.cpu.intel.updateMicrocode = true;

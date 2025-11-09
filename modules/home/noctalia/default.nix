@@ -1,4 +1,9 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  inputs,
+  config,
+  ...
+}:
 {
   # import the home manager module
   imports = [
@@ -9,6 +14,16 @@
   #   inputs.noctalia.packages.${system}.default
   #   inputs.quickshell.packages.${system}.default
   # ];
+
+  # Map the niri config files to standard location
+  home.file = {
+    # this is readonly
+    # ".config/niri".source = config.lib.file.mkOutOfStoreSymlink "${homeModules}/niri/config";
+
+    #and this is editable
+    ".config/noctalia".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/modules/home/noctalia/config";
+  };
 
   # configure options
   programs.noctalia-shell = {

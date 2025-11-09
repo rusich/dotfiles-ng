@@ -11,7 +11,7 @@
     # this is readonly
     # ".config/niri".source = config.lib.file.mkOutOfStoreSymlink "${homeModules}/niri/config";
 
-    #and this is editable
+    # and this is editable
     ".config/niri".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/modules/home/niri/config";
   };

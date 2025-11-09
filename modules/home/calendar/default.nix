@@ -10,23 +10,9 @@
     enable = true;
   };
 
-  home.packages = with pkgs; [
-    khal
-    vdirsyncer
-  ];
-
   # programs.khal = {
   #   enable = true;
   # };
-
-  home.file = {
-    # khal
-    ".config/khal/config".source =
-      config.lib.file.mkOutOfStoreSymlink "${homeModules}/calendar/khal_config.toml";
-    # vdirsyncer
-    ".config/vdirsyncer/config".source =
-      config.lib.file.mkOutOfStoreSymlink "${homeModules}/calendar/vdirsyncer_config.toml";
-  };
 
   # accounts.calendar = {
   #   basePath = ".calendars";
@@ -60,5 +46,19 @@
   #     type = "discover";
   #   };
   #
+  # };
+
+  # Vorking variant with legacy config files
+  # home.packages = with pkgs; [
+  #   khal
+  #   vdirsyncer
+  # ];
+  # home.file = {
+  #   # khal
+  #   ".config/khal/config".source =
+  #     config.lib.file.mkOutOfStoreSymlink "${homeModules}/calendar/khal_config.toml";
+  #   # vdirsyncer
+  #   ".config/vdirsyncer/config".source =
+  #     config.lib.file.mkOutOfStoreSymlink "${homeModules}/calendar/vdirsyncer_config.toml";
   # };
 }

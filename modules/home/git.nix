@@ -7,9 +7,11 @@
 {
   programs.git = {
     enable = true;
-    userName = "Ruslan Sergin";
-    userEmail = "ruslan.sergin@gmail.com";
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Ruslan Sergin";
+        email = "ruslan.sergin@gmail.com";
+      };
       init.defaultBranch = "main";
       alias = {
         "pr" = "pull --rebase";

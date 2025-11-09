@@ -1,0 +1,27 @@
+[general]
+status_path = "~/.cache/vdirsyncer/"
+
+#### CALENDARS ###
+#Khal 
+[storage khal_calendar]
+type = "filesystem"
+path = "~/.calendars/khal/"
+fileext = ".ics"
+
+#Nextcloud
+[storage nextcloud_calendar]
+type = "caldav"
+url.fetch = [ "command", "secret-tool", "lookup", "short", "NEXTCLOUD_URL"]
+username.fetch = [ "command", "secret-tool", "lookup", "short", "NEXTCLOUD_USERNAME"]
+password.fetch = [ "command", "secret-tool", "lookup", "short", "NEXTCLOUD_PASSWORD"]
+
+
+[pair khal_to_nextcloud]
+a = "khal_calendar"
+b = "nextcloud_calendar"
+collections = ["from a", "from b"]
+conflict_resolution = "a wins"
+# metadata = ["color", "displayname"]
+metadata = ["color"]
+
+# vim: set ft=toml:

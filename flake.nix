@@ -10,9 +10,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # # Home Manager Stable
+    # home-manager = {
+    #   url = "github:nix-community/home-manager/release-25.05";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+
+    # Home Manager Unstable
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     firefox-addons = {
@@ -21,7 +28,8 @@
     };
 
     # nix-colors.url = "github:misterio77/nix-colors";
-    stylix.url = "github:nix-community/stylix/release-25.05";
+    # stylix.url = "github:nix-community/stylix/release-25.05";
+    stylix.url = "github:nix-community/stylix";
 
     yandex-browser = {
       url = "github:miuirussia/yandex-browser.nix";
@@ -34,6 +42,34 @@
       # inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # DankMaterialShell
+    dgop = {
+      url = "github:AvengeMedia/dgop";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    dms-cli = {
+      url = "github:AvengeMedia/danklinux";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    dankMaterialShell = {
+      url = "github:AvengeMedia/DankMaterialShell";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.dgop.follows = "dgop";
+      inputs.dms-cli.follows = "dms-cli";
+    };
+
+    # Noctalia shell
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.quickshell.follows = "quickshell";  # Use same quickshell version
+    };
+    quickshell = {
+      url = "github:outfoxxed/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

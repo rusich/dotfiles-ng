@@ -47,6 +47,9 @@
   # for nixd
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
+  # This will, for example, allow fontconfig to discover fonts and configurations installed through home.packages 
+  fonts.fontconfig.enable = true;
+
   # automatically import all home-manager modules
 
   imports =

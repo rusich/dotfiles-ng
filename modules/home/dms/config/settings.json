@@ -85,12 +85,14 @@
       "enabled": true,
       "width": 50,
       "instanceId": "mhqah9knnc6s7emqgyt4fd2uocvvd",
-      "mountPath": "/"
+      "mountPath": "/home"
     },
     {
-      "id": "builtin_vpn",
+      "id": "diskUsage",
       "enabled": true,
-      "width": 50
+      "width": 50,
+      "instanceId": "mhu6lh6thiwib9kowan",
+      "mountPath": "/home"
     }
   ],
   "showWorkspaceIndex": false,

@@ -104,7 +104,7 @@ local spec = {
         -- return '▊'
         return ' '
       end,
-      color = { fg = colors.blue }, -- Sets highlighting of component
+      color = { fg = colors.blue },      -- Sets highlighting of component
       padding = { left = 0, right = 1 }, -- We don't need space before this
     }
 
@@ -225,16 +225,17 @@ local spec = {
       color = { fg = colors.magenta },
     }
 
-    ins_right {
-      function()
-        return '󰌌 ' .. vim.g.last_input_kb_layout
-      end,
-      color = { fg = colors.cyan, gui = 'bold' },
-    }
+    -- FIXME: сейчас работает только для Hyprland, добавить поддержку Niri
+    -- ins_right {
+    --   function()
+    --     return '󰌌 ' .. vim.g.last_input_kb_layout
+    --   end,
+    --   color = { fg = colors.cyan, gui = 'bold' },
+    -- }
 
     -- Add components to right sections
     ins_right {
-      'o:encoding', -- option component same as &encoding in viml
+      'o:encoding',       -- option component same as &encoding in viml
       fmt = string.upper, -- I'm not sure why it's upper case either ;)
       cond = conditions.hide_in_width,
       color = { fg = colors.yellow, gui = 'bold' },

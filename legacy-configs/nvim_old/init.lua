@@ -7,5 +7,3 @@ require 'config.lsp'
 require 'config.keymaps'
 require 'config.autocommands'
 require 'config.highlights'
-
--- test

@@ -71,7 +71,7 @@
       nix-index
       lm_sensors
       pavucontrol
-      polkit_gnome
+      # polkit_gnome
       gparted
       gimp
       inetutils
@@ -269,21 +269,21 @@
       '';
     };
 
-    systemd = {
-      user.services.polkit-gnome-authentication-agent-1 = {
-        description = "polkit-gnome-authentication-agent-1";
-        wantedBy = [ "graphical-session.target" ];
-        wants = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
-        serviceConfig = {
-          Type = "simple";
-          ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-          Restart = "on-failure";
-          RestartSec = 1;
-          TimeoutStopSec = 10;
-        };
-      };
-    };
+    # systemd = {
+    #   user.services.polkit-gnome-authentication-agent-1 = {
+    #     description = "polkit-gnome-authentication-agent-1";
+    #     wantedBy = [ "graphical-session.target" ];
+    #     wants = [ "graphical-session.target" ];
+    #     after = [ "graphical-session.target" ];
+    #     serviceConfig = {
+    #       Type = "simple";
+    #       ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+    #       Restart = "on-failure";
+    #       RestartSec = 1;
+    #       TimeoutStopSec = 10;
+    #     };
+    #   };
+    # };
 
     # for WiVRn
     services.avahi = {
@@ -335,5 +335,12 @@
 
     # fwupd is a simple daemon allowing you to update some devices' firmware, including UEFI for several machines.
     services.fwupd.enable = true;
+
+    # power management
+    services.upower.enable = true;
+    services.power-profiles-daemon.enable = true;
+
+    # Disable gnome keyring for KeepassXC
+    services.gnome.gnome-keyring = pkgs.lib.mkForce { enable = false; };
   };
 }

@@ -51,6 +51,7 @@
   fonts.fontconfig.enable = true;
 
   # automatically import all home-manager modules
+  services.polkit-gnome.enable= true;
 
   imports =
     with builtins;

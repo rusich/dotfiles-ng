@@ -46,7 +46,6 @@ in
 
   hardware.cpu.amd.updateMicrocode = true;
 
-  nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
     unstable.tonelib-jam
     unstable.tonelib-metal

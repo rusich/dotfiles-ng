@@ -2,6 +2,7 @@
   inputs,
   pkgs,
   config,
+  system,
   ...
 }:
 {
@@ -10,9 +11,14 @@
     # inputs.dankMaterialShell.homeModules.dankMaterialShell.niri
   ];
 
+  home.packages = with pkgs; [
+    # unstable.kdePackages.qtmultimedia
+    kdePackages.qtmultimedia
+  ];
+
   programs.dankMaterialShell = {
     enable = true;
-    quickshell.package = pkgs.unstable.quickshell;
+    quickshell.package = inputs.quickshell.packages."${system}".default;
     # niri = {
     #   enableKeybinds = true; # Automatic keybinding configuration
     #   enableSpawn = true; # Auto-start DMS with niri
@@ -26,7 +32,7 @@
 
     #and this is editable
     ".config/DankMaterialShell".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/modules/home/dms/config";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/modules/home/dankmaterialshell/config";
   };
 
 }

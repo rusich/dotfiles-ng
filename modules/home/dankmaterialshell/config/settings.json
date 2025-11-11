@@ -122,6 +122,10 @@
     {
       "id": "focusedWindow",
       "enabled": true
+    },
+    {
+      "id": "systemTray",
+      "enabled": true
     }
   ],
   "dankBarCenterWidgets": [
@@ -273,7 +277,8 @@
       "all"
     ],
     "systemTray": [
-      "DP-1"
+      "DP-1",
+      "eDP-1"
     ]
   },
   "showOnLastDisplay": {

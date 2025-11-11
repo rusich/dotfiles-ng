@@ -17,5 +17,5 @@
   };
 
   # To run as system keyring agent need to disable other keyring agents
-  services.gnome-keyring = pkgs.lib.mkForce { enable = false; };
+  services.gnome-keyring = pkgs.lib.mkForce { enable = false; }; # also need to disable in nixos config
 }

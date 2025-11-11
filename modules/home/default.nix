@@ -47,11 +47,11 @@
   # for nixd
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
-  # This will, for example, allow fontconfig to discover fonts and configurations installed through home.packages 
+  # This will, for example, allow fontconfig to discover fonts and configurations installed through home.packages
   fonts.fontconfig.enable = true;
 
   # automatically import all home-manager modules
-  services.polkit-gnome.enable= true;
+  # services.polkit-gnome.enable = true; # use from dms instead
 
   imports =
     with builtins;

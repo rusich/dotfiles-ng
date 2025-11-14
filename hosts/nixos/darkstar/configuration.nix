@@ -49,6 +49,8 @@ in
   environment.systemPackages = with pkgs; [
     unstable.tonelib-jam
     unstable.tonelib-metal
+    unstable.tonelib-gfx
+    unstable.reaper
     mangohud
     qjackctl
     gmetronome
@@ -72,10 +74,9 @@ in
     protonup-qt
     android-tools
     cifs-utils # for smb share mount
-    kdePackages.kirigami # for KDE Plasma
-    kdePackages.qtstyleplugin-kvantum
     wlr-randr
     xorg.xrandr
+    anydesk
   ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];

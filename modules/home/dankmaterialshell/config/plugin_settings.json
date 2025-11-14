@@ -1,0 +1,14 @@
+{
+  "dankPomodoroTimer": {
+    "enabled": true
+  },
+  "linuxWallpaperEngine": {
+    "enabled": true
+  },
+  "powerUsagePlugin": {
+    "enabled": true
+  },
+  "wallpaperBing": {
+    "enabled": true
+  }
+}

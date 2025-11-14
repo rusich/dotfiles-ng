@@ -6,6 +6,14 @@
 }:
 {
 
+  # required packages
+  home.packages = with pkgs; [
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal-gnome
+    nautilus
+    xwayland-satellite
+  ];
+
   # Map the niri config files to standard location
   home.file = {
     # this is readonly

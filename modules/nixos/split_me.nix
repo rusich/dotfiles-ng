@@ -75,7 +75,6 @@
       gparted
       gimp
       inetutils
-      xwayland-satellite
     ];
 
     # services.noctalia-shell.enable = true;

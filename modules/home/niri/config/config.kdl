@@ -124,6 +124,8 @@ layout {
     //   together with the previously focused column.
     center-focused-column "never"
 
+    always-center-single-column
+
     // You can customize the widths that "switch-preset-column-width" (Mod+R) toggles between.
     preset-column-widths {
         // Proportion sets the width as a fraction of the output width, taking gaps into account.
@@ -284,6 +286,13 @@ hotkey-overlay {
     // skip-at-startup
 }
 
+
+overview {
+    backdrop-color "#151515"
+}
+
+
+
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
 // If the client will specifically ask for CSD, the request will be honored.
 // Additionally, clients will be informed that they are tiled, removing some client-side rounded corners.
@@ -333,6 +342,13 @@ window-rule {
     open-floating true
 }
 
+
+// Initially PokerOK
+window-rule {
+    match app-id=r#"steam_app_0$"# 
+    open-floating true
+}
+
 // Example: block out two password managers from screen capture.
 // (This example rule is commented out with a "/-" in front.)
 window-rule {
@@ -374,6 +390,7 @@ binds {
     Mod+Return hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Slash hotkey-overlay-title="Open launcher: rofi" { spawn "rofi" "-show" "combi"; }
     Ctrl+Alt+L hotkey-overlay-title="Lock the Screen" { spawn "dms" "ipc" "call" "lock" "lock"; }
+    Ctrl+Shift+Escape hotkey-overlay-title="Process List" { spawn "dms" "ipc" "call" "processlist" "toggle"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
@@ -417,10 +434,10 @@ binds {
 
     Mod+Alt+H     { move-column-left; }
     Mod+Alt+L     { move-column-right; }
-    Mod+Alt+J     { move-window-down; }
-    Mod+Alt+K     { move-window-up; }
-    // Mod+Shift+J     { move-window-down-or-to-workspace-down; }
-    // Mod+Shift+K     { move-window-up-or-to-workspace-up; }
+    // Mod+Alt+J     { move-window-down; }
+    // Mod+Alt+K     { move-window-up; }
+    Mod+Alt+J     { move-window-down-or-to-workspace-down; }
+    Mod+Alt+K     { move-window-up-or-to-workspace-up; }
 
     // Alternative commands that move across workspaces when reaching
     // the first or last window in a column.
@@ -432,15 +449,15 @@ binds {
     Mod+Alt+Home { move-column-to-first; }
     Mod+Alt+End  { move-column-to-last; }
 
-    Mod+Shift+H     { focus-monitor-left; }
-    Mod+Shift+J     { focus-monitor-down; }
-    Mod+Shift+K     { focus-monitor-up; }
-    Mod+Shift+L     { focus-monitor-right; }
+    Mod+Ctrl+H     { focus-monitor-left; }
+    Mod+Ctrl+J     { focus-monitor-down; }
+    Mod+Ctrl+K     { focus-monitor-up; }
+    Mod+Ctrl+L     { focus-monitor-right; }
 
-    Mod+Shift+Alt+H     { move-column-to-monitor-left; }
-    Mod+Shift+Alt+J     { move-column-to-monitor-down; }
-    Mod+Shift+Alt+K     { move-column-to-monitor-up; }
-    Mod+Shift+Alt+L     { move-column-to-monitor-right; }
+    Mod+Ctrl+Alt+H     { move-column-to-monitor-left; }
+    Mod+Ctrl+Alt+J     { move-column-to-monitor-down; }
+    Mod+Ctrl+Alt+K     { move-column-to-monitor-up; }
+    Mod+Ctrl+Alt+L     { move-column-to-monitor-right; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Shift+Alt+Left  { move-window-to-monitor-left; }
@@ -456,8 +473,8 @@ binds {
     Mod+I              { focus-workspace-up; }
     Mod+Alt+Page_Down { move-column-to-workspace-down; }
     Mod+Alt+Page_Up   { move-column-to-workspace-up; }
-    Mod+Alt+U         { move-column-to-workspace-down; }
-    Mod+Alt+I         { move-column-to-workspace-up; }
+    // Mod+Alt+U         { move-column-to-workspace-down; }
+    // Mod+Alt+I         { move-column-to-workspace-up; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Alt+Page_Down { move-window-to-workspace-down; }
@@ -465,8 +482,8 @@ binds {
 
     Mod+Shift+Page_Down { move-workspace-down; }
     Mod+Shift+Page_Up   { move-workspace-up; }
-    Mod+Shift+U         { move-workspace-down; }
-    Mod+Shift+I         { move-workspace-up; }
+    Mod+Alt+U         { move-workspace-down; }
+    Mod+Alt+I         { move-workspace-up; }
 
     // You can bind mouse wheel scroll ticks using the following syntax.
     // These binds will change direction based on the natural-scroll setting.

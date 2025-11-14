@@ -70,6 +70,7 @@
     eza
     networkmanagerapplet
     nodejs_24
+    discord
   ];
 
 }

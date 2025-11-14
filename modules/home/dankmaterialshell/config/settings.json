@@ -85,7 +85,7 @@
       "enabled": true,
       "width": 50,
       "instanceId": "mhqah9knnc6s7emqgyt4fd2uocvvd",
-      "mountPath": "/home"
+      "mountPath": "/nix/store"
     },
     {
       "id": "diskUsage",
@@ -118,24 +118,36 @@
       "id": "launcherButton",
       "enabled": true
     },
-    "workspaceSwitcher",
     {
-      "id": "focusedWindow",
+      "id": "workspaceSwitcher",
       "enabled": true
     },
     {
-      "id": "systemTray",
+      "id": "focusedWindow",
       "enabled": true
     }
   ],
   "dankBarCenterWidgets": [
-    "music",
-    "clock",
-    "weather"
+    {
+      "id": "music",
+      "enabled": true
+    },
+    {
+      "id": "clock",
+      "enabled": true
+    },
+    {
+      "id": "weather",
+      "enabled": true
+    }
   ],
   "dankBarRightWidgets": [
     {
       "id": "systemTray",
+      "enabled": true
+    },
+    {
+      "id": "wallpaperBing",
       "enabled": true
     },
     {
@@ -168,8 +180,8 @@
     }
   ],
   "dankBarWidgetOrder": [],
-  "appLauncherViewMode": "grid",
-  "spotlightModalViewMode": "grid",
+  "appLauncherViewMode": "list",
+  "spotlightModalViewMode": "list",
   "sortAppsAlphabetically": false,
   "weatherLocation": "Якутск, Дальневосточный федеральный округ",
   "weatherCoordinates": "62.0274078,129.7319787",

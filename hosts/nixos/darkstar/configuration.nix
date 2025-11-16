@@ -252,7 +252,10 @@ in
   #   ];
   # };
 
-  virtualisation.libvirtd.enable = true;
+  virtualisation = {
+    libvirtd.enable = true;
+    spiceUSBRedirection.enable = true;
+  };
 
   boot.extraModprobeConfig = ''
     options kvm_intel nested=1

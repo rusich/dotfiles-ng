@@ -195,6 +195,7 @@
         "kvm"
         "input"
         "adbusers"
+        "qemu"
       ];
     };
 

@@ -11,7 +11,6 @@
   imports = [
     ./hardware-configuration.nix
     "${nixosModules}/desktopCommon"
-    "${nixosModules}/gnome-online-accounts.nix"
   ];
 
   hardware.cpu.intel.updateMicrocode = true;
@@ -33,9 +32,6 @@
 
   services.xserver.videoDrivers = [ "amdgpu" ];
   # Host-specific packages
-  programs.steam.enable = true;
-  programs.steam.gamescopeSession.enable = true;
-  programs.gamemode.enable = true;
   powerManagement.enable = true;
   powerManagement.powertop.enable = true;
 

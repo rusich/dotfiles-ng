@@ -30,7 +30,7 @@ in
     ./hardware-configuration.nix
     "${nixosModules}/desktopCommon"
     "${nixosModules}/plasma6.nix"
-    "${nixosModules}/gnome-online-accounts.nix"
+    "${nixosModules}/gaming.nix"
   ];
 
   # Host-specific configuration
@@ -42,6 +42,7 @@ in
     enable = true;
     enable32Bit = true;
   };
+
   hardware.amdgpu.initrd.enable = true;
 
   hardware.cpu.amd.updateMicrocode = true;
@@ -51,28 +52,20 @@ in
     unstable.tonelib-metal
     unstable.tonelib-gfx
     unstable.reaper
-    mangohud
     qjackctl
     gmetronome
     guitarix
     audacity
     lmstudio
-    sidequest
     # librsvg # wivrn
     # cairo # librsvg, wivrn
-    opencomposite
-    wlx-overlay-s
     virt-manager
-    jstest-gtk
     quickemu
     quickgui
     spice
     spice-gtk
     virt-viewer
-    gamemode
-    gamescope
-    protonup-qt
-    android-tools
+    # android-tools
     cifs-utils # for smb share mount
     wlr-randr
     xorg.xrandr
@@ -80,21 +73,6 @@ in
   ];
 
   services.xserver.videoDrivers = [ "amdgpu" ];
-  # Host-specific packages
-  programs.steam.enable = true;
-  programs.steam.gamescopeSession.enable = true;
-  programs.steam.protontricks.enable = true;
-  programs.gamemode.enable = true;
-  # programs.steam.extraCompatPackages = with pkgs; [ proton-ge-bin ];
-
-  programs.adb.enable = true;
-
-  services.wivrn = {
-    enable = true;
-    openFirewall = true;
-    defaultRuntime = true;
-    package = pkgs.unstable.wivrn;
-  };
 
   # for corectrl full features
   boot.kernelParams = [ "amdgpu.ppfeaturemask=0xffffffff" ];

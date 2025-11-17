@@ -201,7 +201,6 @@
 
     # Allow unfree packages
 
-    programs.corectrl.enable = true;
     programs.firefox.enable = true;
     programs.nix-ld.enable = true; # what's the heck it's this...
     programs.fish.enable = true;
@@ -251,23 +250,6 @@
     # services.devmon.enable = true;
     services.gvfs.enable = true;
     services.udisks2.enable = true;
-
-    security.polkit = {
-      enable = true;
-      extraConfig = ''
-
-        /* Allow regular users to run corectrl as root */
-        polkit.addRule(function(action, subject) {
-            if ((action.id == "org.corectrl.helper.init" ||
-                 action.id == "org.corectrl.helperkiller.init") &&
-                subject.local == true &&
-                subject.active == true &&
-                subject.isInGroup("users")) {
-                    return polkit.Result.YES;
-            }
-        });
-      '';
-    };
 
     # systemd = {
     #   user.services.polkit-gnome-authentication-agent-1 = {

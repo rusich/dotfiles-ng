@@ -33,6 +33,12 @@
     steam.importOXRRuntimes = true; # for Steam auto discover WivRN
   };
 
+  programs.alvr = {
+    enable = true;
+    openFirewall = true;
+    package = pkgs.alvr;
+  };
+
   # Power profile management for gaming
   programs.corectrl.enable = true;
   security.polkit = {

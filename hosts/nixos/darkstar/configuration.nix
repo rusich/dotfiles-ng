@@ -28,8 +28,8 @@ in
 
   imports = [
     ./hardware-configuration.nix
+    "${nixosModules}/desktopCommon"
     "${nixosModules}/plasma6.nix"
-    "${nixosModules}/split_me.nix"
     "${nixosModules}/gnome-online-accounts.nix"
   ];
 

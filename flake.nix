@@ -57,7 +57,6 @@
       url = "github:AvengeMedia/DankMaterialShell";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
       inputs.dgop.follows = "dgop";
-      inputs.dms-cli.follows = "dms-cli";
     };
 
     # Noctalia shell
@@ -121,6 +120,7 @@
             };
             modules = [
               ./hosts/nixos/${host}/configuration.nix
+              ./modules/nixos/common
               # stylix.nixosModules.stylix
               # ./common/theme.nix
             ];

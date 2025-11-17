@@ -10,7 +10,7 @@
 
   imports = [
     ./hardware-configuration.nix
-    "${nixosModules}/split_me.nix"
+    "${nixosModules}/desktopCommon"
     "${nixosModules}/gnome-online-accounts.nix"
   ];
 
@@ -41,7 +41,6 @@
 
   services.displayManager.sddm.theme = "chili";
   # services.displayManager.sddm.theme = "sugar-dark";
-
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

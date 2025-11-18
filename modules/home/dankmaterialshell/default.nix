@@ -14,15 +14,18 @@
   home.packages = with pkgs; [
     # unstable.kdePackages.qtmultimedia
     kdePackages.qtmultimedia
+    adw-gtk3
   ];
 
   programs.dankMaterialShell = {
     enable = true;
     quickshell.package = inputs.quickshell.packages."${system}".default;
+    # quickshell.package = pkgs.unstable.quickshell;
     # niri = {
     #   enableKeybinds = true; # Automatic keybinding configuration
     #   enableSpawn = true; # Auto-start DMS with niri
     # };
+    enableSystemSound = true; # System sound effects
   };
 
   # Map the niri config files to standard location

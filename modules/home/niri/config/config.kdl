@@ -4,6 +4,17 @@
 // Check the wiki for a full description of the configuration:
 // https://yalter.github.io/niri/Configuration:-Introduction
 
+
+environment {
+    XDG_CURRENT_DESKTOP "niri"
+    QT_QPA_PLATFORM "wayland"
+    ELECTRON_OZONE_PLATFORM_HINT "auto"
+    // QT_QPA_PLATFORMTHEME "gtk3"
+    // QT_QPA_PLATFORMTHEME_QT6 "gtk3"
+    QT_QPA_PLATFORMTHEME "qt6ct"
+    QT_QPA_PLATFORMTHEME_QT6 "qt6ct"
+}
+
 // Input device configuration.
 // Find the full list of options on the wiki:
 // https://yalter.github.io/niri/Configuration:-Input
@@ -114,7 +125,9 @@ output "eDP-1" {
 // https://yalter.github.io/niri/Configuration:-Layout
 layout {
     // Set gaps around windows in logical pixels.
-    gaps 8
+    gaps 5
+
+    background-color "transparent" // DMS integration
 
     // When to center a column when changing focus, options are:
     // - "never", default behavior, focusing an off-screen column will keep at the left
@@ -280,6 +293,7 @@ layout {
 spawn-sh-at-startup "dms run"
 spawn-sh-at-startup "sleep 3 && kill -9 $(pgrep 'kwalletd6|ksecretd|gnome-keyring'); sleep 3; keepassxc"
 spawn-sh-at-startup "sleep 60 && nextcloud"
+spawn-sh-at-startup "wl-paste--watch cliphist store"
 
 hotkey-overlay {
     // Uncomment this line to disable the "Important Hotkeys" pop-up at startup.
@@ -290,8 +304,6 @@ hotkey-overlay {
 overview {
     backdrop-color "#151515"
 }
-
-
 
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
 // If the client will specifically ask for CSD, the request will be honored.
@@ -319,6 +331,28 @@ animations {
     // slowdown 3.0
 }
 
+// DMS integration
+// place the wallpaper on the overview.
+layer-rule {
+    match namespace="^quickshell$"
+    place-within-backdrop false
+}
+
+window-rule {
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    match app-id="Alacritty"
+    match app-id="zen"
+    match app-id="com.mitchellh.ghostty"
+    match app-id="kitty"
+    match app-id=r#"^org\.gnome\."#
+    draw-border-with-background false
+}
+
+// window-rule {
+//     match is-active=false
+//     opacity 0.99
+// }
+
 // Window rules let you adjust behavior for individual windows.
 // Find more information on the wiki:
 // https://yalter.github.io/niri/Configuration:-Window-Rules
@@ -344,6 +378,7 @@ window-rule {
     // - host Firefox (app-id is "firefox")
     // - Flatpak Firefox (app-id is "org.mozilla.firefox")
     match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+    match app-id="org.gnome.Calculator"
     open-floating true
 }
 

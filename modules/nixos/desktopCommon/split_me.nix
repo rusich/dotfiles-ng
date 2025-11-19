@@ -75,6 +75,15 @@
       gparted
       gimp
       inetutils
+      nextcloud-client
+      nautilus
+      nautilus-python
+      nautilus-open-any-terminal
+      # kde package
+      kdePackages.dolphin
+      kdePackages.dolphin-plugins
+      kdePackages.qtsvg # for dolphin
+      kdePackages.kio-extras
     ];
 
     # services.noctalia-shell.enable = true;

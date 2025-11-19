@@ -27,9 +27,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # nix-colors.url = "github:misterio77/nix-colors";
-    # stylix.url = "github:nix-community/stylix/release-25.05";
-    stylix.url = "github:nix-community/stylix";
+    # stylix = {
+    #   url = "github:nix-community/stylix/release-25.05";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
 
     yandex-browser = {
       url = "github:miuirussia/yandex-browser.nix";
@@ -116,7 +121,7 @@
             modules = [
               ./hosts/nixos/${host}/configuration.nix
               ./modules/nixos/common
-              # stylix.nixosModules.stylix
+              stylix.nixosModules.stylix
               # ./common/theme.nix
             ];
           };

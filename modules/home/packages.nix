@@ -10,10 +10,9 @@
 
   home.packages = with pkgs; [
     # desktop
-    kdePackages.breeze
-    libsForQt5.qt5ct
-    qt6ct
-    breeze-hacked-cursor-theme
+    # libsForQt5.qt5ct
+    # qt6ct
+    # breeze-hacked-cursor-theme
     whitesur-gtk-theme
     whitesur-icon-theme
     nwg-look
@@ -23,10 +22,8 @@
     nerd-fonts.iosevka
     nerd-fonts.iosevka-term
     nerd-fonts.fantasque-sans-mono
-    # kde packagers
-    kdePackages.dolphin
-    kdePackages.dolphin-plugins
     unstable.opencode
+    kdePackages.breeze
     # wayland
     rofi-wayland
     wofi
@@ -60,12 +57,8 @@
     jq
     pamixer
     keepassxc
-    nextcloud-client
     yazi
     ncdu
-    nautilus
-    nautilus-python
-    nautilus-open-any-terminal
     fd
     eza
     networkmanagerapplet

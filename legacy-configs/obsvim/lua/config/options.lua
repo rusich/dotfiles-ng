@@ -82,12 +82,12 @@ opt.foldlevel = 99
 opt.foldlevelstart = 99
 
 -- Set colorscheme
--- pcall(vim.cmd.colorscheme, 'catppuccin')
+pcall(vim.cmd.colorscheme, 'catppuccin')
 -- pcall(vim.cmd.colorscheme, 'onedark')
 -- pcall(vim.cmd.colorscheme, 'kanagawa')
 -- pcall(vim.cmd.colorscheme, 'carbonfox')
 -- pcall(vim.cmd.colorscheme, 'oxocarbon')
-pcall(vim.cmd.colorscheme, 'tokyonight-storm')
+-- pcall(vim.cmd.colorscheme, 'tokyonight-storm')
 
 -- Spell
 opt.spelllang = 'ru,en'

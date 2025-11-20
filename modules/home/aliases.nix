@@ -19,7 +19,6 @@ let
 
     # Nix packages online
     "lumen" = "nix run github:jnsahaj/lumen -- ";
-    "ovim" = "NVIM_APPNAME=nvim_old nvim";
   };
 in
 {

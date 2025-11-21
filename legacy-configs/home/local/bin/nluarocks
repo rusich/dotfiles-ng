@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-LUAROCKS_CONFIG=$HOME/.config/nluarocks/config.lua luarocks --local "$@"
-
-# vim: ft=bash

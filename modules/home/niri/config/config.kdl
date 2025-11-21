@@ -291,7 +291,7 @@ layout {
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
 spawn-sh-at-startup "QT_QPA_PLATFORMTHEME=gtk3 dms run"
-spawn-sh-at-startup "wl-paste--watch cliphist store &"
+spawn-sh-at-startup "wl-paste --watch cliphist store"
 spawn-sh-at-startup "sleep 3 && kill -9 $(pgrep 'kwalletd6|ksecretd|gnome-keyring'); sleep 3; keepassxc"
 spawn-sh-at-startup "sleep 60 && nextcloud"
 spawn-sh-at-startup "blueman-applet"

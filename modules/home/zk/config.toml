@@ -70,7 +70,7 @@ author = "rusich"
 #key = "value"
 
 [group.daily]
-paths = ["daily/"]
+paths = ["daily"]
 
 [group.daily.note]
 filename = "{{format-date now}}"
@@ -83,7 +83,7 @@ template = "daily.md"
 
 # Format used to generate links between notes.
 # Either "wiki", "markdown" or a custom template. Default is "markdown".
-#link-format = "wiki"
+link-format = "wiki"
 # Indicates whether a link's path will be percent-encoded.
 # Defaults to true for "markdown" format and false for "wiki" format.
 #link-encode-path = true
@@ -167,16 +167,19 @@ dead-link = "error"
 #     * you can pipe commands together with the usual | character
 #
 [alias]
-# Here are a few aliases to get you started.
-
-# Shortcut to a command.
-#ls = "zk list $@"
-
 # Default flags for an existing command.
-#list = "zk list --quiet $@"
+nt = 'zk new --title "$*"'
+list = "zk list --quiet $@"
+edit = 'zk edit --interactive "$@"'
 
 # Edit the last modified note.
-#editlast = "zk edit --limit 1 --sort modified- $@"
+editlast = "zk edit --limit 1 --sort modified- $@"
+
+ls = "zk list $@"
+daily = 'zk new "$ZK_NOTEBOOK_DIR/daily"'
+
+# edit config file
+conf = '$EDITOR "$HOME/.config/zk/config.toml"'
 
 # Edit the notes selected interactively among the notes created the last two weeks.
 # This alias doesn't take any argument, so we don't use $@.
@@ -186,14 +189,36 @@ dead-link = "error"
 # arguments. This can be useful to expand a complex search query into a flag
 # taking only paths. For example:
 #   zk list --link-to "`zk path -m potatoe`"
-#path = "zk list --quiet --format {{path}} --delimiter , $@"
+path = "zk list --quiet --format {{path}} --delimiter , $@"
 
+# Similarly, use this alias to expand filtered note paths inside a 
+# parent zk command taking a comma-separated paths list.
+inline = "zk list --quiet --format {{path}} --delimiter , $@"
+# `inline` use examples
+# List the notes which have at least one link pointing to them (i.e. not orphans).
+# $ zk list --exclude "`zk inline --orphan`"
+# List the notes which are linked by at least one note from the journal/ directory.
+# $ zk list --linked-by "`zk inline journal`"
+
+
+# Print the backlinks of a note
+bl = "zk list --link-to $@"
+# Locate unlinked mentions in a note
+# This alias can help you look for potential new links to establish, 
+# by listing every note whose title is mentioned in the note you are 
+# working on but which are not already linked to it.
+# Note that we are using a single argument $1 which is repeated for both options.
+unlinked-mentions = "zk list --mentioned-by $1 --no-linked-by $1"
 # Show a random note.
 #lucky = "zk list --quiet --format full --sort random --limit 1"
+
+#xargs formula
+
+#Calling an external program with a list of note paths using xargs is such a common use case that we can extract a reusable alias pattern.
+#alias = "zk list --quiet --format path --delimiter0 $@ | xargs -0 <EXTERNAL COMMAND>"
+
 
 # Returns the Git history for the notes found with the given arguments.
 # Note the use of a pipe and the location of $@.
 #hist = "zk list --format path --delimiter0 --quiet $@ | xargs -t -0 git log --patch --"
 
-# Edit this configuration file.
-#conf = '$EDITOR "$ZK_NOTEBOOK_DIR/.zk/config.toml"'

@@ -5,6 +5,8 @@
   ...
 }:
 {
+  programs.lazygit.enable = true;
+
   programs.git = {
     enable = true;
     settings = {

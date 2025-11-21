@@ -22,7 +22,6 @@
     nerd-fonts.iosevka
     nerd-fonts.iosevka-term
     nerd-fonts.fantasque-sans-mono
-    unstable.opencode
     kdePackages.breeze
     # wayland
     rofi-wayland
@@ -57,7 +56,6 @@
     jq
     pamixer
     keepassxc
-    yazi
     ncdu
     fd
     eza

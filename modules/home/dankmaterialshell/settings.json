@@ -152,6 +152,10 @@
   ],
   "dankBarRightWidgets": [
     {
+      "id": "dankPomodoroTimer",
+      "enabled": true
+    },
+    {
       "id": "systemTray",
       "enabled": true
     },

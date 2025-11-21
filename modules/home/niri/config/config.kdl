@@ -294,6 +294,7 @@ spawn-sh-at-startup "QT_QPA_PLATFORMTHEME=gtk3 dms run"
 spawn-sh-at-startup "wl-paste--watch cliphist store &"
 spawn-sh-at-startup "sleep 3 && kill -9 $(pgrep 'kwalletd6|ksecretd|gnome-keyring'); sleep 3; keepassxc"
 spawn-sh-at-startup "sleep 60 && nextcloud"
+spawn-sh-at-startup "blueman-applet"
 
 hotkey-overlay {
     // Uncomment this line to disable the "Important Hotkeys" pop-up at startup.

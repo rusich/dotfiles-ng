@@ -117,6 +117,7 @@ pager = "less -FIRX"
 # bat is a great tool to render Markdown document with syntax highlighting.
 #https://github.com/sharkdp/bat
 fzf-preview = "bat -p --color always {-1}"
+# fzf-preview = "zk list --quiet --format full --limit 1 {-1}"
 
 
 # LSP
@@ -176,7 +177,8 @@ edit = 'zk edit --interactive "$@"'
 editlast = "zk edit --limit 1 --sort modified- $@"
 
 ls = "zk list $@"
-daily = 'zk new "$ZK_NOTEBOOK_DIR/daily"'
+daily = 'zk new --no-input "$ZK_NOTEBOOK_DIR/daily"'
+capture = 'zk new --no-input "$ZK_NOTEBOOK_DIR/inbox-7gho.md"'
 
 # edit config file
 conf = '$EDITOR "$HOME/.config/zk/config.toml"'

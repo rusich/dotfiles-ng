@@ -69,10 +69,6 @@ opt.laststatus = 3
 
 opt.wrap = false
 
--- Need for neorg-nvim
--- opt.conceallevel = 2
--- opt.concealcursor = 'nc'
-
 -- Folding
 -- opt.foldmethod = 'indent'
 opt.foldmethod = 'expr'

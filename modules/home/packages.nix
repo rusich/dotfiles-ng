@@ -45,7 +45,6 @@
     libsecret
     gnome-calculator
     cht-sh
-    wl-clipboard
     luarocks
     # rustup
     # cargo
@@ -62,6 +61,7 @@
     networkmanagerapplet
     nodejs_24
     discord
+    wl-clipboard
   ];
 
 }

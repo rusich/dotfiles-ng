@@ -5,5 +5,6 @@
     file
     usbutils
     pciutils
+    dig
   ];
 }

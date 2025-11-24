@@ -64,20 +64,20 @@ local spec = {
   },
 
   keys = {
-    {
-      '<leader>z',
-      function()
-        Snacks.zen()
-      end,
-      desc = 'Zen Mode',
-    },
-    {
-      '<leader>Z',
-      function()
-        Snacks.zen.zoom()
-      end,
-      desc = 'Zen Zoom',
-    },
+    -- {
+    --   '<leader>z',
+    --   function()
+    --     Snacks.zen()
+    --   end,
+    --   desc = 'Zen Mode',
+    -- },
+    -- {
+    --   '<leader>Z',
+    --   function()
+    --     Snacks.zen.zoom()
+    --   end,
+    --   desc = 'Zen Zoom',
+    -- },
     {
       '<leader>un',
       function()

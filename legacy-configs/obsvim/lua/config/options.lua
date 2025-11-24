@@ -69,8 +69,8 @@ opt.laststatus = 3
 
 opt.wrap = false
 
--- Need for neorg-nvim
--- opt.conceallevel = 2
+-- Need for Obsidian.nvim
+opt.conceallevel = 2
 -- opt.concealcursor = 'nc'
 
 -- Folding

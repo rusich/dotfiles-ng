@@ -59,16 +59,6 @@
       inputs.dgop.follows = "dgop";
     };
 
-    # Noctalia shell
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-      inputs.quickshell.follows = "quickshell"; # Use same quickshell version
-    };
-    quickshell = {
-      url = "github:outfoxxed/quickshell";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
   };
 
   outputs =

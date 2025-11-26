@@ -12,7 +12,8 @@ language = "ru"
 default-title = "Untitled"
 
 # Template used to generate a note's filename, without extension.
-filename = "{{slug title}}-{{id}}"
+# filename = "{{slug title}}-{{id}}"
+filename = "{{title}}"
 
 # The file extension used for the notes.
 extension = "md"
@@ -68,6 +69,11 @@ author = "rusich"
 #filename = "{{format-date now}}"
 #[group."<NAME>".extra]
 #key = "value"
+
+[group.capture.note]
+filename = "inbox"
+extension = "md"
+template = "capture.md"
 
 [group.daily]
 paths = ["daily"]
@@ -178,7 +184,7 @@ editlast = "zk edit --limit 1 --sort modified- $@"
 
 ls = "zk list $@"
 daily = 'zk new --no-input "$ZK_NOTEBOOK_DIR/daily"'
-capture = 'zk new --no-input "$ZK_NOTEBOOK_DIR/inbox-7gho.md"'
+capture = 'zk new --no-input --group capture'
 
 # edit config file
 conf = '$EDITOR "$HOME/.config/zk/config.toml"'

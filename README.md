@@ -2,4 +2,4 @@
 
 [[AGENTS.md]]
 
-[Agents] (AGENTS.md)
+[Agents](AGENTS.md)

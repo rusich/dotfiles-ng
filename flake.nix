@@ -59,6 +59,10 @@
       inputs.dgop.follows = "dgop";
     };
 
+    quickshell = {
+      url = "github:outfoxxed/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs =

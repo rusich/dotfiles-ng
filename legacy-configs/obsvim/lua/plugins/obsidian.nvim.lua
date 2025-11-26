@@ -18,7 +18,7 @@ return {
     workspaces = {
       {
         name = "default",
-        path = "~/Nextcloud/Notes/",
+        path = "~/Nextcloud/ZKNotes/",
       },
     },
 

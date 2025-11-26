@@ -14,6 +14,13 @@ return {
           }
         },
       },
+
+      lsp = {
+        config = {},
+        auto_attach = {
+          enabled = false,
+        },
+      }
     })
 
     local zk = require("zk")

@@ -211,7 +211,12 @@
     # Allow unfree packages
 
     programs.firefox.enable = true;
-    programs.nix-ld.enable = true; # what's the heck it's this...
+    programs.nix-ld = {
+      enable = true; # what's the heck it's this...
+      libraries = with pkgs; [
+        icu
+      ];
+    };
     programs.fish.enable = true;
     programs.neovim = {
       enable = true;

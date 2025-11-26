@@ -12,6 +12,11 @@ local spec = {
     },
     picker = {
       enabled = true,
+      -- set ivy to default
+      layout = {
+        preset = "ivy",
+      }
+
     },
     image = { enabled = true },
     bigfile = { enabled = true },

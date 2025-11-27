@@ -1,8 +1,9 @@
 [notebook]
-dir = "~/Nextcloud/ZKNotes/" 
+dir = "~/Nextcloud/Notes/" 
 
 # NOTE SETTINGS
 [note]
+template = "default.md"
 
 # Language used when writing notes.
 # This is used to generate slugs or with date formats.

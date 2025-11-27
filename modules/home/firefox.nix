@@ -26,7 +26,7 @@
 
       extensions = {
         force = true;
-        packages = with inputs.firefox-addons.packages.${pkgs.hostPlatform.system}; [
+        packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
           keepassxc-browser
           simple-translate
         ];

@@ -51,7 +51,7 @@ in
     unstable.tonelib-jam
     unstable.tonelib-metal
     unstable.tonelib-gfx
-    unstable.reaper
+    reaper
     qjackctl
     gmetronome
     guitarix

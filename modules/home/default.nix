@@ -31,7 +31,7 @@
   };
 
   home.packages = with pkgs; [
-    unstable.fastfetch
+    fastfetch
     neofetch
   ];
 

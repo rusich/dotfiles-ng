@@ -29,7 +29,6 @@
     enable = true;
     openFirewall = true;
     defaultRuntime = true;
-    package = pkgs.unstable.wivrn;
     steam.importOXRRuntimes = true; # for Steam auto discover WivRN
   };
 

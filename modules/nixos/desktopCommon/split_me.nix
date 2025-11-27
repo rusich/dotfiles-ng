@@ -152,11 +152,6 @@
     # Hyprland
     programs.hyprland = {
       enable = true;
-      # package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-      # portalPackage =
-      #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-      package = pkgs.unstable.hyprland;
-      portalPackage = pkgs.unstable.xdg-desktop-portal-hyprland;
     };
 
     # Niri
@@ -223,7 +218,7 @@
       defaultEditor = true;
     };
 
-    programs.nekoray = {
+    programs.throne = {
       enable = true;
       tunMode.enable = true;
       #   # tunMode.setuid = true;

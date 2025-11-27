@@ -2,7 +2,7 @@
   description = "NixOS, nix-darwin and home-manager config in one place!";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-25.05";
+    nixpkgs.url = "nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
 
     nix-darwin = {
@@ -18,8 +18,8 @@
 
     # Home Manager Unstable
     home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      url = "github:nix-community/home-manager/release-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     firefox-addons = {
@@ -33,7 +33,7 @@
     # };
     stylix = {
       url = "github:nix-community/stylix";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     yandex-browser = {
@@ -41,35 +41,24 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixvim = {
-      url = "github:nix-community/nixvim/nixos-25.05";
-      # If using a stable channel you can use `url = "github:nix-community/nixvim/nixos-<version>"`
-      # inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # DankMaterialShell
     dgop = {
       url = "github:AvengeMedia/dgop";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     dankMaterialShell = {
       url = "github:AvengeMedia/DankMaterialShell";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
       inputs.dgop.follows = "dgop";
     };
 
-    quickshell = {
-      url = "github:outfoxxed/quickshell";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
   };
 
   outputs =
     {
       self,
       stylix,
-      nixvim,
       nixpkgs,
       nix-darwin,
       home-manager,
@@ -144,7 +133,6 @@
           pkgs = nixpkgs.legacyPackages.${system};
           modules = [
             stylix.homeModules.stylix
-            nixvim.homeModules.nixvim
             "${self}/modules/home"
           ];
 
@@ -155,24 +143,5 @@
           };
         };
       });
-
-      # homeConfigurations = {
-      #   ${userSettings.username} = home-manager.lib.homeManagerConfiguration {
-      #     inherit pkgs;
-      #     modules = [
-      #       stylix.homeModules.stylix
-      #       ./common/theme.nix
-      #       ./home-manager
-      #     ];
-      #     extraSpecialArgs = {
-      #       inherit
-      #         userSettings
-      #         unstable
-      #         inputs
-      #         system
-      #         ;
-      #     };
-      #   };
-      # };
     };
 }

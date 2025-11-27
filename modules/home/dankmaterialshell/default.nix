@@ -15,15 +15,13 @@ in
   ];
 
   home.packages = with pkgs; [
-    # unstable.kdePackages.qtmultimedia
     kdePackages.qtmultimedia
     adw-gtk3
   ];
 
   programs.dankMaterialShell = {
     enable = true;
-    quickshell.package = inputs.quickshell.packages."${system}".default;
-    # quickshell.package = pkgs.unstable.quickshell;
+    # quickshell.package = inputs.quickshell.packages."${system}".default;
     # niri = {
     #   enableKeybinds = true; # Automatic keybinding configuration
     #   enableSpawn = true; # Auto-start DMS with niri

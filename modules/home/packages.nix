@@ -24,8 +24,7 @@
     nerd-fonts.fantasque-sans-mono
     kdePackages.breeze
     # wayland
-    rofi-wayland
-    wofi
+    rofi
     # swaynotificationcenter
     waybar
     waylock

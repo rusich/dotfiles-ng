@@ -20,19 +20,4 @@
     vimdiffAlias = true;
   };
 
-  programs.nixvim = {
-    enable = false;
-    #   # config = {
-    #   #   options = {
-    #   #     number = true;
-    #   #     relativenumber = true;
-    #   #
-    #   #     shiftwidth = 2;
-    #   #   };
-    #   # };
-    #
-    #   colorschemes.catppuccin.enable = true;
-    #   plugins.lualine.enable = true;
-  };
-
 }

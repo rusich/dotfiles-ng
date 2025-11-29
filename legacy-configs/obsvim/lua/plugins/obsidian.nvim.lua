@@ -15,13 +15,49 @@ return {
   ---@type obsidian.config
   opts = {
     legacy_commands = false, -- this will be removed in the next major release
+    note_id_func = function(title)
+      return title
+    end,
+    frontmatter = {
+      sort = { "title", "created", "updated", "aliases", "tags" },
+      func = function(note)
+        -- Берем существующие метаданные или создаем новые
+        local existing = note.frontmatter(note) or {}
+        local now = os.date("%Y-%m-%d %H:%M")
+        local out = {
+          title = note.title,
+          updated = now,
+          created = existing.created or now
+        }
+
+        -- Копируем все существующие поля
+        for k, v in pairs(existing) do
+          -- Пропускаем поля, которые будем обрабатывать отдельно
+          if k ~= "id" and k ~= "title" and k ~= "tags" and k ~= "aliases" and k ~= "updated" then
+            out[k] = v
+          end
+        end
+
+        if note.tags and #note.tags > 0 then out.tags = note.tags end
+        if note.aliases and #note.aliases > 0 then out.aliases = note.aliases end
+
+        return out
+      end
+    },
     workspaces = {
       {
         name = "default",
-        path = "~/Nextcloud/ZKNotes/",
+        path = "~/Nextcloud/Notes/",
       },
     },
+    picker = {
+      name = "telescope.nvim",
+      layout = { preset = "ivy" },
 
+    },
     -- see below for full list of options 👇
+    ui = {
+      enable = false,
+    },
   },
 }

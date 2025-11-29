@@ -21,7 +21,8 @@ in
 
   programs.dankMaterialShell = {
     enable = true;
-    # quickshell.package = inputs.quickshell.packages."${system}".default;
+    quickshell.package = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    # quickshell.package = pkgs.unstable.quickshell;
     # niri = {
     #   enableKeybinds = true; # Automatic keybinding configuration
     #   enableSpawn = true; # Auto-start DMS with niri

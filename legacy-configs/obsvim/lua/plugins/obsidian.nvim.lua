@@ -52,7 +52,8 @@ return {
     },
     picker = {
       name = "telescope.nvim",
-      layout = { preset = "ivy" },
+      -- name = "snacks.pick",
+      -- layout = { preset = "ivy" },
 
     },
     -- see below for full list of options 👇

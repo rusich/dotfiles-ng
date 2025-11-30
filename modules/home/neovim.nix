@@ -1,9 +1,15 @@
 {
   config,
+  pkgs,
   ...
 }:
 {
 
+  home.packages = with pkgs; [
+    tree-sitter # for latext TS
+    python313Packages.pylatexenc # for render-markdown.nvim
+
+  ];
   # backup nvim config
   home.file = {
     ".config/nvim_old".source =

@@ -46,7 +46,7 @@
     cht-sh
     luarocks
     # rustup
-    # cargo
+    cargo
     # rustc
     libnotify
 

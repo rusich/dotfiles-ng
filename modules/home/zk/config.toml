@@ -112,7 +112,7 @@ multiword-tags = false
 
 # Default editor used to open notes. When not set, the EDITOR or VISUAL
 # environment variables are used.
-editor = "NVIM_APPNAME=zkvim nvim"
+editor = "NVIM_APPNAME=nvim_old nvim"
 
 # Pager used to scroll through long output. If you want to disable paging
 # altogether, set it to an empty string "".

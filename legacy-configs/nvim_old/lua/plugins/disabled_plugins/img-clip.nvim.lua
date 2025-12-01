@@ -31,14 +31,6 @@ local spec = {
         return vim.fn.expand '%:t:r' .. '-img-%y%m%d-%H%M%S'
       end,
     },
-    filetypes = {
-      org = {
-        template = [=[
-[[file:$FILE_PATH]]
-#+CAPTION: $CURSOR$LABEL 
-    ]=], ---@type string | fun(context: table): string
-      },
-    },
   },
 }
 

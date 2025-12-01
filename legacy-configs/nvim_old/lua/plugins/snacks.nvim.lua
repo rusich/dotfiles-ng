@@ -12,13 +12,27 @@ local spec = {
     },
     picker = {
       enabled = true,
+      -- set ivy to default
+      layout = {
+        preset = "ivy",
+      }
     },
-    image = { enabled = true },
+    image = {
+      enabled = true,
+      math = {
+        enabled = true
+      },
+    },
     bigfile = { enabled = true },
     dashboard = {
       enabled = true,
       example = 'compact_files',
       preset = {
+        header = [[
+▄████▄ ▄▄▄▄   ▄▄▄▄ ▄▄ ▄▄ ▄▄ ▄▄   ▄▄
+██  ██ ██▄██ ███▄▄ ██▄██ ██ ██▀▄▀██
+▀████▀ ██▄█▀ ▄▄██▀  ▀█▀  ██ ██   ██]]
+        ,
         keys = {
           { icon = ' ', key = 'f', desc = 'Find File', action = ":lua Snacks.dashboard.pick('files')" },
           { icon = ' ', key = 'n', desc = 'New File', action = ':ene | startinsert' },

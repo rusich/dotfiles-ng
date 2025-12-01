@@ -8,9 +8,9 @@ local spec = {
     'nvim-orgmode/orgmode',
     event = 'VeryLazy',
     keys = {
-      { '<leader>oa' },
-      { '<leader>oc' },
-      { '<leader>oI' },
+      { '<leader>Oa' },
+      { '<leader>Oc' },
+      { '<leader>OI' },
     },
     ft = { 'org' },
     dependencies = {
@@ -93,8 +93,10 @@ local spec = {
         -- org_agenda_text_search_extra_files = { 'agenda-archives' },
         org_use_tag_inheritance = true,
         mappings = {
+
+          prefix = "<leader>O",
           org = {
-            org_archive_subtree = '<leader>o?',
+            org_archive_subtree = '<leader>O?',
           },
           capture = {
             org_capture_kill = 'q',
@@ -155,15 +157,15 @@ local spec = {
       }
 
       -- Custom mappings
-      vim.keymap.set('n', '<leader>oI', '<cmd>e ~/Nextcloud/org/inbox.org<cr>', { desc = 'Open Inbox' })
-      vim.keymap.set('n', '<leader>o$', ext.archive_to_daily, { desc = 'Archive heading' }) -- Replace origina archive function
+      vim.keymap.set('n', '<leader>OI', '<cmd>e ~/Nextcloud/org/inbox.org<cr>', { desc = 'Open Inbox' })
+      vim.keymap.set('n', '<leader>O$', ext.archive_to_daily, { desc = 'Archive heading' }) -- Replace origina archive function
     end,
   },
   {
     lazy = true,
     ft = 'org',
     'chipsenkbeil/org-roam.nvim',
-    keys = { { '<leader>n' } },
+    keys = { { '<leader>ON' } },
     -- lazy = false,
     -- tag = '0.1.0',
     dependencies = {
@@ -184,7 +186,7 @@ local spec = {
           },
         },
         bindings = {
-          prefix = '<leader>n',
+          prefix = '<leader>ON',
         },
         -- optional
         org_files = {
@@ -214,8 +216,9 @@ local spec = {
       }
 
       -- open quickfix list of links and backlingks for current Node (replace original)
-      vim.keymap.set('n', '<leader>nq', ext.qf_links_and_backlinks, { desc = 'Open quickfix list of links and backlinks for current node' })
-      -- define <leader>onr keymap to open quickfix list of links for current org-file
+      vim.keymap.set('n', '<leader>ONq', ext.qf_links_and_backlinks,
+        { desc = 'Open quickfix list of links and backlinks for current node' })
+      -- define <leader>Onr keymap to open quickfix list of links for current org-file
     end,
   },
   {

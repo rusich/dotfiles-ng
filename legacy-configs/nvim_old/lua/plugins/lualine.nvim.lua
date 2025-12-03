@@ -1,4 +1,5 @@
 -- A blazing fast and easy to configure Neovim statusline written in Lua.
+--
 
 local spec = {
   'nvim-lualine/lualine.nvim',

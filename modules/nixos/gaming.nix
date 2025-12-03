@@ -28,8 +28,8 @@
   services.wivrn = {
     enable = true;
     openFirewall = true;
-    defaultRuntime = true;
-    steam.importOXRRuntimes = true; # for Steam auto discover WivRN
+    # defaultRuntime = true;
+    # steam.importOXRRuntimes = true; # for Steam auto discover WivRN
   };
 
   programs.alvr = {

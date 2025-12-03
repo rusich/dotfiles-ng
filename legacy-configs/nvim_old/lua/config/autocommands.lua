@@ -134,6 +134,107 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
   end,
 })
 
--- Wh
+-- Автоматическое продолжение списков в markdown
+-- Общая функция для продолжения списков
+local function continue_list()
+  local line = vim.api.nvim_get_current_line()
+  local row = vim.api.nvim_win_get_cursor(0)[1]
+  local indent = line:match("^(%s*)") or ""
+
+  -- Проверяем разные типы списков
+  local patterns = {
+    -- Checkbox: "- [ ] текст" или "* [ ] текст"
+    {
+      pattern = "^%s*([-*])%s+%[(%s)%]%s+(.*)$",
+      handler = function(bullet, checked)
+        local next_checked = checked == "x" and "x" or " "
+        return indent .. bullet .. " [" .. next_checked .. "] "
+      end
+    },
+    -- Обычный маркированный список: "- текст" или "* текст"
+    {
+      pattern = "^%s*([-*])%s+(.*)$",
+      handler = function(bullet)
+        return indent .. bullet .. " "
+      end
+    },
+    -- Нумерованный список: "1. текст"
+    {
+      pattern = "^%s*(%d+)%.%s+(.*)$",
+      handler = function(num)
+        local next_num = tonumber(num) + 1
+        return indent .. tostring(next_num) .. ". "
+      end
+    }
+  }
+
+  for _, p in ipairs(patterns) do
+    local match = { line:match(p.pattern) }
+    if #match > 0 then
+      return p.handler(unpack(match))
+    end
+  end
+
+  return nil -- не список
+end
+
+-- Автоматическое продолжение списков
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    -- INSERT MODE: Ctrl+Enter для продолжения списка
+    vim.keymap.set("i", "<C-CR>", function()
+      local continuation = continue_list()
+      if continuation then
+        -- В insert mode: перейти на новую строку и вставить продолжение
+        return "<CR>" .. continuation
+      else
+        -- Если не список - обычный новый абзац
+        return "<CR><CR>"
+      end
+    end, { expr = true, buffer = bufnr })
+
+    -- NORMAL MODE: Ctrl+Enter для добавления нового элемента списка
+    vim.keymap.set("n", "<C-CR>", function()
+      local continuation = continue_list()
+      if continuation then
+        -- В normal mode: перейти на новую строку ниже и вставить продолжение
+        vim.api.nvim_feedkeys("o" .. continuation, "n", false)
+      else
+        -- Если не список - просто новая строка
+        vim.api.nvim_feedkeys("o", "n", false)
+      end
+    end, { buffer = bufnr })
+
+    -- Опционально: можно оставить обычный Enter умным для списков
+    vim.keymap.set("i", "<CR>", function()
+      local line = vim.api.nvim_get_current_line()
+      local col = vim.api.nvim_win_get_cursor(0)[2] + 1
+
+      -- Если курсор не в конце строки
+      if col <= #line then
+        return "<CR>"
+      end
+
+      -- Если строка пустая или содержит только пробелы
+      if line:match("^%s*$") then
+        return "<CR>"
+      end
+
+      -- Проверяем, пустой ли элемент списка
+      if line:match("^%s*[-*]%s+%[%s%]%s*$") or
+          line:match("^%s*[-*]%s*$") or
+          line:match("^%s*%d+%.%s*$") then
+        -- На пустом элементе списка - выйти из списка
+        return "<CR><C-u>"
+      end
+
+      -- Обычный Enter
+      return "<CR>"
+    end, { expr = true, buffer = bufnr })
+  end
+})
 
 -- vim: ts=2 sts=2 sw=2 et

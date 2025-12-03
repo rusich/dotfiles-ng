@@ -13,6 +13,10 @@ return {
   -- },
   keys = {
     { '<leader>nf', "<cmd>Obsidian quick_switch<cr>", desc = 'Find (or create)' },
+    { '<leader>fn', "<cmd>Obsidian quick_switch<cr>", desc = 'Notes' },
+    { '<leader>n/', "<cmd>Obsidian search<cr>",       desc = 'Grep' },
+    { '<leader>nl', "<cmd>Obsidian links<cr>",        desc = 'Show links' },
+    { '<leader>nb', "<cmd>Obsidian backlinks<cr>",    desc = 'Show backlinks' },
   },
   ---@module 'obsidian'
   ---@type obsidian.config
@@ -76,8 +80,9 @@ return {
       end
     },
     checkbox = {
-      enabled = false,
-      -- order = { " ", "~", "-", "x" },
+      enabled = true,
+      create_new = false,
+      order = { " ", "x", "-", "/" },
     }
   },
 }

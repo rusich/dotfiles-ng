@@ -6,5 +6,13 @@
       "return ${3:baz}"
     ],
     "description": "Foo foo"
+  },
+  "kristi": {
+    "prefix": "kristi",
+    "body": [
+      "-- Kristina ${1:foo} = ${2:bar}",
+      "return ${3:baz}"
+    ],
+    "description": "Kirsi"
   }
 }

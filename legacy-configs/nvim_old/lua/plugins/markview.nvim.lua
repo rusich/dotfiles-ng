@@ -12,7 +12,23 @@ return {
     -- latex = {
     --   enable = false,
     -- }
-    --
+
+    markdown = {
+      list_items = {
+        --   enable = false, -- Using checkmate.nvim for checkbox render
+
+        marker_minus = {
+          text = "-",
+        },
+      },
+    },
+    markdown_inline = {
+      -- -- Using checkmate.nvim for checkbox render
+      --   checkboxes = {
+      --     enable = false
+      --   }
+    },
+
     yaml = {
       properties = {
         ["^created$"] = {
@@ -26,8 +42,13 @@ return {
           use_types = false,
           text = "󰃭 ",
           hl = "MarkviewIcon3"
+        },
+        ["^link$"] = {
+          match_string = "^updated$",
+          use_types = false,
+          text = " ",
+          hl = "MarkviewIcon3"
         }
-
       },
     }
   }

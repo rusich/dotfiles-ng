@@ -73,6 +73,7 @@ opt.wrap = false
 -- opt.foldmethod = 'indent'
 opt.foldmethod = 'expr'
 opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+-- vim.opt.foldmethod = 'marker'
 -- opt.foldtext = ''
 opt.foldlevel = 99
 opt.foldlevelstart = 99

@@ -18,10 +18,32 @@ local spec = {
       }
     },
     image = {
+      debug = {
+        convert = false,   -- Shows LaTeX conversion commands
+        request = false,   -- Shows image display requests
+        placement = false, -- Shows image placement operations
+      },
       enabled = true,
       math = {
-        enabled = true
+        enabled = true,
+        latex = {
+          font_size = "Small",
+          tpl = [[
+      \documentclass[preview,border=0pt,varwidth,12pt]{standalone}
+      \usepackage{${packages}}
+      \begin{document}
+      ${header}
+      { \${font_size} \selectfont
+        \color[HTML]{${color}}
+      ${content}}
+      \end{document}]]
+        }
       },
+      convert = {
+        magick = {
+          math = { "-density", 192, "{src}[{page}]", "-trim", "-transparent", "white" }
+        }
+      }
     },
     bigfile = { enabled = true },
     dashboard = {

@@ -7,7 +7,19 @@
 
   home.packages = with pkgs; [
     tree-sitter # for latext TS
-    python313Packages.pylatexenc # for render-markdown.nvim
+    ghostscript_headless
+    texlive.combined.scheme-full
+    mermaid-cli
+    # python313Packages.pylatexenc # for render-markdown.nvim
+    # (texlive.combine {
+    #   inherit (texlive)
+    #     scheme-full
+    #     amsmath
+    #     # amssymb
+    #     amsfonts
+    #     mathtools
+    #     ;
+    # })
 
   ];
   # backup nvim config

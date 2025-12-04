@@ -9,10 +9,10 @@ return {
     { '<leader>um', "<cmd>Markview<cr>", desc = 'Toggle Markview render' },
   },
   opts = {
-    -- latex = {
-    --   enable = false,
-    -- }
-
+    latex = {
+      -- using Snacks.nvim
+      enable = false,
+    },
     markdown = {
       list_items = {
         --   enable = false, -- Using checkmate.nvim for checkbox render

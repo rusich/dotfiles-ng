@@ -114,12 +114,14 @@
   "dwlShowAllTags": false,
   "workspaceNameIcons": {},
   "waveProgressEnabled": true,
+  "scrollTitleEnabled": true,
   "clockCompactMode": false,
   "focusedWindowCompactMode": false,
   "runningAppsCompactMode": true,
   "keyboardLayoutNameCompactMode": false,
   "runningAppsCurrentWorkspace": false,
   "runningAppsGroupByApp": false,
+  "centeringMode": "index",
   "clockDateFormat": "",
   "lockDateFormat": "",
   "mediaSize": 1,
@@ -128,6 +130,7 @@
   "sortAppsAlphabetically": false,
   "appLauncherGridColumns": 4,
   "spotlightCloseNiriOverview": true,
+  "niriOverviewOverlayEnabled": true,
   "weatherLocation": "Якутск, Дальневосточный федеральный округ",
   "weatherCoordinates": "62.0274078,129.7319787",
   "useAutoLocation": false,
@@ -190,6 +193,10 @@
   "dockMargin": 0,
   "dockIconSize": 40,
   "dockIndicatorStyle": "circle",
+  "dockBorderEnabled": false,
+  "dockBorderColor": "surfaceText",
+  "dockBorderOpacity": 1,
+  "dockBorderThickness": 1,
   "notificationOverlayEnabled": false,
   "modalDarkenBackground": true,
   "lockScreenShowPowerActions": true,
@@ -285,6 +292,10 @@
           "enabled": true
         },
         {
+          "id": "dankPomodoroTimer",
+          "enabled": true
+        },
+        {
           "id": "weather",
           "enabled": true
         },
@@ -294,10 +305,6 @@
         }
       ],
       "rightWidgets": [
-        {
-          "id": "dankPomodoroTimer",
-          "enabled": true
-        },
         {
           "id": "systemTray",
           "enabled": true

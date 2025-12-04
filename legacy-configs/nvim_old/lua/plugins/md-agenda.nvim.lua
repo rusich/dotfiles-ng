@@ -37,7 +37,7 @@ return {
       -- Custom types that you can use instead of TODO.
       -- Default: {}
       -- The plugin will give an error if you use RGB colors (e.g. #ffffff)
-      customTodoTypes = { PAYMENT = "magenta" }, -- A map of item type and its color
+      customTodoTypes = { PAYMENT = "magenta", LEARNING = "yellow", SOMEDAY = "cyan" }, -- A map of item type and its color
 
       -- "vertical" or "horizontal"
       -- Default: "horizontal"
@@ -48,7 +48,7 @@ return {
           {
             -- Item types, e.g., {"TODO", "INFO"}.
             -- Gets the items that match one of the given types. Ignored if empty.
-            type = { "TODO", "INFO" },
+            type = { "TODO", "INFO", "LEARNING", "SOMEDAY" },
 
             -- List of tags to filter. Use AND/OR conditions.
             -- e.g., {AND = {"tag1", "tag2"}, OR = {"tag1", "tag2"}}. Ignored if empty.

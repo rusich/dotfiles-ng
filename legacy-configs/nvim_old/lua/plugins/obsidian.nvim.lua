@@ -12,11 +12,22 @@ return {
   --   "BufNewFile path/to/my-vault/*.md",
   -- },
   keys = {
-    { '<leader>nf', "<cmd>Obsidian quick_switch<cr>", desc = 'Find (or create)' },
-    { '<leader>fn', "<cmd>Obsidian quick_switch<cr>", desc = 'Notes' },
-    { '<leader>n/', "<cmd>Obsidian search<cr>",       desc = 'Grep' },
-    { '<leader>nl', "<cmd>Obsidian links<cr>",        desc = 'Show links' },
-    { '<leader>nb', "<cmd>Obsidian backlinks<cr>",    desc = 'Show backlinks' },
+    { '<leader>nf', "<cmd>Obsidian quick_switch<cr>",        desc = 'Find (or create)' },
+    { '<leader>fn', "<cmd>Obsidian quick_switch<cr>",        desc = 'Notes' },
+    { '<leader>n/', "<cmd>Obsidian search<cr>",              desc = 'Grep' },
+    { '<leader>nl', "<cmd>Obsidian links<cr>",               desc = 'Show links' },
+    { '<leader>nb', "<cmd>Obsidian backlinks<cr>",           desc = 'Show backlinks' },
+    { '<leader>nI', "<cmd>e ~/Nextcloud/Notes/Inbox.md<cr>", desc = 'Inbox' },
+    {
+      '<leader>ne',
+      function()
+        vim.ui.input({ prompt = "Extract Note" }, function(str)
+          require("obsidian.api").extract_note(str)
+        end)
+      end,
+      desc = 'Extract Note',
+      mode = "v"
+    },
   },
   ---@module 'obsidian'
   ---@type obsidian.config
@@ -30,7 +41,7 @@ return {
       func = function(note)
         -- Берем существующие метаданные или создаем новые
         local existing = note.frontmatter(note) or {}
-        local now = os.date("%Y-%m-%d %H:%M")
+        local now = os.date("%Y-%m-%d %a %H:%M")
         local out = {
           title = note.title,
           updated = now,
@@ -50,6 +61,14 @@ return {
 
         return out
       end
+    },
+    templates = {
+      folder = "templates",
+      date_format = "%Y-%m-%d %a",
+      time_format = "%H:%M",
+      customizations = {
+
+      },
     },
     workspaces = {
       {
@@ -83,6 +102,10 @@ return {
       enabled = true,
       create_new = false,
       order = { " ", "x", "-", "/" },
-    }
+    },
+    daily_notes = {
+      folder = "daily",
+      workdays_only = false,
+    },
   },
 }

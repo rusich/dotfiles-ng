@@ -40,24 +40,31 @@ return {
       sort = { "title", "created", "updated", "aliases", "tags" },
       func = function(note)
         -- Берем существующие метаданные или создаем новые
-        local existing = note.frontmatter(note) or {}
+        local frontmatter = note.frontmatter(note) or {}
         local now = os.date("%Y-%m-%d %a %H:%M")
         local out = {
           title = note.title,
           updated = now,
-          created = existing.created or now
+          created = frontmatter.created or now
         }
 
         -- Копируем все существующие поля
-        for k, v in pairs(existing) do
+        for k, v in pairs(frontmatter) do
           -- Пропускаем поля, которые будем обрабатывать отдельно
-          if k ~= "id" and k ~= "title" and k ~= "tags" and k ~= "aliases" and k ~= "updated" then
+          if k ~= "id" and k ~= "title" and k ~= "tags" and k ~= "updated" and k ~= "aliases" then
             out[k] = v
           end
         end
 
-        if note.tags and #note.tags > 0 then out.tags = note.tags end
-        if note.aliases and #note.aliases > 0 then out.aliases = note.aliases end
+        for i, v in ipairs(frontmatter.aliases) do
+          if v == note.title then
+            table.remove(frontmatter.aliases, i)
+          end
+        end
+
+        if #frontmatter.aliases > 0 then out.aliases = frontmatter.aliases end
+
+        if frontmatter.tags and #frontmatter.tags > 0 then out.tags = frontmatter.tags end
 
         return out
       end
@@ -105,6 +112,7 @@ return {
     },
     daily_notes = {
       folder = "daily",
+      template = "daily.md",
       workdays_only = false,
     },
   },

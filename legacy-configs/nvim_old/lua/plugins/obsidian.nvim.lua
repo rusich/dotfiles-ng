@@ -11,24 +11,6 @@ return {
   --   "BufReadPre path/to/my-vault/*.md",
   --   "BufNewFile path/to/my-vault/*.md",
   -- },
-  keys = {
-    { '<leader>nf', "<cmd>Obsidian quick_switch<cr>",        desc = 'Find (or create)' },
-    { '<leader>fn', "<cmd>Obsidian quick_switch<cr>",        desc = 'Notes' },
-    { '<leader>n/', "<cmd>Obsidian search<cr>",              desc = 'Grep' },
-    { '<leader>nl', "<cmd>Obsidian links<cr>",               desc = 'Show links' },
-    { '<leader>nb', "<cmd>Obsidian backlinks<cr>",           desc = 'Show backlinks' },
-    { '<leader>nI', "<cmd>e ~/Nextcloud/Notes/Inbox.md<cr>", desc = 'Inbox' },
-    {
-      '<leader>ne',
-      function()
-        vim.ui.input({ prompt = "Extract Note" }, function(str)
-          require("obsidian.api").extract_note(str)
-        end)
-      end,
-      desc = 'Extract Note',
-      mode = "v"
-    },
-  },
   ---@module 'obsidian'
   ---@type obsidian.config
   opts = {
@@ -38,7 +20,7 @@ return {
     end,
     frontmatter = {
       enabled = function(fname)
-        return fname:match("^%.zk/templates/") == nil and fname:match("daily/") == nil
+        return fname:match("^%.zk/templates/") == nil -- and fname:match("daily/") == nil
       end,
       sort = { "title", "created", "updated", "aliases", "tags" },
       func = function(note)
@@ -107,8 +89,8 @@ return {
     },
     daily_notes = {
       folder = "daily",
-      template = "daily.md",
       workdays_only = false,
+      default_tags = { "daily-notes" },
     },
   },
 }

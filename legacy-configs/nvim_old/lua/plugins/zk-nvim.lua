@@ -47,19 +47,5 @@ return {
 
     commands.add("ZkOrphans", make_edit_fn({ orphan = true }, { title = "Zk Orphans" }))
     commands.add("ZkRecents", make_edit_fn({ createdAfter = "2 weeks ago" }, { title = "Zk Recents" }))
-
-    vim.keymap.set('n', '<leader>nc', function()
-      local params = {
-        template = "todo.md",
-        insertContentAtLocation = {
-          uri = "~/Nextcloud/Notes/Inbox.md",
-          range = {
-            start = { line = vim.fn.line('.') - 1, character = 0 },
-            ['end'] = { line = vim.fn.line('.') - 1, character = 0 }
-          }
-        }
-      }
-      vim.cmd("ZkNew " .. vim.fn.shellescape(vim.fn.json_encode(params)))
-    end, { desc = "Insert zk template content at cursor" })
   end
 }

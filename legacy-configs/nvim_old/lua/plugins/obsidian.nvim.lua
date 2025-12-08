@@ -37,11 +37,14 @@ return {
       return title
     end,
     frontmatter = {
+      enabled = function(fname)
+        return fname:match("^%.zk/templates/") == nil
+      end,
       sort = { "title", "created", "updated", "aliases", "tags" },
       func = function(note)
         -- Берем существующие метаданные или создаем новые
         local frontmatter = note.frontmatter(note) or {}
-        local now = os.date("%Y-%m-%d %a %H:%M")
+        local now = os.date("%Y-%m-%d %H:%M")
         local out = {
           title = note.title,
           updated = now,
@@ -68,14 +71,6 @@ return {
 
         return out
       end
-    },
-    templates = {
-      folder = "templates",
-      date_format = "%Y-%m-%d %a",
-      time_format = "%H:%M",
-      customizations = {
-
-      },
     },
     workspaces = {
       {

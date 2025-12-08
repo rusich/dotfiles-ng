@@ -43,8 +43,8 @@ return {
           text = "󰃭 ",
           hl = "MarkviewIcon3"
         },
-        ["^link$"] = {
-          match_string = "^updated$",
+        ["^urls$"] = {
+          match_string = "^urls$",
           use_types = false,
           text = " ",
           hl = "MarkviewIcon3"

@@ -61,6 +61,7 @@
     nodejs_24
     discord
     wl-clipboard
+    unstable.chatbox
   ];
 
 }

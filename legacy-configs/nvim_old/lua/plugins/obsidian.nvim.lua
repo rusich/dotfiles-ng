@@ -38,7 +38,7 @@ return {
     end,
     frontmatter = {
       enabled = function(fname)
-        return fname:match("^%.zk/templates/") == nil
+        return fname:match("^%.zk/templates/") == nil and fname:match("daily/") == nil
       end,
       sort = { "title", "created", "updated", "aliases", "tags" },
       func = function(note)

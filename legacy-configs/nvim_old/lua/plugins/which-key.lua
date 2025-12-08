@@ -11,19 +11,19 @@ local spec = {
 
     -- Document existing key chains
     require('which-key').add {
-      { '<leader>c',  group = 'Code' },
-      { '<leader>s',  group = 'Search' },
-      { '<leader>u',  group = 'ui' },
+      { '<leader>c', group = 'Code' },
+      { '<leader>s', group = 'Search' },
+      { '<leader>u', group = 'ui' },
       { '<leader>ut', group = 'Table Mode' },
-      { '<leader>g',  group = 'Git' },
-      { '<leader>x',  group = 'Trouble' },
-      { '<leader>a',  group = 'AI' },
-      { '<leader>n',  group = 'Notes' },
-      { '<leader>d',  group = 'Debug' },
-      { '<leader>O',  group = 'org' },
+      { '<leader>g', group = 'Git' },
+      { '<leader>x', group = 'Trouble' },
+      { '<leader>a', group = 'AI' },
+      { '<leader>n', group = 'Notes', icon = '' },
+      { '<leader>d', group = 'Debug' },
+      { '<leader>O', group = 'org' },
       { '<leader>up', group = 'Paste' },
-      { '<leader>f',  group = 'Find' },
-      { '<leader>f',  group = 'Find' },
+      { '<leader>f', group = 'Find' },
+      { '<leader>f', group = 'Find' },
     }
   end,
 }

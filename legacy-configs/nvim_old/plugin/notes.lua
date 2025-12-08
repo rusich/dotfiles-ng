@@ -710,11 +710,220 @@ function M.remove_current_file()
   end
 end
 
+-- 'rg -l "\\[.*%s.*\\]" --type md "%s"',
+-- Generate HUB page
+-- Вспомогательная функция: проверяет, есть ли у файла тег hub в frontmatter
+local function is_hub_file()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, 50, false) -- читаем первые 50 строк
+
+  local in_frontmatter = false
+  local in_tags = false
+
+  for _, line in ipairs(lines) do
+    if line == "---" then
+      if in_frontmatter then
+        break -- конец frontmatter
+      else
+        in_frontmatter = true
+      end
+    elseif in_frontmatter then
+      if line:match("^tags:") then
+        in_tags = true
+      elseif in_tags then
+        -- Ищем "- hub" с любым количеством пробелов
+        if line:match("^%s*-%s*hub%s*$") then
+          return true
+        end
+        -- Если строка не начинается с пробела или дефиса, выходим из тегов
+        if not line:match("^%s") then
+          in_tags = false
+        end
+      end
+    end
+  end
+
+  return false
+end
+
+-- Основная функция: обновляет раздел "Заметки" в hub-файле
+function M.generate_hub_page()
+  -- Проверяем, что это hub-файл
+  if not is_hub_file() then
+    notify("❌ Этот файл не помечен как hub (нет тега 'hub' в frontmatter)", vim.log.levels.WARN)
+    return
+  end
+
+  local hub_name = vim.fn.expand("%:t:r")
+  local notes_dir = expand_path(config.notes_dir)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local current_lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+
+  -- -- ДЕБАГ: Проверим что ищем
+  -- print("Ищем хаб с именем:", hub_name)
+  -- print("Директория заметок:", notes_dir)
+
+  -- Проверим существование директории
+  if vim.fn.isdirectory(notes_dir) == 0 then
+    notify("❌ Директория заметок не существует: " .. notes_dir, vim.log.levels.ERROR)
+    return
+  end
+
+  -- Простая команда поиска (проверим сначала без экранирования)
+  local search_pattern = string.format("\\[\\[%s\\]\\]", hub_name)
+  local command = string.format('rg --files-with-matches "%s" "%s"', search_pattern, notes_dir)
+
+  -- print("Команда поиска:", command)
+
+  local files = {}
+  local success, result = pcall(function()
+    return vim.fn.systemlist(command)
+  end)
+
+  if success and result then
+    files = result
+    -- print("Найдено файлов:", #files)
+    --   if #files > 0 then
+    --     print("Первый найденный файл:", files[1])
+    --   end
+    -- else
+    --   print("Ошибка при выполнении rg:", result)
+  end
+
+  -- Удаляем из списка сам hub-файл (чтобы он не ссылался на себя)
+  local hub_file_path = vim.api.nvim_buf_get_name(bufnr)
+  files = vim.tbl_filter(function(file)
+    return file ~= hub_file_path
+  end, files)
+
+  -- Находим и удаляем существующий раздел "Заметки"
+  local notes_section_start = 0
+  local notes_section_end = 0
+  local found_section = false
+
+  for i = 1, #current_lines do
+    local line = current_lines[i]
+
+    if not found_section and line:match("^## Заметки") then
+      notes_section_start = i
+      found_section = true
+    elseif found_section and notes_section_end == 0 then
+      -- Ищем конец раздела (следующий заголовок ## или конец файла)
+      if line:match("^## ") and i > notes_section_start then
+        notes_section_end = i - 1
+        break
+      elseif i == #current_lines then
+        notes_section_end = i
+        break
+      end
+    end
+  end
+
+  -- Создаем новые строки
+  local new_lines = {}
+
+  if notes_section_start > 0 then
+    -- Копируем всё ДО раздела "Заметки"
+    for i = 1, notes_section_start - 1 do
+      table.insert(new_lines, current_lines[i])
+    end
+  else
+    -- Если раздела нет, копируем весь файл
+    new_lines = vim.list_extend({}, current_lines)
+    notes_section_start = #new_lines + 1
+  end
+
+  -- Добавляем новый раздел "Заметки"
+  table.insert(new_lines, string.format("## Заметки (%d)", #files))
+  table.insert(new_lines, "")
+
+  if #files > 0 then
+    -- Сортируем заметки по алфавиту
+    table.sort(files, function(a, b)
+      return vim.fn.fnamemodify(a, ":t:r") < vim.fn.fnamemodify(b, ":t:r")
+    end)
+
+    for _, file in ipairs(files) do
+      local title = vim.fn.fnamemodify(file, ":t:r")
+      table.insert(new_lines, string.format("- [[%s]]", title))
+    end
+  else
+    table.insert(new_lines, "*Пока нет заметок в этом хабе*")
+  end
+
+  table.insert(new_lines, "")
+
+  -- Добавляем всё ПОСЛЕ раздела "Заметки" (если он был)
+  if notes_section_end > 0 and notes_section_end < #current_lines then
+    for i = notes_section_end + 1, #current_lines do
+      table.insert(new_lines, current_lines[i])
+    end
+  end
+
+  -- Заменяем содержимое буфера
+  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, new_lines)
+
+  -- Обновляем поле updated в frontmatter (если есть)
+  for i = 1, math.min(20, #new_lines) do
+    if new_lines[i] and new_lines[i]:match("^updated:") then
+      new_lines[i] = "updated: " .. get_current_datetime()
+      vim.api.nvim_buf_set_lines(bufnr, i - 1, i, false, { new_lines[i] })
+      break
+    end
+  end
+
+  -- Сохраняем файл
+  vim.cmd("write")
+
+  notify(string.format("🔄 Хаб '%s' обновлён (%d заметок)", hub_name, #files))
+end
+
+-- Автокоманда для автоматического обновления hub-файлов при открытии
+local function setup_hub_autocommand()
+  vim.api.nvim_create_autocmd('BufRead', {
+    pattern = '*.md',
+    callback = function(args)
+      local bufnr = args.buf
+
+      -- Даем файлу время загрузиться
+      vim.defer_fn(function()
+        if vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_get_name(bufnr):match("%.md$") then
+          -- Временно переключаемся на буфер для проверки
+          local current_buf = vim.api.nvim_get_current_buf()
+          vim.api.nvim_set_current_buf(bufnr)
+
+          if is_hub_file() then
+            -- Запускаем генерацию асинхронно
+            vim.defer_fn(function()
+              if vim.api.nvim_buf_is_valid(bufnr) then
+                -- Сохраняем текущий буфер
+                local prev_buf = vim.api.nvim_get_current_buf()
+                vim.api.nvim_set_current_buf(bufnr)
+
+                -- Вызываем функцию
+                M.generate_hub_page()
+
+                -- Возвращаемся к предыдущему буферу
+                vim.api.nvim_set_current_buf(prev_buf)
+              end
+            end, 100)
+          end
+
+          -- Возвращаемся к исходному буферу
+          vim.api.nvim_set_current_buf(current_buf)
+        end
+      end, 50)
+    end
+  })
+end
+
 -- Настройка команд и маппингов -----------------------------------------------
 function M.setup(user_config)
   if user_config then
     config = vim.tbl_extend("force", config, user_config)
   end
+
+  setup_hub_autocommand()
 
   -- Стандартизированные команды
   vim.api.nvim_create_user_command('NoteCapture', M.capture_to_inbox, {
@@ -737,6 +946,10 @@ function M.setup(user_config)
     desc = 'Delete current note file from disk'
   })
 
+  vim.api.nvim_create_user_command('NoteHub', M.generate_hub_page, {
+    desc = 'Generate hub page'
+  })
+
   -- Маппинги (можно настраивать через конфиг)
   vim.keymap.set('n', '<leader>nc', '<cmd>NoteCapture<CR>', {
     desc = 'Capture to Inbox'
@@ -756,6 +969,10 @@ function M.setup(user_config)
 
   vim.keymap.set('n', '<leader>nd', '<cmd>NoteRemoveFile<CR>', {
     desc = 'Delete current note file'
+  })
+
+  vim.keymap.set('n', '<leader>nh', '<cmd>NoteHub<CR>', {
+    desc = 'Generate hub page'
   })
 
   -- Plugins mappings

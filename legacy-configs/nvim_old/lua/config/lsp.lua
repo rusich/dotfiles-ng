@@ -66,7 +66,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
       Snacks.picker.lsp_type_definitions()
     end, 'Goto T[y]pe Definition')
 
-    Snacks.picker.lsp_type_definitions()
     map('<leader>ss', function()
       Snacks.picker.lsp_symbols()
     end, 'LSP Symbols')

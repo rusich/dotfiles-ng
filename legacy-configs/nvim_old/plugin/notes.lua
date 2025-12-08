@@ -584,7 +584,7 @@ function M.archive_heading()
       "title: " .. archive_date_clean,
       "created: " .. get_current_datetime(),
       "tags:",
-      "  - daily-notes",
+      "  - daily-note",
       "---",
       "",
       "# " .. archive_date_clean,
@@ -863,15 +863,6 @@ function M.generate_hub_page()
   -- Заменяем содержимое буфера
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, new_lines)
 
-  -- Обновляем поле updated в frontmatter (если есть)
-  for i = 1, math.min(20, #new_lines) do
-    if new_lines[i] and new_lines[i]:match("^updated:") then
-      new_lines[i] = "updated: " .. get_current_datetime()
-      vim.api.nvim_buf_set_lines(bufnr, i - 1, i, false, { new_lines[i] })
-      break
-    end
-  end
-
   -- Сохраняем файл
   vim.cmd("write")
 
@@ -880,41 +871,42 @@ end
 
 -- Автокоманда для автоматического обновления hub-файлов при открытии
 local function setup_hub_autocommand()
-  vim.api.nvim_create_autocmd('BufRead', {
-    pattern = '*.md',
-    callback = function(args)
-      local bufnr = args.buf
+  return
+      vim.api.nvim_create_autocmd('BufRead', {
+        pattern = '*.md',
+        callback = function(args)
+          local bufnr = args.buf
 
-      -- Даем файлу время загрузиться
-      vim.defer_fn(function()
-        if vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_get_name(bufnr):match("%.md$") then
-          -- Временно переключаемся на буфер для проверки
-          local current_buf = vim.api.nvim_get_current_buf()
-          vim.api.nvim_set_current_buf(bufnr)
+          -- Даем файлу время загрузиться
+          vim.defer_fn(function()
+            if vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_get_name(bufnr):match("%.md$") then
+              -- Временно переключаемся на буфер для проверки
+              local current_buf = vim.api.nvim_get_current_buf()
+              vim.api.nvim_set_current_buf(bufnr)
 
-          if is_hub_file() then
-            -- Запускаем генерацию асинхронно
-            vim.defer_fn(function()
-              if vim.api.nvim_buf_is_valid(bufnr) then
-                -- Сохраняем текущий буфер
-                local prev_buf = vim.api.nvim_get_current_buf()
-                vim.api.nvim_set_current_buf(bufnr)
+              if is_hub_file() then
+                -- Запускаем генерацию асинхронно
+                vim.defer_fn(function()
+                  if vim.api.nvim_buf_is_valid(bufnr) then
+                    -- Сохраняем текущий буфер
+                    local prev_buf = vim.api.nvim_get_current_buf()
+                    vim.api.nvim_set_current_buf(bufnr)
 
-                -- Вызываем функцию
-                M.generate_hub_page()
+                    -- Вызываем функцию
+                    M.generate_hub_page()
 
-                -- Возвращаемся к предыдущему буферу
-                vim.api.nvim_set_current_buf(prev_buf)
+                    -- Возвращаемся к предыдущему буферу
+                    vim.api.nvim_set_current_buf(prev_buf)
+                  end
+                end, 100)
               end
-            end, 100)
-          end
 
-          -- Возвращаемся к исходному буферу
-          vim.api.nvim_set_current_buf(current_buf)
+              -- Возвращаемся к исходному буферу
+              vim.api.nvim_set_current_buf(current_buf)
+            end
+          end, 50)
         end
-      end, 50)
-    end
-  })
+      })
 end
 
 -- Настройка команд и маппингов -----------------------------------------------
@@ -993,13 +985,13 @@ function M.setup(user_config)
     desc = 'Show links'
   })
 
-  -- vim.keymap.set('n', '<leader>nb', '<cmd>Obsidian backlinks<cr>', {
-  --   desc = 'Show backlinks'
-  -- })
-
-  vim.keymap.set('n', '<leader>nb', '<cmd>ZkBacklinks<cr>', {
+  vim.keymap.set('n', '<leader>nb', '<cmd>Obsidian backlinks<cr>', {
     desc = 'Show backlinks'
   })
+
+  -- vim.keymap.set('n', '<leader>nb', '<cmd>ZkBacklinks<cr>', {
+  --   desc = 'Show backlinks'
+  -- })
 
   vim.keymap.set('n', '<leader>nI', '<cmd>e ~/Nextcloud/Notes/Inbox.md<cr>', {
     desc = 'Open Inbox'

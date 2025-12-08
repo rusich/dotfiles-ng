@@ -90,7 +90,7 @@ return {
     daily_notes = {
       folder = "daily",
       workdays_only = false,
-      default_tags = { "daily-notes" },
+      default_tags = { "daily-note" },
     },
   },
 }

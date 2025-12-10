@@ -429,7 +429,7 @@ binds {
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+Return hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
-    Mod+Slash hotkey-overlay-title="Open launcher: rofi" { spawn "rofi" "-show" "combi"; }
+    Mod+Space hotkey-overlay-title="Open launcher: rofi" { spawn "rofi" "-show" "combi"; }
     // Ctrl+Alt+L hotkey-overlay-title="Lock the Screen" { spawn "dms" "ipc" "call" "lock" "lock"; }
     Ctrl+Shift+Escape hotkey-overlay-title="Process List" { spawn "dms" "ipc" "call" "processlist" "toggle"; }
 

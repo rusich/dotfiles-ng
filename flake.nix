@@ -27,12 +27,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # stylix = {
-    #   url = "github:nix-community/stylix/release-25.05";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
     stylix = {
-      url = "github:nix-community/stylix";
+      url = "github:nix-community/stylix/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -51,11 +47,6 @@
       url = "github:AvengeMedia/DankMaterialShell";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.dgop.follows = "dgop";
-    };
-
-    quickshell = {
-      url = "github:outfoxxed/quickshell";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
   };

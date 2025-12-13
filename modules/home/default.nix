@@ -12,13 +12,6 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  home = rec {
-    stateVersion = "25.05";
-    username = userConfig.username;
-    homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
-    # homeDirectory = "/Users/rusich";
-  };
-
   nixpkgs = {
     overlays = [
       outputs.overlays.unstable-packages
@@ -30,10 +23,18 @@
     };
   };
 
-  home.packages = with pkgs; [
-    fastfetch
-    neofetch
-  ];
+  home = rec {
+
+    stateVersion = "25.05";
+    username = userConfig.username;
+    homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
+    # homeDirectory = "/Users/rusich";
+
+    packages = with pkgs; [
+      fastfetch
+      neofetch
+    ];
+  };
 
   # Enable alacritty
   programs.alacritty.enable = true;

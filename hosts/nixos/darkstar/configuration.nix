@@ -51,7 +51,8 @@ in
     unstable.tonelib-jam
     unstable.tonelib-metal
     unstable.tonelib-gfx
-    reaper
+    ardour
+    # reaper
     qjackctl
     gmetronome
     guitarix
@@ -87,26 +88,6 @@ in
     }))
   ];
 
-  # audio override
-  security.rtkit.enable = true;
-
-  # Disable Pulseaudio because Pipewire is used.
-  # hardware.pulseaudio.enable = lib.mkForce false;
-  # sound.enable = false; # Only meant for ALSA-based configurations.
-  # hardware.alsa.enable = false;
-
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
-
-    wireplumber = {
-      enable = true;
-      package = pkgs.wireplumber;
-    };
-  };
   services.udev = {
     enable = true;
     extraRules = ''
@@ -121,20 +102,6 @@ in
 
   };
 
-  # services.jack = {
-  #   jackd.enable = true;
-  #   # support ALSA only programs via ALSA JACK PCM plugin
-  #   alsa.enable = false;
-  #   # support ALSA only programs via loopback device (supports programs like Steam)
-  #   loopback = {
-  #     enable = true;
-  #     # buffering parameters for dmix device to work with ALSA only semi-professional sound programs
-  #     #dmixConfig = ''
-  #     #  period_size 2048
-  #     #'';
-  #   };
-  # };
-  #
   users.users.zaychik = {
     isNormalUser = true;
     description = "Sakhaya Sergina";

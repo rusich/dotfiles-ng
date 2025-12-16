@@ -14,10 +14,10 @@ return {
       agendaViewPageItems = 10,
       -- Number of days before the deadline to show a reminder for the task in the agenda view.
       -- Default: 30
-      remindDeadlineInDays = 30,
+      remindDeadlineInDays = 10,
       -- Number of days before the scheduled time to show a reminder for the task in the agenda view.
       -- Default: 10
-      remindScheduledInDays = 10,
+      remindScheduledInDays = 2,
       -- "vertical" or "horizontal"
       -- Default: "horizontal"
       agendaViewSplitOrientation = "horizontal",

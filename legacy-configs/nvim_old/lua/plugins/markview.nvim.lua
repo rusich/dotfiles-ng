@@ -43,6 +43,12 @@ return {
           text = "󰃭 ",
           hl = "MarkviewIcon3"
         },
+        ["^hubs$"] = {
+          match_string = "^hubs$",
+          use_types = false,
+          text = "⟗ ",
+          hl = "MarkviewIcon3"
+        },
         ["^urls$"] = {
           match_string = "^urls$",
           use_types = false,

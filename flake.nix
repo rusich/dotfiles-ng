@@ -98,8 +98,8 @@
               hostname = host;
             };
             modules = [
-              ./hosts/nixos/${host}/configuration.nix
               ./modules/nixos/common
+              ./hosts/nixos/${host}/configuration.nix
               stylix.nixosModules.stylix
               # ./common/theme.nix
             ];

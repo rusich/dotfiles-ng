@@ -1,8 +1,5 @@
 {
-  inputs,
   pkgs,
-  config,
-  homeModules,
   ...
 }:
 {
@@ -11,7 +8,8 @@
   programs.khal.enable = true;
   programs.khard.enable = true;
 
-  # Чтобы это работало, необходимо использовать NixOS-модуль ../../nixos/gnome-online-accounts.nix
+  # Gnome online accounts must be enabled in NixOS configuration
+  # ../../modules/nixos/desktopCommon/gnome-online-accounts.nix
   home.packages = with pkgs; [
     gnome-contacts
   ];

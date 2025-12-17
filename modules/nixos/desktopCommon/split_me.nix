@@ -1,5 +1,4 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
+# Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 {
@@ -40,23 +39,8 @@
     # List packages installed in system profile. To search, run:
     # $ nix search wget
     environment.systemPackages = with pkgs; [
-      pkg-config
-      openssl
-      nix-output-monitor # beautify nix output
-      nvd
-      nh # nix helper
-      curl
-      wget
-      htop
-      btop
-      git
-      ripgrep
-      fzf
       gcc
-      unzip
-      elinks
       python3
-      killall
       home-manager
       kitty
       sddm-chili-theme
@@ -66,15 +50,9 @@
       hunspell
       hunspellDicts.en_US
       hunspellDicts.ru_RU
-      mtr
-      traceroute
-      nix-index
-      lm_sensors
-      pavucontrol
-      # polkit_gnome
+      pwvucontrol
       gparted
       gimp
-      inetutils
       nextcloud-client
       nautilus
       nautilus-python
@@ -87,22 +65,6 @@
     ];
 
     # services.noctalia-shell.enable = true;
-
-    hardware.bluetooth = {
-      enable = true;
-      powerOnBoot = true;
-      settings = {
-        General = {
-          Experimental = true; # Show battery charge of Bluetooth devices
-          FastConnectable = true;
-        };
-        Policy = {
-          AutoEnable = true;
-        };
-      };
-    };
-
-    services.blueman.enable = true;
 
     networking.hostName = hostname;
     # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -168,37 +130,8 @@
     # Enable CUPS to print documents.
     services.printing.enable = false;
 
-    # Enable sound with pipewire.
-    services.pulseaudio.enable = false;
-    security.rtkit.enable = true;
-    services.pipewire = {
-      enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
-      # If you want to use JACK applications, uncomment this
-      jack.enable = lib.mkDefault true;
-    };
-
-    # Disable Pulseaudio because Pipewire is used.
-    # hardware.pulseaudio.enable = lib.mkForce false;
-    # sound.enable = false; # Only meant for ALSA-based configurations.
-    # hardware.alsa.enable = false;
-
-    # services.jack = {
-    #   jackd.enable = true;
-    #   # support ALSA only programs via ALSA JACK PCM plugin
-    #   alsa.enable = false;
-    #   # support ALSA only programs via loopback device (supports programs like Steam)
-    #   loopback = {
-    #     enable = true;
-    #     # buffering parameters for dmix device to work with ALSA only semi-professional sound programs
-    #     #dmixConfig = ''
-    #     #  period_size 2048
-    #     #'';
-    #   };
-    # };
-    #
+    # Sound
+    services.pipewire.enable = lib.mkDefault true;
 
     # Enable touchpad support (enabled default in most desktopManager).
     services.libinput.enable = true;

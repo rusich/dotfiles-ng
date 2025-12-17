@@ -30,7 +30,6 @@
     powertop
   ];
 
-  services.xserver.videoDrivers = [ "amdgpu" ];
   # Host-specific packages
   powerManagement.enable = true;
   powerManagement.powertop.enable = true;

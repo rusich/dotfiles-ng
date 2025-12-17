@@ -48,15 +48,6 @@ in
   hardware.cpu.amd.updateMicrocode = true;
 
   environment.systemPackages = with pkgs; [
-    unstable.tonelib-jam
-    unstable.tonelib-metal
-    unstable.tonelib-gfx
-    ardour
-    # reaper
-    qjackctl
-    gmetronome
-    guitarix
-    audacity
     lmstudio
     # librsvg # wivrn
     # cairo # librsvg, wivrn

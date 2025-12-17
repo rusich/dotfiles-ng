@@ -1,7 +1,7 @@
-{ pkgs, ... }:
 {
-  # Надо создать конфигурационный файл онлайн-аккаунта Nextcloud ~/.config/goa-1.0/accounts.conf :
-  # Детали: ~/Nextcloud/org/notes/Gnome_online_accounts-20250217.org
+  # user config stored in
+  # ../../home/contacts.nix
+  # ../../home/calendar.nix
 
   programs.dconf.enable = true;
   services.gnome.evolution-data-server.enable = true;

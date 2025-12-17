@@ -33,6 +33,7 @@
 
   programs.neovim = {
     # enable = true; # enabling this break nixvim
+    defaultEditor = true;
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;

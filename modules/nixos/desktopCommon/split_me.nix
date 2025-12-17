@@ -1,77 +1,20 @@
 # Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
 {
-  config,
   lib,
   pkgs,
   userConfig,
-  inputs,
-  outputs,
   hostname,
   ...
 }:
-
 {
 
   imports = [
   ];
 
-  options = {
-    my.arbitrary.option = lib.mkOption {
-      type = lib.types.str;
-      default = "stuff";
-    };
-  };
-
   config = {
 
-    nixpkgs = {
-      overlays = [
-        outputs.overlays.unstable-packages
-      ];
-
-      config = {
-        allowUnfree = true;
-      };
-    };
-
-    # List packages installed in system profile. To search, run:
-    # $ nix search wget
-    environment.systemPackages = with pkgs; [
-      gcc
-      python3
-      home-manager
-      kitty
-      sddm-chili-theme
-      sddm-astronaut
-      sddm-sugar-dark
-      libreoffice
-      hunspell
-      hunspellDicts.en_US
-      hunspellDicts.ru_RU
-      pwvucontrol
-      gparted
-      gimp
-      nextcloud-client
-      nautilus
-      nautilus-python
-      nautilus-open-any-terminal
-      # kde package
-      kdePackages.dolphin
-      kdePackages.dolphin-plugins
-      kdePackages.qtsvg # for dolphin
-      kdePackages.kio-extras
-    ];
-
-    # services.noctalia-shell.enable = true;
-
     networking.hostName = hostname;
-    # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-    # Configure network proxy if necessary
-    # networking.proxy.default = "http://user:password@proxy:port/";
-    # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
     # Enable networking
     networking.networkmanager.enable = true;
@@ -152,9 +95,6 @@
       ];
     };
 
-    # Allow unfree packages
-
-    programs.firefox.enable = true;
     programs.nix-ld = {
       enable = true; # what's the heck it's this...
       libraries = with pkgs; [
@@ -162,6 +102,7 @@
       ];
     };
     programs.fish.enable = true;
+    # programs.firefox.enable = true;
     programs.neovim = {
       enable = true;
       defaultEditor = true;
@@ -174,27 +115,10 @@
     };
     services.resolved.enable = false; # nekoray
     networking.firewall.checkReversePath = "loose"; # nekoray
+
+    # DCS-world server
     networking.firewall.allowedTCPPorts = [ 10308 ];
     networking.firewall.allowedUDPPorts = [ 10308 ];
-
-    # security.wrappers = {
-    #   nekobox_core = {
-    #     owner = "root";
-    #     group = "root";
-    #     source = "${pkgs.nekoray.nekobox-core}/bin/nekobox_core";
-    #     capabilities = "cap_net_admin=ep";
-    #   };
-    # };
-
-    # Some programs need SUID wrappers, can be configured further or are
-    # started in user sessions.
-    # programs.mtr.enable = true;
-    # programs.gnupg.agent = {
-    #   enable = true;
-    #   enableSSHSupport = true;
-    # };
-
-    # List services that you want to enable:
 
     # Enable the OpenSSH daemon.
     services.openssh.enable = true;
@@ -209,22 +133,6 @@
     services.gvfs.enable = true;
     services.udisks2.enable = true;
 
-    # systemd = {
-    #   user.services.polkit-gnome-authentication-agent-1 = {
-    #     description = "polkit-gnome-authentication-agent-1";
-    #     wantedBy = [ "graphical-session.target" ];
-    #     wants = [ "graphical-session.target" ];
-    #     after = [ "graphical-session.target" ];
-    #     serviceConfig = {
-    #       Type = "simple";
-    #       ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-    #       Restart = "on-failure";
-    #       RestartSec = 1;
-    #       TimeoutStopSec = 10;
-    #     };
-    #   };
-    # };
-
     # for WiVRn
     services.avahi = {
       enable = true;
@@ -233,41 +141,6 @@
         enable = true;
         userServices = true;
       };
-    };
-
-    # Exec AppImage files directly
-    boot.binfmt.registrations.appimage = {
-      wrapInterpreterInShell = false;
-      interpreter = "${pkgs.appimage-run}/bin/appimage-run";
-      recognitionType = "magic";
-      offset = 0;
-      mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
-      magicOrExtension = ''\x7fELF....AI\x02'';
-    };
-
-    nix.settings.experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-
-    # cleanup system automatically
-    nix.gc = {
-      automatic = lib.mkDefault true;
-      dates = "daily";
-      options = lib.mkDefault "--delete-older-than 7d";
-    };
-
-    # Nix store optimisation
-    nix.settings.auto-optimise-store = true;
-    nix.optimise = {
-      automatic = true;
-      dates = [ "daily" ];
-    };
-
-    # Automatic upgrading
-    system.autoUpgrade = {
-      enable = true;
-      dates = "weekly";
     };
 
     # Bootloader how many configurations to show

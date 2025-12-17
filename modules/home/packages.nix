@@ -1,8 +1,6 @@
+# User only packages
 {
-  config,
   pkgs,
-  inputs,
-  nixpkgs,
   ...
 }:
 
@@ -49,7 +47,6 @@
     cargo
     # rustc
     libnotify
-
     delta
     jq
     pamixer

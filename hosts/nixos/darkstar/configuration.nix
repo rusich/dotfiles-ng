@@ -31,6 +31,7 @@ in
     "${nixosModules}/desktopCommon"
     "${nixosModules}/plasma6.nix"
     "${nixosModules}/gaming.nix"
+    "${nixosModules}/DAW.nix"
   ];
 
   # Host-specific configuration
@@ -49,15 +50,12 @@ in
 
   environment.systemPackages = with pkgs; [
     lmstudio
-    # librsvg # wivrn
-    # cairo # librsvg, wivrn
     virt-manager
     quickemu
     quickgui
     spice
     spice-gtk
     virt-viewer
-    # android-tools
     cifs-utils # for smb share mount
     wlr-randr
     xorg.xrandr

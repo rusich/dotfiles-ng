@@ -86,7 +86,6 @@
       extraGroups = [
         "networkmanager"
         "wheel"
-        "jackaudio"
         "libvirtd"
         "kvm"
         "input"

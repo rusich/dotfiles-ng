@@ -14,7 +14,6 @@
     hunspell
     hunspellDicts.en_US
     hunspellDicts.ru_RU
-    pwvucontrol
     gparted
     gimp
     nextcloud-client

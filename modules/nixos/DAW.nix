@@ -1,31 +1,45 @@
-{ lib, pkgs }:
+{ userConfig, pkgs, ... }:
 {
+
+  # Required groups
+  users.users.${userConfig.username} = {
+    isNormalUser = true;
+    description = userConfig.username;
+    extraGroups = [
+      "jackaudio"
+      "audio"
+    ];
+  };
+
   environment.systemPackages = with pkgs; [
     unstable.tonelib-jam
     unstable.tonelib-metal
     unstable.tonelib-gfx
     ardour
-    # reaper
-    # qjackctl
-    qpwgraph # instead of qjackctl
+    reaper
     gmetronome
     guitarix
     audacity
+    pavucontrol
+    pwvucontrol
+    alsa-utils # aplay etc..
+    qjackctl
+    qpwgraph # instead of qjackctl
   ];
 
-  # Enable sound with pipewire.
   services.pulseaudio.enable = false;
+  # Enable sound with pipewire.
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     # If you want to use JACK applications, uncomment this
-    jack.enable = false;
+    jack.enable = true;
     pulse.enable = false;
   };
 
-  hardware.pulseaudio.enable = lib.mkForce false;
+  # hardware.pulseaudio.enable = lib.mkForce false;
   # sound.enable = false; # Only meant for ALSA-based configurations.
   # hardware.alsa.enable = false;
 

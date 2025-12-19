@@ -20,7 +20,7 @@
     gmetronome
     guitarix
     audacity
-    pavucontrol
+    # pavucontrol
     pwvucontrol
     alsa-utils # aplay etc..
     qjackctl
@@ -37,6 +37,16 @@
     # If you want to use JACK applications, uncomment this
     jack.enable = true;
     pulse.enable = false;
+
+    extraConfig = {
+      jack = {
+        "10-latency" = {
+          "jack.properties" = {
+            "node.latency" = "128/48000";
+          };
+        };
+      };
+    };
   };
 
   # hardware.pulseaudio.enable = lib.mkForce false;

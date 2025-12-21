@@ -36,7 +36,7 @@
     alsa.support32Bit = true;
     # If you want to use JACK applications, uncomment this
     jack.enable = true;
-    pulse.enable = false;
+    pulse.enable = true;
 
     extraConfig = {
       jack = {

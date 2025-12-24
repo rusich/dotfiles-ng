@@ -1,4 +1,9 @@
-{ userConfig, pkgs, ... }:
+{
+  userConfig,
+  pkgs,
+  lib,
+  ...
+}:
 {
 
   # Required groups
@@ -20,16 +25,22 @@
     gmetronome
     guitarix
     audacity
-    # pavucontrol
+    pavucontrol
     pwvucontrol
     alsa-utils # aplay etc..
     qjackctl
     qpwgraph # instead of qjackctl
+    millisecond # Show tips for audio optimization for RealTime performance
+    carla
+    lsp-plugins
+    neural-amp-modeler-lv2
+    patchance
+    python313Packages.legacy-cgi
   ];
 
   services.pulseaudio.enable = false;
   # Enable sound with pipewire.
-  security.rtkit.enable = true;
+  security.rtkit.enable = true; # PW use RT scheduler for increase performance
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -38,14 +49,26 @@
     jack.enable = true;
     pulse.enable = true;
 
-    extraConfig = {
-      jack = {
-        "10-latency" = {
-          "jack.properties" = {
-            "node.latency" = "128/48000";
-          };
-        };
-      };
+    # TODO: Temporary disabled for learning purpiose (configs in home/.config/pipewire/pipewire.conf)
+    # extraConfig = {
+    #   jack = {
+    #     "10-latency" = {
+    #       "jack.properties" = {
+    #         "node.latency" = "128/48000";
+    #       };
+    #     };
+    #   };
+    # };
+  };
+
+  # amixer -c "PODHD500" set Monitor 0%
+  systemd.services.disablePODHD500MONITORING = {
+    enable = true;
+    description = "Set Line6 POD HD500 Monitoring Level to 0%";
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.alsa-utils}/bin/amixer -c \"PODHD500\" set Monitor 0%";
+      Restart = "always"; # Optional: restart the service if it fails
     };
   };
 

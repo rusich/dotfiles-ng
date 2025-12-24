@@ -59,6 +59,7 @@
     discord
     wl-clipboard
     unstable.chatbox
+    unrar
   ];
 
 }

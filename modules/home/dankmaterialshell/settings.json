@@ -392,5 +392,6 @@
       "popupGapsManual": 4
     }
   ],
-  "configVersion": 3
+  "configVersion": 4,
+  "desktopWidgetInstances": []
 }

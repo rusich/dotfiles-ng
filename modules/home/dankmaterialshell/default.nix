@@ -10,7 +10,8 @@ let
 in
 {
   imports = [
-    inputs.dankMaterialShell.homeModules.dankMaterialShell.default
+    # inputs.dankMaterialShell.homeModules.dankMaterialShell.default
+    inputs.dankMaterialShell.homeModules.dank-material-shell
     # inputs.dankMaterialShell.homeModules.dankMaterialShell.niri
   ];
 
@@ -19,7 +20,7 @@ in
     adw-gtk3
   ];
 
-  programs.dankMaterialShell = {
+  programs.dank-material-shell = {
     enable = true;
   };
 

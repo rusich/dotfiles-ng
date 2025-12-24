@@ -27,5 +27,6 @@
     nix-output-monitor # beautify nix output
     nvd
     nh # nix helper
+    nix-du
   ];
 }

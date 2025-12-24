@@ -1,6 +1,7 @@
 return {
   "obsidian-nvim/obsidian.nvim",
-  version = "*", -- recommended, use latest release instead of latest commit
+  -- version = "*", -- recommended, use latest release instead of latest commit
+  version = "3.14.7", -- Blink completion work!
   lazy = false,
   -- ft = "markdown",
   -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
@@ -18,6 +19,7 @@ return {
     note_id_func = function(title)
       return title
     end,
+
     frontmatter = {
       enabled = function(fname)
         return fname:match("^%.zk/templates/") == nil -- and fname:match("daily/") == nil

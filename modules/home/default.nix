@@ -5,12 +5,24 @@
   homeModules,
   userConfig,
   pkgs,
+  lib,
   ...
 }:
 {
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  ########
+
+  # cleanup system automatically
+  nix.gc = {
+    automatic = lib.mkDefault true;
+    dates = "daily";
+    options = lib.mkDefault "--delete-older-than 7d";
+  };
+
+  ###########
 
   nixpkgs = {
     overlays = [

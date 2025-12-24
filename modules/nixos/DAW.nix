@@ -1,10 +1,22 @@
 {
   userConfig,
   pkgs,
-  lib,
+  inputs,
   ...
 }:
 {
+  imports = [
+    inputs.musnix.nixosModules.musnix
+  ];
+
+  # use automatic kernel and system optimizations
+  # for realtime audio performance.
+  # detailed explanation: https://github.com/musnix/musnix
+
+  musnix.enable = true;
+  # NOTE: Enabling this option will rebuild your kernel.
+  # Description: If enabled, this option will apply the CONFIG_PREEMPT_RT patch to the kernel.
+  musnix.kernel.realtime = false;
 
   # Required groups
   users.users.${userConfig.username} = {
@@ -33,6 +45,7 @@
     millisecond # Show tips for audio optimization for RealTime performance
     carla
     lsp-plugins
+    x42-plugins # see more x42-packages later
     neural-amp-modeler-lv2
     patchance
     python313Packages.legacy-cgi
@@ -48,17 +61,39 @@
     # If you want to use JACK applications, uncomment this
     jack.enable = true;
     pulse.enable = true;
+    extraLv2Packages = [
+      pkgs.lsp-plugins
+    ];
 
-    # TODO: Temporary disabled for learning purpiose (configs in home/.config/pipewire/pipewire.conf)
-    # extraConfig = {
-    #   jack = {
-    #     "10-latency" = {
-    #       "jack.properties" = {
-    #         "node.latency" = "128/48000";
-    #       };
-    #     };
-    #   };
-    # };
+    extraConfig = {
+      pipewire = {
+        "10-clock-rate" = {
+          "context.properties" = {
+            "default.clock.allowed-rates" = [
+              44100
+              48000
+            ];
+            "default.clock.rate" = 48000;
+            "default.clock.quantum" = 128;
+          };
+        };
+      };
+
+      # pipewire-pulse = {
+      # "10-some-file"...
+      # };
+      #
+      # client = {
+      # "10-some-file"...
+      # };
+      #   jack = {
+      #     "10-latency" = {
+      #       "jack.properties" = {
+      #         "node.latency" = "128/48000";
+      #       };
+      #     };
+      #   };
+    };
   };
 
   # amixer -c "PODHD500" set Monitor 0%

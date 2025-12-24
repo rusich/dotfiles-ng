@@ -49,6 +49,11 @@
       inputs.dgop.follows = "dgop";
     };
 
+    # using in ./modules/nixos/DAW.nix
+    musnix = {
+      url = "github:musnix/musnix";
+    };
+
   };
 
   outputs =

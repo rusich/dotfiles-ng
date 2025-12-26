@@ -49,6 +49,10 @@
     neural-amp-modeler-lv2
     patchance
     python313Packages.legacy-cgi
+    alsa-lib # For Ratatoule
+    alsa-lib-with-plugins
+    jalv
+    jalv-qt
   ];
 
   services.pulseaudio.enable = false;
@@ -70,11 +74,18 @@
         "10-clock-rate" = {
           "context.properties" = {
             "default.clock.allowed-rates" = [
-              44100
+              # 44100
               48000
             ];
             "default.clock.rate" = 48000;
-            "default.clock.quantum" = 128;
+            "default.clock.quantum" = 512;
+          };
+        };
+      };
+      jack = {
+        "10-latency" = {
+          "jack.properties" = {
+            "node.latency" = "256/48000";
           };
         };
       };
@@ -86,26 +97,19 @@
       # client = {
       # "10-some-file"...
       # };
-      #   jack = {
-      #     "10-latency" = {
-      #       "jack.properties" = {
-      #         "node.latency" = "128/48000";
-      #       };
-      #     };
-      #   };
     };
   };
 
-  # amixer -c "PODHD500" set Monitor 0%
-  systemd.services.disablePODHD500MONITORING = {
-    enable = true;
-    description = "Set Line6 POD HD500 Monitoring Level to 0%";
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      ExecStart = "${pkgs.alsa-utils}/bin/amixer -c \"PODHD500\" set Monitor 0%";
-      Restart = "always"; # Optional: restart the service if it fails
-    };
-  };
+  # # amixer -c "PODHD500" set Monitor 0%
+  # systemd.services.disablePODHD500MONITORING = {
+  #   enable = true;
+  #   description = "Set Line6 POD HD500 Monitoring Level to 0%";
+  #   wantedBy = [ "multi-user.target" ];
+  #   serviceConfig = {
+  #     ExecStart = "${pkgs.alsa-utils}/bin/amixer -c \"PODHD500\" set Monitor 0%";
+  #     Restart = "always"; # Optional: restart the service if it fails
+  #   };
+  # };
 
   # hardware.pulseaudio.enable = lib.mkForce false;
   # sound.enable = false; # Only meant for ALSA-based configurations.

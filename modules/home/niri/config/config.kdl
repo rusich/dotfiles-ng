@@ -385,6 +385,7 @@ window-rule {
     match app-id="org.rncbc.qjackctl"
     match app-id="gmetronome"
     match app-id=r#"steam_app_0$"# // Initially PokerOK
+    match title=r".* \(GUI\)$" // VST, LV etc
     open-floating true
 }
 

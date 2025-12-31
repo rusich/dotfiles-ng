@@ -29,30 +29,35 @@
   };
 
   environment.systemPackages = with pkgs; [
-    unstable.tonelib-jam
-    unstable.tonelib-metal
-    unstable.tonelib-gfx
+    # reaper - ardour fully replaces reaper, and its open source and free
     ardour
-    reaper
     gmetronome
-    guitarix
     audacity
-    pavucontrol
+    # pavucontrol, not needed?
     pwvucontrol
     alsa-utils # aplay etc..
     qjackctl
+    carla
+    python313Packages.legacy-cgi # patchance needs this
+    patchance # TODO: it is nessesary? Or use only qjackctl and carla?
     qpwgraph # instead of qjackctl
     millisecond # Show tips for audio optimization for RealTime performance
-    carla
-    lsp-plugins
-    x42-plugins # see more x42-packages later
-    neural-amp-modeler-lv2
-    patchance
-    python313Packages.legacy-cgi
     alsa-lib # For Ratatoule
     alsa-lib-with-plugins
+    hydrogen
+    unstable.tonelib-jam
+    unstable.tonelib-metal
+    unstable.tonelib-gfx
+    neural-amp-modeler-lv2
+    # TODO: review plugins listed below
     jalv
     jalv-qt
+    guitarix
+    gxplugins-lv2
+    zam-plugins
+    calf
+    lsp-plugins
+    x42-plugins
   ];
 
   services.pulseaudio.enable = false;

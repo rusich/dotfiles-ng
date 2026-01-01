@@ -44,7 +44,8 @@
     millisecond # Show tips for audio optimization for RealTime performance
     alsa-lib # For Ratatoule
     alsa-lib-with-plugins
-    hydrogen
+    hydrogen # drums app
+    drumgizmo # drums plugin
     unstable.tonelib-jam
     unstable.tonelib-metal
     unstable.tonelib-gfx

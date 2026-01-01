@@ -10,9 +10,7 @@ let
 in
 {
   imports = [
-    # inputs.dankMaterialShell.homeModules.dankMaterialShell.default
-    inputs.dankMaterialShell.homeModules.dank-material-shell
-    # inputs.dankMaterialShell.homeModules.dankMaterialShell.niri
+    inputs.dms.homeModules.dankMaterialShell.default
   ];
 
   home.packages = with pkgs; [
@@ -20,8 +18,14 @@ in
     adw-gtk3
   ];
 
-  programs.dank-material-shell = {
+  programs.dankMaterialShell = {
     enable = true;
+    enableSystemMonitoring = true; # System monitoring widgets (dgop)
+    enableClipboard = true; # Clipboard history manager
+    enableVPN = true; # VPN management widget
+    enableDynamicTheming = false; # Wallpaper-based theming (matugen)
+    enableAudioWavelength = true; # Audio visualizer (cava)
+    enableCalendarEvents = true; # Calendar integration (khal)
   };
 
   # Map the niri config files to standard location

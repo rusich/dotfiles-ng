@@ -38,15 +38,9 @@
     };
 
     # DankMaterialShell
-    dgop = {
-      url = "github:AvengeMedia/dgop";
+    dms = {
+      url = "github:AvengeMedia/DankMaterialShell/stable";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    dankMaterialShell = {
-      url = "github:AvengeMedia/DankMaterialShell";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.dgop.follows = "dgop";
     };
 
     # using in ./modules/nixos/DAW.nix

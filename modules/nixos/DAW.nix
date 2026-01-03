@@ -38,7 +38,7 @@
     alsa-utils # aplay etc..
     qjackctl
     carla
-    python313Packages.legacy-cgi # patchance needs this
+    python3Packages.legacy-cgi # patchance needs this
     patchance # TODO: it is nessesary? Or use only qjackctl and carla?
     qpwgraph # instead of qjackctl
     millisecond # Show tips for audio optimization for RealTime performance
@@ -91,7 +91,7 @@
       jack = {
         "10-latency" = {
           "jack.properties" = {
-            "node.latency" = "256/48000";
+            "node.latency" = "128/48000";
           };
         };
       };
@@ -106,6 +106,9 @@
     };
   };
 
+  #alsa_card.usb-Line_6_POD_HD500-00
+  # set PODHC500 pipewire audio profile to "Pro Audio"
+
   # # amixer -c "PODHD500" set Monitor 0%
   # systemd.services.disablePODHD500MONITORING = {
   #   enable = true;
@@ -117,22 +120,4 @@
   #   };
   # };
 
-  # hardware.pulseaudio.enable = lib.mkForce false;
-  # sound.enable = false; # Only meant for ALSA-based configurations.
-  # hardware.alsa.enable = false;
-
-  # services.jack = {
-  #   jackd.enable = true;
-  #   # support ALSA only programs via ALSA JACK PCM plugin
-  #   alsa.enable = false;
-  #   # support ALSA only programs via loopback device (supports programs like Steam)
-  #   loopback = {
-  #     enable = true;
-  #     # buffering parameters for dmix device to work with ALSA only semi-professional sound programs
-  #     #dmixConfig = ''
-  #     #  period_size 2048
-  #     #'';
-  #   };
-  # };
-  #
 }

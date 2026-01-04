@@ -84,7 +84,7 @@
     in
     {
 
-      overlays = import ./overlays { inherit inputs; };
+      overlays = import ./overlays.nix { inherit inputs; };
 
       nixosConfigurations = builtins.listToAttrs (
         map (host: {

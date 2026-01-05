@@ -13,7 +13,7 @@ let
     in
     {
       custom = myPackages // {
-        # Также можно добавить переопределенные версии стандартных пакетов
+        # ToneLib-GFX
         tonelib-gfx = prev.tonelib-gfx.overrideAttrs (oldAttrs: {
           version = "4.9.0";
           src = prev.fetchurl {
@@ -24,6 +24,19 @@ let
             prev.fontconfig
           ];
         });
+
+        # # patchance
+        # patchance = prev.patchance.overrideAttrs (oldAttrs: rec {
+        #   version = "1.3.0";
+        #
+        #   src = prev.fetchurl {
+        #     url = "https://github.com/Houston4444/Patchance/releases/download/v${version}/Patchance-${version}-source.tar.gz";
+        #     hash = "sha256-LfRgT1uH69ePvqNwhGURS2Ixc/sLePb3qcDjZBjEzfM=";
+        #   };
+        #   propagatedBuildInputs = (oldAttrs.propagatedBuildInputs or [ ]) ++ [
+        #     prev.python313Packages.legacy-cgi
+        #   ];
+        # });
       };
     };
 

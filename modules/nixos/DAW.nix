@@ -38,8 +38,7 @@
     alsa-utils # aplay etc..
     qjackctl
     carla
-    python3Packages.legacy-cgi # patchance needs this
-    patchance # TODO: it is nessesary? Or use only qjackctl and carla?
+    custom.patchance # TODO: it is nessesary? Or use only qjackctl and carla?
     qpwgraph # instead of qjackctl
     millisecond # Show tips for audio optimization for RealTime performance
     alsa-lib # For Ratatoule

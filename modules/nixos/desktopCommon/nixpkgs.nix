@@ -2,9 +2,9 @@
 { outputs, ... }:
 {
   nixpkgs = {
-    overlays = [
-      outputs.overlays.unstable-packages
-    ];
+    # overlays = [
+    #   outputs.overlays.unstable-packages
+    # ];
 
     config = {
       allowUnfree = true;

@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.11";
+    nixpkgs-stable.url = "nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
 
     nix-darwin = {
@@ -10,13 +11,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # # Home Manager Stable
-    # home-manager = {
-    #   url = "github:nix-community/home-manager/release-25.05";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-
-    # Home Manager Unstable
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -81,10 +75,26 @@
       ];
 
       forAllSystems = nixpkgs.lib.genAttrs systems;
+
+      # Импортируем overlays
+      overlays = import ./overlays { inherit inputs; };
+
+      # Функция для создания pkgs с overlays для конкретной системы
+      mkPkgs =
+        system:
+        import nixpkgs {
+          inherit system;
+          # stdenv.hostPlatform.system = system;
+          overlays = overlays;
+          config.allowUnfree = true;
+        };
+
+      # Создаем пакетные наборы для всех систем
+      pkgsFor = forAllSystems mkPkgs;
+
     in
     {
-
-      overlays = import ./overlays.nix { inherit inputs; };
+      # legacyPackages = pkgsFor;
 
       nixosConfigurations = builtins.listToAttrs (
         map (host: {
@@ -97,6 +107,13 @@
               hostname = host;
             };
             modules = [
+              # Добавляем overlays прямо здесь
+              (
+                { ... }:
+                {
+                  nixpkgs.overlays = overlays;
+                }
+              )
               ./modules/nixos/common
               ./hosts/nixos/${host}/configuration.nix
               stylix.nixosModules.stylix
@@ -124,19 +141,42 @@
 
       # Home-manager configuration
       legacyPackages = forAllSystems (system: {
-        homeConfigurations."rusich" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${system};
-          modules = [
-            stylix.homeModules.stylix
-            "${self}/modules/home"
-          ];
+        homeConfigurations = {
+          "rusich" = home-manager.lib.homeManagerConfiguration {
+            pkgs = pkgsFor.${system}; # Используем pkgs с overlays
+            modules = [
+              stylix.homeModules.stylix
+              "${self}/modules/home"
+            ];
 
-          extraSpecialArgs = {
-            inherit inputs outputs system;
-            userConfig = users.rusich;
-            homeModules = "${self}/modules/home";
+            extraSpecialArgs = {
+              inherit inputs outputs;
+              userConfig = users.rusich;
+              homeModules = "${self}/modules/home";
+            };
           };
         };
       });
+      # homeConfigurations = forAllSystems (system: {
+      #   "rusich" = home-manager.lib.homeManagerConfiguration {
+      #     # Создаем pkgs с overlays для конкретной системы
+      #     pkgs = import nixpkgs {
+      #       inherit system;
+      #       overlays = overlays;
+      #       config.allowUnfree = true;
+      #     };
+      #
+      #     modules = [
+      #       stylix.homeModules.stylix
+      #       "${self}/modules/home"
+      #     ];
+      #
+      #     extraSpecialArgs = {
+      #       inherit inputs outputs;
+      #       userConfig = users.rusich;
+      #       homeModules = "${self}/modules/home";
+      #     };
+      #   };
+      # });
     };
 }

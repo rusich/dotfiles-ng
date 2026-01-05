@@ -48,7 +48,8 @@
     drumgizmo # drums plugin
     unstable.tonelib-jam
     unstable.tonelib-metal
-    unstable.tonelib-gfx
+    custom.tonelib-gfx
+    custom.tonelib-grand-magus
     neural-amp-modeler-lv2
     # TODO: review plugins listed below
     jalv

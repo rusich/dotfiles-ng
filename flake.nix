@@ -107,11 +107,12 @@
               hostname = host;
             };
             modules = [
-              # Добавляем overlays прямо здесь
+              # Oerlays loading to nixpkgs
               (
                 { ... }:
                 {
                   nixpkgs.overlays = overlays;
+                  nixpkgs.config.allowUnfree = true;
                 }
               )
               ./modules/nixos/common
@@ -134,7 +135,17 @@
               darwinModules = "${self}/modules/darwin";
               hostname = host;
             };
-            modules = [ ./hosts/darwin/${host}/configuration.nix ];
+            modules = [
+              # Oerlays loading to nixpkgs
+              (
+                { ... }:
+                {
+                  nixpkgs.overlays = overlays;
+                  nixpkgs.config.allowUnfree = true;
+                }
+              )
+              ./hosts/darwin/${host}/configuration.nix
+            ];
           };
         }) (builtins.attrNames (builtins.readDir ./hosts/darwin))
       );

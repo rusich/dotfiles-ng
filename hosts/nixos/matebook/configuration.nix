@@ -28,9 +28,6 @@
   environment.systemPackages = with pkgs; [
     brightnessctl
     powertop
-    unstable.tonelib-gfx
-    unstable.tonelib-metal
-    unstable.tonelib-jam
   ];
 
   # Host-specific packages

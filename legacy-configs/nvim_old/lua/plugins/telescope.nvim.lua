@@ -2,6 +2,7 @@
 local spec = {
   -- Fuzzy Finder (files, lsp, etc)
   'nvim-telescope/telescope.nvim',
+  lazy = true,
   config = function()
     require('telescope').setup {
       defaults = require("telescope.themes").get_ivy({

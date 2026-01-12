@@ -3,7 +3,6 @@ local spec = {
   'saghen/blink.cmp',
   dependencies = {
     'rafamadriz/friendly-snippets',
-    'folke/lazydev.nvim',
     'saghen/blink.compat',
   },
   version = '*',

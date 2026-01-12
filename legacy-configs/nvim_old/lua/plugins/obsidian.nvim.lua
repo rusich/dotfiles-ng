@@ -1,7 +1,7 @@
 return {
   "obsidian-nvim/obsidian.nvim",
-  -- version = "*", -- recommended, use latest release instead of latest commit
-  version = "3.14.7", -- Blink completion work!
+  version = "*", -- recommended, use latest release instead of latest commit
+  -- version = "3.14.7", -- Blink completion work!
   lazy = false,
   -- ft = "markdown",
   -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
@@ -30,7 +30,7 @@ return {
         local frontmatter = note.frontmatter(note) or {}
         local now = os.date("%Y-%m-%d %H:%M")
         local out = {
-          title = note.title,
+          title = note.id,
           updated = now,
           created = frontmatter.created or now
         }
@@ -44,7 +44,7 @@ return {
         end
 
         for i, v in ipairs(frontmatter.aliases) do
-          if v == note.title then
+          if v == note.id then
             table.remove(frontmatter.aliases, i)
           end
         end
@@ -73,7 +73,7 @@ return {
       enable = false,
     },
     attachments = {
-      img_folder = "/media",
+      folder = "/media",
       img_text_func = function(path)
         local name = vim.fs.basename(tostring(path))
         local encoded_name = require("obsidian.util").urlencode(name)

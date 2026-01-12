@@ -2,7 +2,6 @@
   config,
   pkgs,
   inputs,
-  userConfig,
   ...
 }:
 
@@ -15,9 +14,9 @@
         "dom.security.https_only_mode" = true;
         "browser.translations.enable" = false;
         "signon.rememberSignons" = false;
-        "browser.places.importBookmarksHTML" = true;
-        "browser.bookmarks.autoExportHTML" = true;
-        "browser.bookmarks.file" = "/home/${userConfig.username}/Nextcloud/Configs/bookmarks.html";
+        "browser.places.importBookmarksHTML" = false;
+        "browser.bookmarks.autoExportHTML" = false;
+        # "browser.bookmarks.file" = "/home/${userConfig.username}/Nextcloud/Configs/bookmarks.html";
         # Look'n'feel
         "sidebar.verticalTabs" = true;
         "browser.toolbars.bookmarks.visibility" = "never";
@@ -29,6 +28,8 @@
         packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
           keepassxc-browser
           simple-translate
+          floccus
+          firefox-color
         ];
       };
 
@@ -105,7 +106,23 @@
             definedAliases = [ "@no" ];
           };
 
-          "NixOS Wiki" = {
+          "NixOS Wiki Official" = {
+            urls = [
+              {
+                template = "https://wiki.nixos.org/w/index.php";
+                params = [
+                  {
+                    name = "search";
+                    value = "{searchTerms}";
+                  }
+                ];
+              }
+            ];
+            icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+            definedAliases = [ "@nwo" ];
+          };
+
+          "NixOS Wiki Unofficial" = {
             urls = [
               {
                 template = "https://nixos.wiki/index.php";
@@ -118,7 +135,7 @@
               }
             ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = [ "@nw" ];
+            definedAliases = [ "@nwu" ];
           };
 
           "Nixpkgs Issues" = {

@@ -1,5 +1,7 @@
 return {
   "zk-org/zk-nvim",
+  ft = "markdown",
+  cmd = { "ZkNew", "ZkNotes", "ZkRecents", "ZkTags", "ZkLinks" },
   config = function()
     vim.env.ZK_NOTEBOOK_DIR = vim.env.HOME .. "/Nextcloud/Notes/"
 

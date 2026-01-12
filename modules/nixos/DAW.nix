@@ -47,7 +47,8 @@
     drumgizmo # drums plugin
     unstable.tonelib-jam
     unstable.tonelib-metal
-    custom.tonelib-gfx
+    unstable.tonelib-gfx
+    # custom.tonelib-gfx
     custom.tonelib-grand-magus
     neural-amp-modeler-lv2
     # TODO: review plugins listed below
@@ -85,6 +86,8 @@
             ];
             "default.clock.rate" = 48000;
             "default.clock.quantum" = 512;
+            "default.clock.min-quantum" = 64;
+            "default.clock.max-quantum" = 2048;
           };
         };
       };

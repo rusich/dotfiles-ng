@@ -3,7 +3,7 @@
 
 local spec = {
   'nvim-lualine/lualine.nvim',
-  event = 'BufEnter',
+  event = 'BufRead',
 
   config = function()
     local utils = require 'utils'

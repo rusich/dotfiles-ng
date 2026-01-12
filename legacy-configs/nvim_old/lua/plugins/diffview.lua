@@ -37,7 +37,7 @@ end
 ---@type LazyPluginSpec
 local spec = {
   'sindrets/diffview.nvim',
-  lazy = false,
+  -- lazy = false,
   dependencies = {
     { 'nvim-lua/plenary.nvim' },
   },
@@ -45,6 +45,9 @@ local spec = {
     'DiffviewOpen',
     'DiffviewClose',
     'DiffviewFileHistory',
+    'DiffviewFileHistory %',
+    'DiffviewToggleFiles',
+    'DiffviewFocusFiles',
   },
   opts = {
     view = {
@@ -59,7 +62,7 @@ local spec = {
         -- layout = "diff3_mixed",
         layout = 'diff3_mixed',
         disable_diagnostics = true, -- Temporarily disable diagnostics for conflict buffers while in the view.
-        winbar_info = true, -- See ':h diffview-config-view.x.winbar_info'
+        winbar_info = true,         -- See ':h diffview-config-view.x.winbar_info'
       },
       file_history = {
         -- Config for changed files in file history views.
@@ -95,7 +98,7 @@ local spec = {
     },
   },
   keys = {
-    { '<leader>gd', DiffviewOpen, desc = 'DiffView' },
+    { '<leader>gd', DiffviewOpen,              desc = 'DiffView' },
     -- { '<leader>gf', ToggleDiffviewCurrentFileHistory, desc = 'Current file History' },
     { '<leader>gF', ToggleDiffviewFileHistory, desc = 'All files History' },
   },

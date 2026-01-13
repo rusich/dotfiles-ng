@@ -386,6 +386,7 @@ window-rule {
     match app-id="gmetronome"
     match app-id=r#"steam_app_0$"# // Initially PokerOK
     match title=r".* \(GUI\)$" // VST, LV etc
+    match title=r"^Выберите USB-устройства для перенаправл.*$" // Remmina usb redirect selection
     open-floating true
 }
 

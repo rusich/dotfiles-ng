@@ -138,11 +138,11 @@ local spec = {
       desc = 'Lazygit Current File History',
     },
     {
-      '<leader>gG',
+      '<leader>gg',
       function()
         Snacks.lazygit()
       end,
-      desc = 'Lazygit',
+      desc = 'Open Lazygit',
     },
     {
       '<leader>gl',

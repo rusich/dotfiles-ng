@@ -10,7 +10,7 @@ let
 in
 {
   imports = [
-    inputs.dms.homeModules.dankMaterialShell.default
+    inputs.dms.homeModules.dank-material-shell
   ];
 
   home.packages = with pkgs; [
@@ -18,10 +18,10 @@ in
     adw-gtk3
   ];
 
-  programs.dankMaterialShell = {
+  programs.dank-material-shell = {
     enable = true;
+    dgop.package = pkgs.unstable.dgop;
     enableSystemMonitoring = true; # System monitoring widgets (dgop)
-    enableClipboard = true; # Clipboard history manager
     enableVPN = true; # VPN management widget
     enableDynamicTheming = false; # Wallpaper-based theming (matugen)
     enableAudioWavelength = true; # Audio visualizer (cava)

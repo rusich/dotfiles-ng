@@ -168,26 +168,6 @@
           };
         };
       });
-      # homeConfigurations = forAllSystems (system: {
-      #   "rusich" = home-manager.lib.homeManagerConfiguration {
-      #     # Создаем pkgs с overlays для конкретной системы
-      #     pkgs = import nixpkgs {
-      #       inherit system;
-      #       overlays = overlays;
-      #       config.allowUnfree = true;
-      #     };
-      #
-      #     modules = [
-      #       stylix.homeModules.stylix
-      #       "${self}/modules/home"
-      #     ];
-      #
-      #     extraSpecialArgs = {
-      #       inherit inputs outputs;
-      #       userConfig = users.rusich;
-      #       homeModules = "${self}/modules/home";
-      #     };
-      #   };
-      # });
+      # check flake-parts
     };
 }

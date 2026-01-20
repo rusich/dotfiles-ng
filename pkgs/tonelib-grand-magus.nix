@@ -24,7 +24,7 @@ stdenv.mkDerivation rec {
 
   # Замените URL на актуальный для tonelib-grand-magus
   src = fetchurl {
-    url = "https://tonelib.vip/download/25-11-10/ToneLib-GrandMagus-amd64.deb";
+    url = "https://tonelib.ru/download/25-11-10/ToneLib-GrandMagus-amd64.deb";
     hash = "sha256-wlVfRBoZ1TrzUQdp5Tczr+PQ/VtBNQp2rQ3f6PocxVs=";
   };
 

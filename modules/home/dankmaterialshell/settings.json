@@ -136,8 +136,6 @@
   "appLauncherGridColumns": 4,
   "spotlightCloseNiriOverview": true,
   "niriOverviewOverlayEnabled": true,
-  "weatherLocation": "Якутск, Дальневосточный федеральный округ",
-  "weatherCoordinates": "62.0274078,129.7319787",
   "useAutoLocation": false,
   "weatherEnabled": true,
   "networkPreference": "wifi",
@@ -374,5 +372,6 @@
       "popupGapsManual": 4
     }
   ],
-  "configVersion": 2
+  "configVersion": 5,
+  "desktopWidgetInstances": []
 }

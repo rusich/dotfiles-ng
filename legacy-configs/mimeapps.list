@@ -2,6 +2,7 @@
 application/json=nvim.desktop;
 application/octet-stream=vim.desktop;
 application/pdf=org.kde.okular.desktop;xreader.desktop;libreoffice-draw.desktop;org.gnome.Evince.desktop;
+application/vnd.oasis.opendocument.text=writer.desktop;
 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=onlyoffice-desktopeditors.desktop;
 application/vnd.openxmlformats-officedocument.wordprocessingml.document=onlyoffice-desktopeditors.desktop;libreoffice-writer.desktop;
 application/vnd.rar=org.gnome.FileRoller.desktop;
@@ -104,6 +105,7 @@ application/json=nvim.desktop
 application/lrf=calibre-lrfviewer.desktop
 application/pdf=org.kde.okular.desktop;
 application/vnd.flatpak.ref=io.github.flattool.Warehouse
+application/vnd.oasis.opendocument.text=writer.desktop;
 application/vnd.openxmlformats-officedocument.wordprocessingml.document=libreoffice-writer.desktop
 application/vnd.rar=org.gnome.FileRoller.desktop;
 application/x-bittorrent=io.github.TransmissionRemoteGtk.desktop

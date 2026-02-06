@@ -9,7 +9,11 @@
     mangohud
     sidequest
     jstest-gtk
+    # Lutris
     protonup-qt
+    protonup-rs
+    lutris # there are alsow -unwrapped and -free versions available
+    cartridges # GTK4 + Libadwaita game launcher
   ];
 
   programs.steam = {

@@ -126,8 +126,10 @@ in
   };
 
   fileSystems."/mnt/nvme500g/dcs" = {
-    device = "/dev/disk/by-uuid/8432d060-bbd1-48e2-b45a-a7c27239c39c";
-    fsType = "ext4";
+    device = "/dev/disk/by-uuid/C0E4-C1F9";
+    fsType = "exfat";
+    # device = "/dev/disk/by-uuid/8432d060-bbd1-48e2-b45a-a7c27239c39c";
+    # fsType = "ext4";
     options = [
       "defaults"
       "nofail"
@@ -135,6 +137,8 @@ in
       "users"
       "exec"
       "rw"
+      "uid=1000"
+      "gid=100"
     ];
   };
 

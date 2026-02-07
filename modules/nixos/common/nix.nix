@@ -26,4 +26,7 @@
     enable = true;
     dates = "weekly";
   };
+
+  # Fix hardware clock on dualboot
+  time.hardwareClockInLocalTime = true;
 }

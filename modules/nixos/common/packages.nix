@@ -28,5 +28,6 @@
     nvd
     nh # nix helper
     nix-du
+    unixtools.netstat
   ];
 }

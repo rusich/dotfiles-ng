@@ -25,6 +25,7 @@
     kdePackages.dolphin-plugins
     kdePackages.qtsvg # for dolphin
     kdePackages.kio-extras
+    firefox
   ];
 
 }

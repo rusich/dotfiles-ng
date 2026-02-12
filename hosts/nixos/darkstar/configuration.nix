@@ -32,6 +32,7 @@ in
     "${nixosModules}/plasma6.nix"
     "${nixosModules}/gaming.nix"
     "${nixosModules}/DAW.nix"
+    "${nixosModules}/gnome.nix"
   ];
 
   # Host-specific configuration
@@ -94,6 +95,12 @@ in
   users.users.zaychik = {
     isNormalUser = true;
     description = "Sakhaya Sergina";
+    extraGroups = [ "networkmanager" ];
+  };
+
+  users.users.busya = {
+    isNormalUser = true;
+    description = "Kristina Sergina";
     extraGroups = [ "networkmanager" ];
   };
 

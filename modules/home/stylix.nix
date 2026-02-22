@@ -3,6 +3,7 @@
 {
   stylix.enable = true;
   stylix.targets = {
+    helix.enable = false;
     nixvim.enable = false;
     gtk.enable = true;
     qt = {

@@ -18,7 +18,7 @@ let
     "tree" = "eza --tree --icons --group-directories-first";
 
     # Nix packages online
-    "lumen" = "nix run github:jnsahaj/lumen -- ";
+    # "lumen" = "nix run github:jnsahaj/lumen -- ";
   };
 in
 {

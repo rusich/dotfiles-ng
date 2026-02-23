@@ -102,10 +102,6 @@
     };
     programs.fish.enable = true;
     # programs.firefox.enable = true;
-    programs.neovim = {
-      enable = true;
-      defaultEditor = true;
-    };
 
     programs.throne = {
       enable = true;

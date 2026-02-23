@@ -41,7 +41,7 @@ local spec = {
       -- ['Busted'] = {},
     },
     status = { virtual_text = true },
-    output = { open_on_run = true },
+    output = { open_on_run = false },
     quickfix = {
       enabled = true,
       open = function()

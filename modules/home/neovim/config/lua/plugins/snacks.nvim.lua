@@ -3,9 +3,8 @@
 ---@type LazyPluginSpec
 local spec = {
   'folke/snacks.nvim',
-  priority = 1000,
+  priority = 999,
   lazy = false,
-  ---@type snacks.Config
   opts = {
     toggle = {
       which_key = true, -- integrate with which-key to show enabled/disabled icons and colors
@@ -47,7 +46,7 @@ local spec = {
     },
     bigfile = { enabled = true },
     dashboard = {
-      enabled = true,
+      enabled = false,
       example = 'compact_files',
       preset = {
         header = [[

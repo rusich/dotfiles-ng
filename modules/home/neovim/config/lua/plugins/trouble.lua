@@ -6,12 +6,11 @@ local spec = {
   'folke/trouble.nvim',
   cmd = { 'Trouble' },
   opts = { use_diagnostic_signs = true },
-  event = 'VeryLazy',
   keys = {
-    { '<leader>xx', '<cmd>Trouble diagnostics<cr>', desc = 'Diagnostics (Trouble)' },
-    { '<leader>xq', '<cmd>Trouble quickfix<cr>', desc = 'Quickfix List (Trouble)' },
-    { '<leader>xt', '<cmd>Trouble todo<cr>', desc = 'Todo List (Trouble)' },
-    { '<C-\\>', '<cmd>Trouble lsp_document_symbols toggle win.position=right win.size=0.3 focus=true<cr>', desc = 'Toggle LSP symbols (Trouble)' },
+    { '<leader>xx', '<cmd>Trouble diagnostics<cr>',                                                            desc = 'Diagnostics (Trouble)' },
+    { '<leader>xq', '<cmd>Trouble quickfix<cr>',                                                               desc = 'Quickfix List (Trouble)' },
+    { '<leader>xt', '<cmd>Trouble todo<cr>',                                                                   desc = 'Todo List (Trouble)' },
+    { '<C-\\>',     '<cmd>Trouble lsp_document_symbols toggle win.position=right win.size=0.3 focus=true<cr>', desc = 'Toggle LSP symbols (Trouble)' },
     {
       '[q',
       function()

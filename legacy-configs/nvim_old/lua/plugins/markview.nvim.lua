@@ -1,7 +1,7 @@
 -- For `plugins/markview.lua` users.
 return {
   "OXY2DEV/markview.nvim",
-  -- lazy = false,
+  lazy = true,
   ft = { "markdown", "markdown_inline" },
 
   -- Completion for `blink.cmp`

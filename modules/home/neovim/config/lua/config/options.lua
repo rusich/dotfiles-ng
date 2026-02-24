@@ -88,8 +88,10 @@ pcall(vim.cmd.colorscheme, 'catppuccin')
 -- Spell
 opt.spelllang = 'ru,en'
 
-vim.opt.winborder = 'rounded'
-vim.opt.winblend = 5
+opt.winborder = 'rounded'
+opt.winblend = 5
+
+opt.icm = 'split'
 
 -- Global Float transparency
 -- opt.winblend = require('core.config').ui.winblend

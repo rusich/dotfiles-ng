@@ -4,9 +4,21 @@ local set = vim.keymap.set
 
 local spec = {
   'nvim-mini/mini.nvim',
-  priority = 1000,
+  priority = 999,
   lazy = false,
   config = function()
+    vim.api.nvim_create_autocmd('FileType', {
+      pattern = 'snacks_dashboard',
+      callback = function()
+        require('mini.clue').ensure_buf_triggers()
+      end,
+    })
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'MiniStarterOpened',
+      callback = function()
+        require('mini.clue').ensure_buf_triggers()
+      end,
+    })
     -- TEXT EDITING --
 
     -- Better Around/Inside textobjects
@@ -35,19 +47,19 @@ local spec = {
     -- - sr)'  - [S]urround [R]eplace [)] [']
     require('mini.surround').setup()
 
-    -- Setup
-    local gen_loader = require('mini.snippets').gen_loader
-    require('mini.snippets').setup {
-      snippets = {
-        -- gen_loader.from_runtime '*.json',
-        -- Load custom file with global snippets first
-        gen_loader.from_file '~/.config/nvim/snippets/global.json',
-
-        -- Load snippets based on current language by reading files from
-        -- "snippets/" subdirectories from 'runtimepath' directories.
-        gen_loader.from_lang(),
-      },
-    }
+    -- -- Setup
+    -- local gen_loader = require('mini.snippets').gen_loader
+    -- require('mini.snippets').setup {
+    --   snippets = {
+    --     -- gen_loader.from_runtime '*.json',
+    --     -- Load custom file with global snippets first
+    --     gen_loader.from_file '~/.config/nvim/snippets/global.json',
+    --
+    --     -- Load snippets based on current language by reading files from
+    --     -- "snippets/" subdirectories from 'runtimepath' directories.
+    --     gen_loader.from_lang(),
+    --   },
+    -- }
 
     -- GENERAL WORKFLOW --
 
@@ -130,6 +142,8 @@ local spec = {
           keys = '<Leader>',
         },
 
+        { mode = 'n',          keys = 'c' },
+
         -- `[` and `]` keys
         { mode = 'n',          keys = '[' },
         { mode = 'n',          keys = ']' },
@@ -178,12 +192,46 @@ local spec = {
         { mode = 'n', keys = '<Leader>O',  desc = '+org' },
         { mode = 'n', keys = '<Leader>up', desc = '+Paste' },
         { mode = 'n', keys = '<Leader>f',  desc = '+Find' },
+        { mode = 'n', keys = '<Leader>t',  desc = '+Tests' },
       },
     })
 
+    local function lazy_stats()
+      local lazy_stats = require("lazy.stats").stats()
+      local ms = (math.floor(lazy_stats.startuptime * 100 + 0.5) / 100)
+      local icon = "⚡ "
 
-    -- -- Dashboard
-    -- require('mini.starter').setup()
+      return icon .. "Neovim loaded " .. lazy_stats.loaded .. "/" .. lazy_stats.count .. " plugins in " .. ms .. "ms"
+    end
+
+    -- Dashboard
+    require('mini.starter').setup({
+      header =
+      [[
+      ████ ██████           █████      ██
+     ███████████             █████ 
+     █████████ ███████████████████ ███   ███████████
+    █████████  ███    █████████████ █████ ██████████████
+   █████████ ██████████ █████████ █████ █████ ████ █████
+ ███████████ ███    ███ █████████ █████ █████ ████ █████
+██████  █████████████████████ ████ █████ █████ ████ ██████
+]]
+    })
+
+    -- leap-like
+    require('mini.jump').setup({})
+    require('mini.jump2d').setup({
+      view = {
+        -- Whether to dim lines with at least one jump spot
+        dim = true,
+
+        -- How many steps ahead to show. Set to big number to show all steps.
+        n_steps_ahead = 100,
+      },
+      mappings = {
+        start_jumping = 'gw', -- NOTE: заменяет стандартных хоткей
+      },
+    })
   end,
 }
 

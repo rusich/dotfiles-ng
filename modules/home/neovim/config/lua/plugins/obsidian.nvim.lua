@@ -64,12 +64,30 @@ return {
       },
     },
     picker = {
-      name = "telescope.nvim",
-      -- name = "snacks.pick",
-      -- layout = { preset = "ivy" },
-
+      name = "snacks.pick",
     },
-    -- see below for full list of options 👇
+    -- fix snacks.pick missed <c-x> mapping
+    callbacks = {
+      post_setup = function(_)
+        -- Add a key mapping in snacks.picker input to create note from query
+        vim.api.nvim_create_autocmd("FileType", {
+          pattern = "snacks_picker_input",
+          callback = function()
+            vim.keymap.set("i", "<C-x>", function()
+              local picker = require("snacks.picker").get()
+              if picker then
+                local query = picker[1].finder.filter.pattern
+                -- print(query)
+                vim.cmd("close")
+                vim.schedule(function()
+                  require("obsidian.api").new(query)
+                end)
+              end
+            end, { buffer = true, desc = "Obsidian new note from query" })
+          end,
+        })
+      end,
+    },
     ui = {
       enable = false,
     },

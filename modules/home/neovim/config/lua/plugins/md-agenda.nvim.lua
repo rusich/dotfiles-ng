@@ -96,7 +96,7 @@ return {
     vim.keymap.set('n', '<A-c>', ":CancelTask<CR>")
 
     vim.keymap.set('n', '<A-h>', ":HabitView<CR>")
-    vim.keymap.set('n', '<A-o>', ":AgendaDashboard<CR>")
+    vim.keymap.set('n', '<A-;>', ":AgendaDashboard<CR>")
     vim.keymap.set('n', '<A-a>', ":AgendaView<CR>")
 
     vim.keymap.set('n', '<A-s>', ":TaskScheduled<CR>")

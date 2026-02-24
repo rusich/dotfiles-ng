@@ -16,9 +16,9 @@ vim.lsp.enable("nixd")
 -- })
 
 vim.diagnostic.config {
-  -- virtual_lines = {
-  --   current_line = false,
-  -- },
+  virtual_lines = {
+    current_line = true,
+  },
   virtual_text = false,
   severity_sort = true,
   underline = true,

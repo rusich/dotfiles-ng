@@ -4,7 +4,6 @@ local set = vim.keymap.set
 
 local spec = {
   'nvim-mini/mini.nvim',
-  priority = 999,
   lazy = false,
   config = function()
     vim.api.nvim_create_autocmd('User', {
@@ -225,21 +224,43 @@ local spec = {
 
       -- Which lines are used for computing spots
       allowed_lines = {
-        blank = false, -- Blank line (not sent to spotter even if `true`)
+        blank = false, -- Blank line (not sent to spotter even tf `true`)
         fold = true,   -- Start of fold (not sent to spotter even if `true`)
       },
 
-      mappings = {
-        start_jumping = '',
-      },
+      -- mappings = {
+      --   start_jumping = '',
+      -- },
     })
-    -- vim.api.nvim_set_hl(0, 'MiniJump2dSpot', { foreground = '#ee0000', bold = true, sp = 'Red', undercurl = true })
-    local spot_color = '#ff5d62';
-    vim.api.nvim_set_hl(0, 'MiniJump2dSpot', { foreground = spot_color, bold = true })
-    vim.api.nvim_set_hl(0, 'MiniJump2dSpotAhead', { foreground = spot_color, bold = true })
-    vim.api.nvim_set_hl(0, 'MiniJump2dSpotUnique', { foreground = spot_color, bold = true })
     -- NOTE: заменяет стандартных хоткей 'gw'
     vim.keymap.set('n', 'gw', '<Cmd>lua   MiniJump2d.start(MiniJump2d.builtin_opts.word_start)<CR>', { silent = true })
+    -- Создаем группу для наших highlight автокоманд
+    -- Функция для установки highlight
+    local function set_jump2d_hl()
+      -- vim.api.nvim_set_hl(0, 'MiniJump2dSpot', { foreground = '#ee0000', bold = true, sp = 'Red', undercurl = true })
+      -- -- Также настраиваем MiniJump2dSpotAhead для лучшей видимости
+      -- vim.api.nvim_set_hl(0, 'MiniJump2dSpotAhead', { foreground = '#ff5d62', bold = true })
+      local spot_color = '#ff5d62'
+      vim.api.nvim_set_hl(0, 'MiniJump2dSpot', { foreground = spot_color, bold = true })
+      vim.api.nvim_set_hl(0, 'MiniJump2dSpotAhead', { foreground = spot_color, bold = true })
+      vim.api.nvim_set_hl(0, 'MiniJump2dSpotUnique', { foreground = spot_color, bold = true })
+      -- Можно добавить и другие highlight группы при необходимости
+      -- vim.api.nvim_set_hl(0, 'MiniJump2dDim', { link = 'Comment' })
+    end
+    -- Устанавливаем highlight сразу
+    set_jump2d_hl()
+    -- Автокоманда для ColorScheme, которая выполнится с задержкой после автокоманды MiniJump2d
+    vim.api.nvim_create_autocmd('ColorScheme', {
+      group = vim.api.nvim_create_augroup('MyMiniJump2dHL', { clear = true }),
+      pattern = '*',
+      callback = function()
+        -- Используем vim.schedule для гарантии выполнения после автокоманды MiniJump2d
+        vim.schedule(function()
+          set_jump2d_hl()
+        end)
+      end,
+      desc = 'Set MiniJump2d highlight after colorscheme change'
+    })
   end,
 }
 

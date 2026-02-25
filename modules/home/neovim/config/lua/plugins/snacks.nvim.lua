@@ -193,7 +193,7 @@ local spec = {
       desc = 'Smart Find Files',
     },
     {
-      '<leader>,',
+      '<leader>b',
       function()
         Snacks.picker.buffers()
       end,
@@ -214,13 +214,6 @@ local spec = {
       desc = 'Command History',
     },
     -- find
-    {
-      '<leader>fb',
-      function()
-        Snacks.picker.buffers()
-      end,
-      desc = 'Buffers',
-    },
     {
       '<leader>fc',
       function()

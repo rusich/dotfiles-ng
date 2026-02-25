@@ -20,13 +20,6 @@ map('n', '<C-Down>', '<cmd>resize -2<cr>', { desc = 'Decrease Window Height' })
 map('n', '<C-Left>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease Window Width' })
 map('n', '<C-Right>', '<cmd>vertical resize +2<cr>', { desc = 'Increase Window Width' })
 
--- Move Lines
-map('n', '<A-Up>', "<cmd>execute 'move .-' . (v:count1 + 1)<cr>==", { desc = 'Move Up' })
-map('i', '<A-Down>', '<esc><cmd>m .+1<cr>==gi', { desc = 'Move Down' })
-map('i', '<A-Up>', '<esc><cmd>m .-2<cr>==gi', { desc = 'Move Up' })
-map('v', '<A-Down>', ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc = 'Move Down' })
-map('v', '<A-Up>', ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = 'Move Up' })
-map('n', '<A-Down>', "<cmd>execute 'move .+' . v:count1<cr>==", { desc = 'Move Down' })
 
 -- Comment with <c-/>
 map('n', '<C-/>', 'gcc', { desc = 'Toggle comment', remap = true })
@@ -36,9 +29,9 @@ map('v', '<C-/>', 'gc', { desc = 'Toggle comment', remap = true })
 map('n', '<M-space>', 'za', { desc = 'Toggle fold' })
 map('v', '<M-space>', 'zf', { desc = 'Toggle fold' })
 
--- Buffer next/previous
-map('n', 'L', '<cmd>bnext<CR>', { desc = 'Next buffer' })
-map('n', 'H', '<cmd>bprevious<CR>', { desc = 'Previous buffer' })
+-- NOTE: use ]b and [b instead -- Buffer next/previous
+-- map('n', 'L', '<cmd>bnext<CR>', { desc = 'Next buffer' })
+-- map('n', 'H', '<cmd>bprevious<CR>', { desc = 'Previous buffer' })
 
 -- Close current window with Ctrl+C
 map('n', '<C-c>', '<cmd>close<CR>', { desc = 'Close window' })

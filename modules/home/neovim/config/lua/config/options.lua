@@ -60,7 +60,7 @@ opt.inccommand = 'split'
 opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-opt.scrolloff = 3
+opt.scrolloff = 5
 
 opt.cmdheight = 1 -- 0 is not working with org change todo state
 

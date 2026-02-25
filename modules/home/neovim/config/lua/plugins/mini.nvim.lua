@@ -7,12 +7,6 @@ local spec = {
   priority = 999,
   lazy = false,
   config = function()
-    vim.api.nvim_create_autocmd('FileType', {
-      pattern = 'snacks_dashboard',
-      callback = function()
-        require('mini.clue').ensure_buf_triggers()
-      end,
-    })
     vim.api.nvim_create_autocmd('User', {
       pattern = 'MiniStarterOpened',
       callback = function()
@@ -223,15 +217,29 @@ local spec = {
     require('mini.jump2d').setup({
       view = {
         -- Whether to dim lines with at least one jump spot
-        dim = true,
+        dim = false,
 
         -- How many steps ahead to show. Set to big number to show all steps.
-        n_steps_ahead = 100,
+        n_steps_ahead = 2,
       },
+
+      -- Which lines are used for computing spots
+      allowed_lines = {
+        blank = false, -- Blank line (not sent to spotter even if `true`)
+        fold = true,   -- Start of fold (not sent to spotter even if `true`)
+      },
+
       mappings = {
-        start_jumping = 'gw', -- NOTE: заменяет стандартных хоткей
+        start_jumping = '',
       },
     })
+    -- vim.api.nvim_set_hl(0, 'MiniJump2dSpot', { foreground = '#ee0000', bold = true, sp = 'Red', undercurl = true })
+    local spot_color = '#ff5d62';
+    vim.api.nvim_set_hl(0, 'MiniJump2dSpot', { foreground = spot_color, bold = true })
+    vim.api.nvim_set_hl(0, 'MiniJump2dSpotAhead', { foreground = spot_color, bold = true })
+    vim.api.nvim_set_hl(0, 'MiniJump2dSpotUnique', { foreground = spot_color, bold = true })
+    -- NOTE: заменяет стандартных хоткей 'gw'
+    vim.keymap.set('n', 'gw', '<Cmd>lua   MiniJump2d.start(MiniJump2d.builtin_opts.word_start)<CR>', { silent = true })
   end,
 }
 

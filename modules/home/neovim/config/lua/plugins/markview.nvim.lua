@@ -15,6 +15,14 @@ return {
       enable = false,
     },
     markdown = {
+      headings = {
+        enable = true,
+        org_indent = true,
+        heading_1 = {
+          style = "icon",
+          icon = "◉ "
+        }
+      },
       list_items = {
         --   enable = false, -- Using checkmate.nvim for checkbox render
 

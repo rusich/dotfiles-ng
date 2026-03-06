@@ -61,6 +61,10 @@
     unstable.chatbox
     unrar
     unetbootin
+    # Gnome apps for test
+    showtime
+    decibels
+    loupe
   ];
 
 }

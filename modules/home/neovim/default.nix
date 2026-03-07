@@ -12,6 +12,7 @@
     texlive.combined.scheme-full
     # for mermaid grapth support via Snacks.nvim
     mermaid-cli
+    sqlite # for vim-dadbod
   ];
   # backup nvim config
   home.file = {

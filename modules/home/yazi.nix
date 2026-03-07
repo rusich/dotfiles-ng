@@ -1,8 +1,66 @@
+{ pkgs, ... }:
 {
+  home.packages = with pkgs; [
+    ffmpeg # for mediainfo
+    mediainfo # for mediainfo
+  ];
+
   programs.yazi = {
     enable = true;
     enableZshIntegration = true;
     enableFishIntegration = true;
     enableBashIntegration = true;
+
+    plugins = {
+      mediainfo = pkgs.yaziPlugins.mediainfo;
+    };
+
+    settings = {
+
+      plugin = {
+        prepend_preloaders = [
+          # Replace magick, image, video with mediainfo
+          {
+            mime = "{audio,video,image}/*";
+            run = "mediainfo";
+          }
+          {
+            mime = "application/subrip";
+            run = "mediainfo";
+          }
+          # Adobe Illustrator, Adobe Photoshop is image/adobe.photoshop, already handled above
+          {
+            mime = "application/postscript";
+            run = "mediainfo";
+          }
+        ];
+        prepend_previewers = [
+          # Replace magick, image, video with mediainfo
+          {
+            mime = "{audio,video,image}/*";
+            run = "mediainfo";
+          }
+          {
+            mime = "application/subrip";
+            run = "mediainfo";
+          }
+          # Adobe Illustrator, Adobe Photoshop is image/adobe.photoshop, already handled above
+          {
+            mime = "application/postscript";
+            run = "mediainfo";
+          }
+        ];
+      };
+      # There are more extensions which are supported by mediainfo.
+      # Just add file's MIME type to `previewers`, `preloaders` above.
+      # https://mediaarea.net/en/MediaInfo/Support/Formats
+
+      # For a large file like Adobe Illustrator, Adobe Photoshop, etc
+      # you may need to increase the memory limit if no image is rendered.
+      # https://yazi-rs.github.io/docs/configuration/yazi#tasks
+      tasks = {
+        image_alloc = 1073741824; # = 1024*1024*1024 = 1024MB
+      };
+    };
   };
 }

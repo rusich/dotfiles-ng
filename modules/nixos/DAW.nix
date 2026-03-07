@@ -46,6 +46,7 @@
     hydrogen # drums app
     drumgizmo # drums plugin
     unstable.tonelib-jam
+    tuxguitar # for export from .gp to .gp3 ↖
     unstable.tonelib-metal
     unstable.tonelib-gfx
     # custom.tonelib-gfx

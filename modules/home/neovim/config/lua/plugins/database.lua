@@ -1,14 +1,33 @@
--- Modern database interface for Vim
-
----@type LazyPluginSpec
-local spec = {
-  'tpope/vim-dadbod',
-  dependencies = {
+return {
+  {
     'kristijanhusak/vim-dadbod-ui',
-    'kristijanhusak/vim-dadbod-completion',
-    'nanotee/sqls.nvim',
+    dependencies = {
+      { 'tpope/vim-dadbod',                     lazy = true },
+      { 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true },
+    },
+    cmd = {
+      'DBUI',
+      'DBUIToggle',
+      'DBUIAddConnection',
+      'DBUIFindBuffer',
+    },
+    init = function()
+      -- Your DBUI configuration
+      vim.g.db_ui_use_nerd_fonts = 1
+    end,
   },
-  cmd = { 'DB', 'DBUI', 'DBUIToggle' },
+  { -- optional saghen/blink.cmp completion source
+    'saghen/blink.cmp',
+    opts = {
+      sources = {
+        per_filetype = {
+          sql = { 'snippets', 'dadbod', 'buffer' },
+        },
+        -- add vim-dadbod-completion to your completion providers
+        providers = {
+          dadbod = { name = "Dadbod", module = "vim_dadbod_completion.blink" },
+        },
+      },
+    },
+  }
 }
-
-return spec

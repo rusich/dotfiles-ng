@@ -100,6 +100,8 @@ x-scheme-handler/https=firefox.desktop;yandex-browser.desktop;chromium.desktop;z
 x-scheme-handler/sms=org.kde.kdeconnect.handler.desktop;
 x-scheme-handler/tel=org.kde.kdeconnect.handler.desktop;
 x-scheme-handler/trash=org.kde.dolphin.desktop
+application/sql=nvim.desktop;
+application/xml=nvim.desktop;
 
 [Default Applications]
 application/json=nvim.desktop
@@ -283,3 +285,5 @@ x-scheme-handler/unknown=yandex-browser.desktop
 x-scheme-handler/vnc=org.remmina.Remmina.desktop
 x-scheme-handler/webcal=yandex-browser.desktop
 x-scheme-handler/x-rdp=org.remmina.Remmina.desktop
+application/sql=nvim.desktop
+application/xml=nvim.desktop

@@ -14,7 +14,7 @@
     protonup-rs
     lutris # there are alsow -unwrapped and -free versions available
     cartridges # GTK4 + Libadwaita game launcher
-    retroarch-full
+    #retroarch-full
     ryubing
   ];
 

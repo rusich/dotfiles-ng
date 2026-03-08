@@ -42,7 +42,7 @@
       url = "github:musnix/musnix";
     };
 
-    inputs.nix-yazi-plugins = {
+    nix-yazi-plugins = {
       url = "github:lordkekz/nix-yazi-plugins?ref=yazi-v0.2.5";
       inputs.nixpkgs.follows = "nixpkgs";
     };

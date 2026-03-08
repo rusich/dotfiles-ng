@@ -429,7 +429,7 @@ function M.review_inbox()
 end
 
 -- Refine Heading -------------------------------------------------------------
-function M.refine_heading()
+function M.refile_heading()
   local Snacks = require("snacks")
   local heading_data, error_msg = validate_heading_operation()
   if not heading_data then
@@ -453,6 +453,7 @@ function M.refine_heading()
       score = i,
       text = note.title,
       path = note.path,
+      file = note.path,
       filename = note.filename,
     })
 
@@ -926,7 +927,7 @@ function M.setup(user_config)
     desc = 'Review notes in Inbox'
   })
 
-  vim.api.nvim_create_user_command('NoteRefile', M.refine_heading, {
+  vim.api.nvim_create_user_command('NoteRefile', M.refile_heading, {
     desc = 'Refile current heading to another note'
   })
 

@@ -28,12 +28,15 @@ in
 
   imports = [
     ./hardware-configuration.nix
+    # Common for desktops
     "${nixosModules}/desktopCommon"
-    "${nixosModules}/plasma6.nix"
+    # Optional
     "${nixosModules}/gaming.nix"
     "${nixosModules}/DAW.nix"
-    "${nixosModules}/gnome.nix"
     "${nixosModules}/gamedev.nix"
+    # "${nixosModules}/plasma6.nix"
+    # "${nixosModules}/gnome.nix"
+    # "${nixosModules}/hyprland.nix"
   ];
 
   # Host-specific configuration

@@ -54,11 +54,6 @@
     services.displayManager.sddm.enable = true;
     services.displayManager.sddm.wayland.enable = true;
 
-    # Hyprland
-    programs.hyprland = {
-      enable = true;
-    };
-
     # Niri
     programs.niri.enable = true;
 

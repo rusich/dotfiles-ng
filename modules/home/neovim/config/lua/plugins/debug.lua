@@ -427,6 +427,46 @@ local spec = {
       },
     }
 
+    -- customp DAP
+
+    -- Godot4
+    -- Функция для поиска корня проекта по файлу project.godot
+    local function find_godot_project_root()
+      local current_file = vim.fn.expand("%:p")
+      if current_file == "" then
+        current_file = vim.fn.getcwd()
+      end
+
+      local dir = vim.fn.fnamemodify(current_file, ":h")
+      while dir ~= "/" do
+        local project_file = dir .. "/project.godot"
+        if vim.fn.filereadable(project_file) == 1 then
+          return dir
+        end
+        dir = vim.fn.fnamemodify(dir, ":h")
+      end
+      return vim.fn.getcwd()
+    end
+
+    dap.adapters.godot = {
+      type = 'server',
+      host = '127.0.0.1',
+      port = '6006',
+      debugServer = '6007',
+    }
+    dap.configurations.gdscript = {
+      {
+        type = "godot",
+        request = "launch",
+        name = "Launch scene",
+        -- project = "${workspaceFolder}", -- попробуйте явный путь
+        -- project = "/home/rusich/Nextcloud/Devel/tutorials/Godot/first-game", -- попробуйте явный путь
+        -- project = vim.fn.getcwd(),
+        project = find_godot_project_root(),
+        launch_scene = true,
+      },
+    }
+
     -- LUA
     -- dap.configurations.lua = {
     --   {

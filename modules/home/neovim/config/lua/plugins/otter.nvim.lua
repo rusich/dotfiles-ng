@@ -12,6 +12,6 @@ return {
   },
 
   keys = {
-    { '<leader>co', '<cmd>lua require("otter").activate()<cr>', desc = 'Toggle otter' },
+    { '<leader>co', '<cmd>lua require("otter").activate()<cr>', desc = 'Activate Otter.nvim' },
   }
 }

@@ -33,6 +33,7 @@ in
     "${nixosModules}/gaming.nix"
     "${nixosModules}/DAW.nix"
     "${nixosModules}/gnome.nix"
+    "${nixosModules}/gamedev.nix"
   ];
 
   # Host-specific configuration

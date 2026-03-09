@@ -388,6 +388,7 @@ window-rule {
     match title=r".* \(GUI\)$" // VST, LV etc
     match title=r"^Выберите USB-устройства для перенаправл.*$" // Remmina usb redirect selection
     match app-id="org.gnome.Showtime"
+    match title="(DEBUG)" // Godot Debug window
     open-floating true
 }
 

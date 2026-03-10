@@ -30,6 +30,19 @@ vim.diagnostic.config {
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
   callback = function(event)
+    -- Enable CodeLens
+    local bufnr = event.buf
+    local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+    if client and client:supports_method 'textDocument/codeLens' then
+      vim.lsp.codelens.refresh()
+      vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
+        buffer = bufnr,
+        callback = vim.lsp.codelens.refresh,
+      })
+    end
+
+    -- Set LSP Keymaps
     local map = function(keys, func, desc)
       vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
     end
@@ -65,6 +78,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     -- Execute a code action, usually your cursor needs to be on top of an error
     -- or a suggestion from your LSP for this to activate.
     map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+    map('<leader>cl', vim.lsp.codelens.run, '[C]ode [L]ens')
 
     -- WARN: This is not Goto Definition, this is Goto Declaration.
     --  For example, in C this would take you to the header.

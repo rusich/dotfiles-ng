@@ -10,7 +10,7 @@ local spec = {
       gdscript = { 'gdlint' },
       -- markdown = { 'markdownlint' },
       -- ['markdown-inline'] = nil,
-      -- sql = { 'sqlfluff' },
+      sql = { 'sqlfluff' },
     }
 
     -- To allow other plugins to add linters to require('lint').linters_by_ft,

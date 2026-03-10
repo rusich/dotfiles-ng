@@ -1,6 +1,7 @@
 -- Custom lsp servers setup (in ~/.config/nvim/after/lsp/)
 vim.lsp.enable("nixd")
 vim.lsp.enable("gdscript")
+vim.lsp.enable("roslyn_ls")
 
 
 vim.diagnostic.config {

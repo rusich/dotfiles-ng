@@ -16,22 +16,7 @@ local spec = {
     },
 
     sources = {
-      -- min_keyword_length = function()
-      --   return vim.bo.filetype == 'org' and 3 or 0
-      -- end,
-      providers = {
-        lazydev = {
-          name = 'LazyDev',
-          module = 'lazydev.integrations.blink',
-          -- make lazydev completions top priority (see `:h blink.cmp`)
-          score_offset = 100,
-        },
-      },
-      -- default = { 'snippets', 'lsp', 'path', 'buffer' },
-      default = { 'snippets', 'buffer', 'lsp', 'path' },
-      per_filetype = {
-        lua = { 'lazydev', 'snippets', 'lsp', 'path', 'buffer' },
-      },
+      default = { 'snippets', 'lsp', 'path', 'buffer' },
     },
 
     completion = {
@@ -44,6 +29,10 @@ local spec = {
       },
       menu = {
         winhighlight = 'Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:BlinkCmpMenuSelection,Search:None',
+
+        draw = {
+          columns = { { 'kind_icon' }, { 'label', 'label_description', 'source_name', gap = 1 } },
+        },
       },
     },
     signature = {

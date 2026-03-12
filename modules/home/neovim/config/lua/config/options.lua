@@ -93,6 +93,7 @@ opt.winblend = 5
 
 opt.icm = 'split'
 
+
 -- Global Float transparency
 -- opt.winblend = require('core.config').ui.winblend
 

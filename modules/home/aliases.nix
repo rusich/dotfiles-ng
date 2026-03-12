@@ -3,9 +3,7 @@
   pkgs,
   lib,
   ...
-}:
-
-let
+}: let
   myAliases = {
     # Standard
     "home-manager" = "home-manager --flake ~/.dotfiles/";
@@ -16,12 +14,8 @@ let
     # ls and tree replacement with eza
     "ls" = "eza --icons --group-directories-first";
     "tree" = "eza --tree --icons --group-directories-first";
-
-    # Nix packages online
-    # "lumen" = "nix run github:jnsahaj/lumen -- ";
   };
-in
-{
+in {
   programs.bash.shellAliases = myAliases;
   programs.fish.shellAliases = myAliases;
   programs.zsh.shellAliases = myAliases;

@@ -60,6 +60,7 @@ local spec = {
           { icon = ' ', key = 'g', desc = 'Find Text', action = ":lua Snacks.dashboard.pick('live_grep')" },
           { icon = ' ', key = 'r', desc = 'Recent Files', action = ":lua Snacks.dashboard.pick('oldfiles')" },
           { icon = ' ', key = 'c', desc = 'Config', action = ":lua Snacks.picker('files', {cwd = vim.fn.stdpath('config')})" },
+          { icon = ' ', key = 'd', desc = 'Dotfiles', action = ":lua Snacks.picker('files', {cwd = '~/.dotfiles'})" },
           { icon = ' ', key = 's', desc = 'Restore Session', action = ':lua MiniSessions.select()' },
           { icon = '󰒲 ', key = 'L', desc = 'Lazy', action = ':Lazy', enabled = package.loaded.lazy ~= nil },
           { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
@@ -219,7 +220,14 @@ local spec = {
       function()
         Snacks.picker.files { cwd = vim.fn.stdpath 'config' }
       end,
-      desc = 'Find Config File',
+      desc = 'Find Nevim Config File',
+    },
+    {
+      '<leader>fd',
+      function()
+        Snacks.picker.files { cwd = '~/.dotfiles' }
+      end,
+      desc = 'Find Dotfiles',
     },
     {
       '<leader>ff',

@@ -6,8 +6,15 @@ root = true
 # Don't use tabs for indentation.
 [*]
 indent_style = space
-indent_size = 4
-# (Please don't specify an indent_size here; that has too many unintended consequences.)
+indent_size = 4 
+
+[Makefile]
+indent_style = tab
+
+# Dart
+[**/*.dart]
+indent_style = space
+indent_size = 2
 
 # Code files
 [*.{cs,csx,vb,vbx}]
@@ -15,23 +22,13 @@ indent_size = 4
 insert_final_newline = true
 charset = utf-8-bom
 
-# XML project files
-[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
-indent_size = 2
-
-# XML config files
-[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
-indent_size = 2
-
 # JSON files
 [*.json]
 indent_size = 2
 
-
 # LUA files
 [*.lua]
 indent_size = 2
-
 
 # NIX files
 [*.nix]
@@ -44,6 +41,16 @@ indent_size = 2
 # Shell script files
 [*.sh]
 end_of_line = lf
+indent_size = 2
+
+# NOTE: From this line until EOF only Dotnet specific settings
+
+# XML project files
+[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
+indent_size = 2
+
+# XML config files
+[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
 indent_size = 2
 
 # Dotnet code style settings:
@@ -311,10 +318,4 @@ dotnet_diagnostic.IDE2004.severity = warning
 # There is a risk of accidentally breaking an internal API that partners rely on though IVT.
 dotnet_code_quality.CA1822.api_surface = private
 
-[Makefile]
-indent_style = tab
-
-# Dart
-[**/*.dart]
-indent_style = space
-indent_size = 2
+# vim: ft=editorconfig

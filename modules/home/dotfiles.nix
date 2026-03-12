@@ -1,12 +1,8 @@
-{ config, ... }:
-
-{
+{config, ...}: {
   home.file = {
     # common
     ".config/mimeapps.list".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/legacy-configs/mimeapps.list";
-    ".editorconfig".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/legacy-configs/home/editorconfig";
     # apps
     ".config/waybar".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/legacy-configs/waybar";

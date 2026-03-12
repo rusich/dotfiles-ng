@@ -29,8 +29,9 @@ local spec = {
     formatters_by_ft = {
       lua = { 'stylua' },
       sql = { 'sql_formatter' },
-      nix = { 'nixfmt' },
+      nix = { 'alejandra' },
       gdscript = { 'gdformat' },
+      json = { 'prettier' },
     },
   },
 }

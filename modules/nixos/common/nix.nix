@@ -1,6 +1,8 @@
 # Common `nix` settings
-{ lib, ... }:
-{
+{lib, ...}: {
+  environment.interactiveShellInit = ''
+    alias nixos-rebuild='nixos-rebuild --flake /home/rusich/.dotfiles'
+  '';
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -18,7 +20,7 @@
   nix.settings.auto-optimise-store = true;
   nix.optimise = {
     automatic = true;
-    dates = [ "daily" ];
+    dates = ["daily"];
   };
 
   # Automatic upgrading

@@ -7,9 +7,7 @@
   pkgs,
   lib,
   ...
-}:
-{
-
+}: {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -26,15 +24,17 @@
 
   nixpkgs = {
     config = {
-      allowUnfreePredicate = (_: true);
+      allowUnfreePredicate = _: true;
     };
   };
 
   home = rec {
-
     stateVersion = "25.05";
     username = userConfig.username;
-    homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
+    homeDirectory =
+      if pkgs.stdenv.isDarwin
+      then "/Users/${username}"
+      else "/home/${username}";
     # homeDirectory = "/Users/rusich";
 
     packages = with pkgs; [
@@ -53,7 +53,7 @@
   services.remmina.enable = true;
 
   # for nixd
-  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+  nix.nixPath = ["nixpkgs=${inputs.nixpkgs}"];
 
   # This will, for example, allow fontconfig to discover fonts and configurations installed through home.packages
   fonts.fontconfig.enable = true;
@@ -61,10 +61,8 @@
   # automatically import all home-manager modules
   # services.polkit-gnome.enable = true; # use from dms instead
 
-  imports =
-    with builtins;
+  imports = with builtins;
     map (fn: ./${fn}) (
       filter (fn: fn != "default.nix" && fn != "disabled") (attrNames (readDir "${homeModules}"))
     );
-
 }

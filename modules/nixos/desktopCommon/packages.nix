@@ -17,15 +17,25 @@
     gparted
     gimp
     nextcloud-client
+    # Nautilus + dependencies
     nautilus
     nautilus-python
     nautilus-open-any-terminal
+    python313Packages.pygobject3
+    # Nemo
+    nemo
+    nemo-preview
+    nemo-python
+    nemo-with-extensions
+
     # kde package
     kdePackages.dolphin
     kdePackages.dolphin-plugins
     kdePackages.qtsvg # for dolphin
     kdePackages.kio-extras
     firefox
+    # misc
+    xkill
   ];
 
 }

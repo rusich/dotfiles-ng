@@ -1,7 +1,7 @@
 -- Custom lsp servers setup (in ~/.config/nvim/after/lsp/)
 vim.lsp.enable("nixd")
 vim.lsp.enable("gdscript")
-vim.lsp.enable("roslyn_ls")
+-- vim.lsp.enable("roslyn_ls") -- try out omnisharp
 
 
 vim.diagnostic.config {
@@ -44,9 +44,45 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end
 
     -- Set LSP Keymaps
+    -- Сочетания клавиш заменяют стадартные для Neovim 0.11
+    -- Для более удобной навигации через Snacks.picker
     local map = function(keys, func, desc)
       vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
     end
+
+    local is_omnisharp = client and client.name == 'omnisharp'
+
+
+    map('gri', function()
+      Snacks.picker.lsp_implementations()
+    end, 'Goto Implementation')
+
+    -- УСЛОВНОЕ НАЗНАЧЕНИЕ ДЛЯ OMNISHARP
+    if is_omnisharp then
+      -- Для OmniSharp используем расширенные функции
+      map('gd', function()
+        require('omnisharp_extended').lsp_definition()
+      end, "Go to Definition (OmniSharp)")
+      -- map('grt', function()
+      --   require('omnisharp_extended').lsp_type_definition()
+      -- end, "Go to Type Definition (OmniSharp)")
+      -- map('grr', function()
+      --   require('omnisharp_extended').lsp_references()
+      -- end, "Go to References (OmniSharp)")
+      -- map('gri', function()
+      --   require('omnisharp_extended').lsp_implementation()
+      -- end, "Go to Implementation (OmniSharp)")
+    else
+      -- Для других LSP используем стандартные функции
+      map('gd', function()
+        Snacks.picker.lsp_definitions()
+      end, 'Goto Definition')
+    end
+
+
+    map('grt', function()
+      Snacks.picker.lsp_type_definitions()
+    end, 'Goto Type Definition')
 
     vim.keymap.set('n', 'grr', function()
       Snacks.picker.lsp_references()
@@ -56,17 +92,10 @@ vim.api.nvim_create_autocmd('LspAttach', {
       Snacks.picker.lsp_implementations()
     end, 'Goto Implementation')
 
-    map('gd', function()
-      Snacks.picker.lsp_definitions()
-    end, 'Goto Definition')
-
     map('gD', function()
       Snacks.picker.lsp_declarations()
     end, 'Goto Declaration')
 
-    map('grt', function()
-      Snacks.picker.lsp_type_definitions()
-    end, 'Goto T[y]pe Definition')
 
     map('<leader>ss', function()
       Snacks.picker.lsp_symbols()
@@ -76,13 +105,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
       Snacks.picker.lsp_workspace_symbols()
     end, 'LSP Workspace Symbols')
 
-    -- Execute a code action, usually your cursor needs to be on top of an error
-    -- or a suggestion from your LSP for this to activate.
-    map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
     map('<leader>cl', vim.lsp.codelens.run, '[C]ode [L]ens')
-
-    -- WARN: This is not Goto Definition, this is Goto Declaration.
-    --  For example, in C this would take you to the header.
-    map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
   end,
 })

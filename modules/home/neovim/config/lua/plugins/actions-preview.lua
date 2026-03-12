@@ -30,12 +30,13 @@ local spec = {
       backend = { 'snacks' },
     }
   end,
+  events = { 'LspAttach' },
   keys = {
     {
-      '<A-.>',
+      '<C-.>',
       "<cmd>lua require('actions-preview').code_actions()<cr>",
       mode = { 'n', 'v' },
-      desc = 'Code Actions',
+      desc = 'Code Actions (Preview)',
     },
   },
 }

@@ -30,7 +30,7 @@
 
   environment.systemPackages = with pkgs; [
     # reaper - ardour fully replaces reaper, and its open source and free
-    ardour
+    unstable.ardour
     gmetronome
     audacity
     # pavucontrol, not needed?

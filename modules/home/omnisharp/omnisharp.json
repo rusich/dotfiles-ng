@@ -1,10 +1,12 @@
 {
-  "FormattingOptions": {
-    "enableEditorConfigSupport": true
-  },
+  "$schema": "https://www.schemastore.org/omnisharp",
+
   "RoslynExtensionsOptions": {
+    "EnableAnalyzersSupport": true,
+    "EnableImportCompletion": true,
+    "AnalyzeOpenDocumentsOnly": true,
     "enableDecompilationSupport": true,
-    "inlayHintsOptions": {
+    "InlayHintsOptions": {
       "enableForParameters": true,
       "forLiteralParameters": true,
       "forIndexerParameters": true,
@@ -18,5 +20,13 @@
       "forLambdaParameterTypes": true,
       "forImplicitObjectCreation": true
     }
+  },
+  "FormattingOptions": {
+    "EnableEditorConfigSupport": false
+  },
+  "RenameOptions": {
+    "RenameOverloads": true,
+    "RenameInStrings": true,
+    "RenameInComments": true
   }
 }

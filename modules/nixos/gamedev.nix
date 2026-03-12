@@ -1,12 +1,11 @@
-{ pkgs, ... }:
-{
-
+{pkgs, ...}: {
   environment.systemPackages = with pkgs; [
-    godot_4-mono
-    godot_4-export-templates-bin
-    gdtoolkit_4 # Godot4: Linter, Formatter, etc...
-    roslyn-ls
+    unstable.godot-mono
+    unstable.godot-export-templates-bin
+    unstable.gdtoolkit_4 # Godot4: Linter, Formatter, etc...
     dotnet-sdk_9
+    unityhub
+    gnome-terminal # needet to neovim integreation in unity editor
+    # unstable.vscode
   ];
-
 }

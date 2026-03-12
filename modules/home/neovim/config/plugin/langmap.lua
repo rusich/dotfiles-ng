@@ -3,12 +3,12 @@
 -- restores the layout when entering and leaving insert mode.
 
 function _G.get_kb_layout()
-  return vim.fn.system { vim.fn.expand '$HOME/.config/nvim_old/tools/get_kb_layout.sh' }
+  return vim.fn.system { vim.fn.expand '$HOME/.config/nvim/tools/get_kb_layout.sh' }
 end
 
 vim.g.last_input_kb_layout = get_kb_layout()
 
-local layout_toggle_tool = vim.fn.expand '$HOME/.dotfiles/legacy-configs/hypr/scripts/toggle_keyboard_layout'
+local layout_toggle_tool = vim.fn.expand '$HOME/.config/hypr/scripts/toggle_keyboard_layout'
 
 -- Save used input keyboard layout when leaving insert mode
 vim.api.nvim_create_autocmd('InsertLeave', {

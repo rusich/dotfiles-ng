@@ -1,10 +1,8 @@
 {
   pkgs,
-  lib,
-  inputs,
+  config,
   ...
-}:
-let
+}: let
   layout = "scrolling";
   switch_workspace_script = pkgs.pkgs.writeShellScriptBin "switch_workspace" ''
 
@@ -64,8 +62,11 @@ let
 
     main "$@"
   '';
-in
-{
+in {
+  home.file = {
+    ".config/hypr/scripts".source =
+      config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/hyprland/scripts";
+  };
 
   home.packages = with pkgs; [
     brightnessctl
@@ -256,50 +257,51 @@ in
         ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
       ];
 
-      bind = [
-        ", XF86AudioPrev, exec, playerctl previous"
-        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-        ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
-        ", XF86AudioPlay, exec, playerctl play-pause"
-        ", XF86AudioPause, exec, playerctl play-pause"
-        ", XF86AudioNext, exec, playerctl next"
-        "Control_L&Shift_L, Escape, exec, io.missioncenter.MissionCenter"
-        "SUPER, return, exec, $term"
-        "SUPER, p, exec, $HOME/.config/rofi/scripts/get_pass.sh"
-        "SUPER, c, exec, $HOME/.config/rofi/scripts/edit_config.sh"
-        "SUPER, o, exec, $HOME/.config/rofi/scripts/open_file.sh"
-        "SUPER, slash, exec, rofi -show combi"
-        "SUPER, b, exec, $browser"
-        "SUPER, v, exec, $term -e nvim"
-        "SUPER, e, exec, dolphin"
-        "SUPER+SHIFT, p, exec, hyprpicker -a"
-        ", Print, exec, $screenshotarea"
-        "SUPER SHIFT, S, exec, $screenshotarea"
-        "CTRL, Print, exec, grimblast --notify --cursor copysave output"
-        "ALT, Print, exec, grimblast --notify --cursor copysave screen"
-        "SUPER SHIFT, Q, exit,"
-        "SUPER CTRL, q, exec, wlogout --protocol layer-shell -b 5 -T 400 -B 400"
-        "SUPER, t, togglefloating,"
-        "SUPER, f, fullscreenstate, 1"
-        "SUPER SHIFT, f, fullscreen,"
-        "SUPER CTRL, p, pseudo,"
-        "SUPER, s, togglesplit,"
-        "SUPER, w, killactive,"
-        "SUPER, x, killactive,"
-        "SUPER CTRL, p, pin"
-        "SUPER, h, movefocus, l"
-        "SUPER, l, movefocus, r"
-        "SUPER, k, movefocus, u"
-        "SUPER, j, movefocus, d"
-        "SUPER CTRL, l, focusmonitor, -1"
-        "SUPER CTRL, h, focusmonitor, +1"
-        # hyprscrolling niri mimics
-        "SUPER, Comma, movewindow, l"
-        "SUPER, Period, movewindow, r"
-      ]
-      ++ (
-        if layout == "scrolling" then
-          [
+      bind =
+        [
+          ", XF86AudioPrev, exec, playerctl previous"
+          ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+          ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+          ", XF86AudioPlay, exec, playerctl play-pause"
+          ", XF86AudioPause, exec, playerctl play-pause"
+          ", XF86AudioNext, exec, playerctl next"
+          "Control_L&Shift_L, Escape, exec, io.missioncenter.MissionCenter"
+          "SUPER, return, exec, $term"
+          "SUPER, p, exec, $HOME/.config/rofi/scripts/get_pass.sh"
+          "SUPER, c, exec, $HOME/.config/rofi/scripts/edit_config.sh"
+          "SUPER, o, exec, $HOME/.config/rofi/scripts/open_file.sh"
+          "SUPER, slash, exec, rofi -show combi"
+          "SUPER, b, exec, $browser"
+          "SUPER, v, exec, $term -e nvim"
+          "SUPER, e, exec, dolphin"
+          "SUPER+SHIFT, p, exec, hyprpicker -a"
+          ", Print, exec, $screenshotarea"
+          "SUPER SHIFT, S, exec, $screenshotarea"
+          "CTRL, Print, exec, grimblast --notify --cursor copysave output"
+          "ALT, Print, exec, grimblast --notify --cursor copysave screen"
+          "SUPER SHIFT, Q, exit,"
+          "SUPER CTRL, q, exec, wlogout --protocol layer-shell -b 5 -T 400 -B 400"
+          "SUPER, t, togglefloating,"
+          "SUPER, f, fullscreenstate, 1"
+          "SUPER SHIFT, f, fullscreen,"
+          "SUPER CTRL, p, pseudo,"
+          "SUPER, s, togglesplit,"
+          "SUPER, w, killactive,"
+          "SUPER, x, killactive,"
+          "SUPER CTRL, p, pin"
+          "SUPER, h, movefocus, l"
+          "SUPER, l, movefocus, r"
+          "SUPER, k, movefocus, u"
+          "SUPER, j, movefocus, d"
+          "SUPER CTRL, l, focusmonitor, -1"
+          "SUPER CTRL, h, focusmonitor, +1"
+          # hyprscrolling niri mimics
+          "SUPER, Comma, movewindow, l"
+          "SUPER, Period, movewindow, r"
+        ]
+        ++ (
+          if layout == "scrolling"
+          then [
             # Scrolling layout specific bindings
             # "SUPER SHIFT, h, layoutmsg, swapcol l"
             # "SUPER SHIFT, l, layoutmsg, swapcol r"
@@ -308,69 +310,65 @@ in
             "SUPER, z, hyprexpo:expo, toggle"
             "SUPER SHIFT, z, overview:toggle, all"
           ]
-        else
-          [
+          else [
             # Master layout specific bindings
             "SUPER SHIFT, h, movewindow, l"
             "SUPER SHIFT, l, movewindow, r"
           ]
-      )
-      ++ [
-        "SUPER SHIFT, k, movewindow, u"
-        "SUPER SHIFT, j, movewindow, d"
-        "SUPER SHIFT, o, movewindow, mon:+1"
-        "SUPER ALT, h, resizeactive, -20 0"
-        "SUPER ALT, l, resizeactive, 20 0"
-        "SUPER ALT, k, resizeactive, 0 -20"
-        "SUPER ALT, j, resizeactive, 0 20"
-        "SUPER CTRL SHIFT, space, exec, ~/.config/hypr/scripts/toggle_wm_layout"
-        "SUPER SHIFT, return, layoutmsg, swapwithmaster"
-        "SUPER CTRL, m, layoutmsg, addmaster"
-        "SUPER CTRL SHIFT, m, layoutmsg, removemaster"
-        "SUPER CTRL SHIFT, h, layoutmsg, orientationleft"
-        "SUPER CTRL SHIFT, l, layoutmsg, orientationright"
-        "SUPER CTRL SHIFT, k, layoutmsg, orientationtop"
-        "SUPER CTRL SHIFT, j, layoutmsg, orientationbottom"
-        "SUPER CTRL SHIFT, return, layoutmsg, orientationcenter"
-        "SUPER CTRL, j, workspace, e+1"
-        "SUPER CTRL, k, workspace, e-1"
-        "SUPER, g, togglegroup,"
-        "SUPER, tab, changegroupactive,"
-        "SUPER, grave, togglespecialworkspace,"
-        "SUPER SHIFT, grave, movetoworkspace, special"
+        )
+        ++ [
+          "SUPER SHIFT, k, movewindow, u"
+          "SUPER SHIFT, j, movewindow, d"
+          "SUPER SHIFT, o, movewindow, mon:+1"
+          "SUPER ALT, h, resizeactive, -20 0"
+          "SUPER ALT, l, resizeactive, 20 0"
+          "SUPER ALT, k, resizeactive, 0 -20"
+          "SUPER ALT, j, resizeactive, 0 20"
+          "SUPER CTRL SHIFT, space, exec, ~/.config/hypr/scripts/toggle_wm_layout"
+          "SUPER SHIFT, return, layoutmsg, swapwithmaster"
+          "SUPER CTRL, m, layoutmsg, addmaster"
+          "SUPER CTRL SHIFT, m, layoutmsg, removemaster"
+          "SUPER CTRL SHIFT, h, layoutmsg, orientationleft"
+          "SUPER CTRL SHIFT, l, layoutmsg, orientationright"
+          "SUPER CTRL SHIFT, k, layoutmsg, orientationtop"
+          "SUPER CTRL SHIFT, j, layoutmsg, orientationbottom"
+          "SUPER CTRL SHIFT, return, layoutmsg, orientationcenter"
+          "SUPER CTRL, j, workspace, e+1"
+          "SUPER CTRL, k, workspace, e-1"
+          "SUPER, g, togglegroup,"
+          "SUPER, tab, changegroupactive,"
+          "SUPER, grave, togglespecialworkspace,"
+          "SUPER SHIFT, grave, movetoworkspace, special"
 
-        "SUPER, mouse_down, workspace, e+1"
-        "SUPER, mouse_up, workspace, e-1"
-      ]
-      ++ (
-        if layout == "scrolling" then
-          [
+          "SUPER, mouse_down, workspace, e+1"
+          "SUPER, mouse_up, workspace, e-1"
+        ]
+        ++ (
+          if layout == "scrolling"
+          then [
             # Scrolling layout specific bindings
             "SUPER,R,layoutmsg,colresize +conf"
             "SUPER SHIFT,R,layoutmsg,colresize -conf"
           ]
-        else
-          [ ]
-      )
-      ++ (
-        # workspaces
-        # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
-        builtins.concatLists (
-          builtins.genList (
-            i:
-            let
-              ws = i + 1;
-            in
-            [
-              "SUPER, code:1${toString i}, exec, ${switch_workspace_script}/bin/switch_workspace ${toString ws}"
-              "SUPER SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
-            ]
-          ) 9
+          else []
         )
-      );
+        ++ (
+          # workspaces
+          # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
+          builtins.concatLists (
+            builtins.genList (
+              i: let
+                ws = i + 1;
+              in [
+                "SUPER, code:1${toString i}, exec, ${switch_workspace_script}/bin/switch_workspace ${toString ws}"
+                "SUPER SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
+              ]
+            )
+            9
+          )
+        );
 
-      "$screenshotarea" =
-        "hyprctl keyword animation \"fadeOut,0,0,default\"; grimblast --notify copysave area; hyprctl keyword animation \"fadeOut,1,4,default\"";
+      "$screenshotarea" = "hyprctl keyword animation \"fadeOut,0,0,default\"; grimblast --notify copysave area; hyprctl keyword animation \"fadeOut,1,4,default\"";
 
       bindm = [
         "SUPER, mouse:272, movewindow"

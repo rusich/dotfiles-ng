@@ -1,10 +1,7 @@
-{ config, ... }:
-
-{
+{config, ...}: {
   home.file = {
-
     ".config/kitty".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/modules/home/kitty/config";
+      config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/kitty/config";
   };
 
   # Настройка dconf для GNOME (установка kitty как терминала по умолчанию)
@@ -31,5 +28,4 @@
     MimeType=application/sql;text/x-sql;text/plain;
     Keywords=Text;editor;
   '';
-
 }

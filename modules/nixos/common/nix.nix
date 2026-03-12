@@ -1,9 +1,5 @@
 # Common `nix` settings
 {lib, ...}: {
-  environment.interactiveShellInit = ''
-    alias nixos-rebuild='nixos-rebuild --flake /home/rusich/.dotfiles'
-  '';
-
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"

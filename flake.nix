@@ -46,133 +46,125 @@
       url = "github:lordkekz/nix-yazi-plugins?ref=yazi-v0.2.5";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
   };
 
-  outputs =
-    {
-      self,
-      stylix,
-      nixpkgs,
-      nix-darwin,
-      home-manager,
-      ...
-    }@inputs:
-    let
-      inherit (self) outputs;
+  outputs = {
+    self,
+    stylix,
+    nixpkgs,
+    nix-darwin,
+    home-manager,
+    ...
+  } @ inputs: let
+    inherit (self) outputs;
 
-      # Define user configuration
-      users = {
-        rusich = {
-          fullName = "Ruslan Sergin";
-          username = "rusich";
-          email = "ruslan.sergin@gmail.com";
-          # avatar = ./assets/avatar; # put actual file
-        };
+    # Define user configuration
+    users = {
+      rusich = {
+        fullName = "Ruslan Sergin";
+        username = "rusich";
+        email = "ruslan.sergin@gmail.com";
+        # avatar = ./assets/avatar; # put actual file
+      };
+    };
+
+    # This is a function that generates an attribute by calling a function you
+    # pass to it, with each system an argument
+    systems = [
+      "x86_64-linux"
+      "x86_64-darwin"
+      "aarch64-darwin"
+    ];
+
+    forAllSystems = nixpkgs.lib.genAttrs systems;
+
+    # Импортируем overlays
+    overlays = import ./overlays {inherit inputs;};
+
+    # Функция для создания pkgs с overlays для конкретной системы
+    mkPkgs = system:
+      import nixpkgs {
+        inherit system;
+        # stdenv.hostPlatform.system = system;
+        overlays = overlays;
+        config.allowUnfree = true;
       };
 
-      # This is a function that generates an attribute by calling a function you
-      # pass to it, with each system an argument
-      systems = [
-        "x86_64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
+    # Создаем пакетные наборы для всех систем
+    pkgsFor = forAllSystems mkPkgs;
+  in {
+    # legacyPackages = pkgsFor;
 
-      forAllSystems = nixpkgs.lib.genAttrs systems;
-
-      # Импортируем overlays
-      overlays = import ./overlays { inherit inputs; };
-
-      # Функция для создания pkgs с overlays для конкретной системы
-      mkPkgs =
-        system:
-        import nixpkgs {
-          inherit system;
-          # stdenv.hostPlatform.system = system;
-          overlays = overlays;
-          config.allowUnfree = true;
+    nixosConfigurations = builtins.listToAttrs (
+      map (host: {
+        name = host;
+        value = nixpkgs.lib.nixosSystem {
+          specialArgs = {
+            inherit inputs outputs;
+            userConfig = users.rusich;
+            nixosModules = "${self}/modules/nixos";
+            hostname = host;
+          };
+          modules = [
+            # Oerlays loading to nixpkgs
+            (
+              {...}: {
+                nixpkgs.overlays = overlays;
+                nixpkgs.config.allowUnfree = true;
+              }
+            )
+            ./modules/nixos/common
+            ./hosts/nixos/${host}/configuration.nix
+            stylix.nixosModules.stylix
+            # ./common/theme.nix
+          ];
         };
+      }) (builtins.attrNames (builtins.readDir ./hosts/nixos))
+    );
 
-      # Создаем пакетные наборы для всех систем
-      pkgsFor = forAllSystems mkPkgs;
-
-    in
-    {
-      # legacyPackages = pkgsFor;
-
-      nixosConfigurations = builtins.listToAttrs (
-        map (host: {
-          name = host;
-          value = nixpkgs.lib.nixosSystem {
-            specialArgs = {
-              inherit inputs outputs;
-              userConfig = users.rusich;
-              nixosModules = "${self}/modules/nixos";
-              hostname = host;
-            };
-            modules = [
-              # Oerlays loading to nixpkgs
-              (
-                { ... }:
-                {
-                  nixpkgs.overlays = overlays;
-                  nixpkgs.config.allowUnfree = true;
-                }
-              )
-              ./modules/nixos/common
-              ./hosts/nixos/${host}/configuration.nix
-              stylix.nixosModules.stylix
-              # ./common/theme.nix
-            ];
+    # Darwin configuration
+    darwinConfigurations = builtins.listToAttrs (
+      map (host: {
+        name = host;
+        value = nix-darwin.lib.darwinSystem {
+          specialArgs = {
+            inherit inputs outputs;
+            userConfig = users.rusich;
+            darwinModules = "${self}/modules/darwin";
+            hostname = host;
           };
-        }) (builtins.attrNames (builtins.readDir ./hosts/nixos))
-      );
+          modules = [
+            # Oerlays loading to nixpkgs
+            (
+              {...}: {
+                nixpkgs.overlays = overlays;
+                nixpkgs.config.allowUnfree = true;
+              }
+            )
+            ./hosts/darwin/${host}/configuration.nix
+          ];
+        };
+      }) (builtins.attrNames (builtins.readDir ./hosts/darwin))
+    );
 
-      # Darwin configuration
-      darwinConfigurations = builtins.listToAttrs (
-        map (host: {
-          name = host;
-          value = nix-darwin.lib.darwinSystem {
-            specialArgs = {
-              inherit inputs outputs;
-              userConfig = users.rusich;
-              darwinModules = "${self}/modules/darwin";
-              hostname = host;
-            };
-            modules = [
-              # Oerlays loading to nixpkgs
-              (
-                { ... }:
-                {
-                  nixpkgs.overlays = overlays;
-                  nixpkgs.config.allowUnfree = true;
-                }
-              )
-              ./hosts/darwin/${host}/configuration.nix
-            ];
-          };
-        }) (builtins.attrNames (builtins.readDir ./hosts/darwin))
-      );
+    # Home-manager configuration
+    legacyPackages = forAllSystems (system: {
+      homeConfigurations = {
+        "rusich" = home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgsFor.${system}; # Используем pkgs с overlays
+          modules = [
+            stylix.homeModules.stylix
+            "${self}/modules/home/default.nix"
+          ];
 
-      # Home-manager configuration
-      legacyPackages = forAllSystems (system: {
-        homeConfigurations = {
-          "rusich" = home-manager.lib.homeManagerConfiguration {
-            pkgs = pkgsFor.${system}; # Используем pkgs с overlays
-            modules = [
-              stylix.homeModules.stylix
-              "${self}/modules/home"
-            ];
-
-            extraSpecialArgs = {
-              inherit inputs outputs;
-              userConfig = users.rusich;
-              homeModules = "${self}/modules/home";
-            };
+          extraSpecialArgs = {
+            inherit inputs outputs self;
+            userConfig = users.rusich;
+            # homeModules = "${self}/modules/home";
           };
         };
-      });
-      # check flake-parts
-    };
+      };
+    });
+    # check flake-parts
+  };
 }

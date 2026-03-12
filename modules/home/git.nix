@@ -1,10 +1,4 @@
-{
-  config,
-  pkgs,
-  userSettings,
-  ...
-}:
-{
+{...}: {
   programs.lazygit.enable = true;
 
   programs.git = {

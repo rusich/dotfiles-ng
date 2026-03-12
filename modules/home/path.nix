@@ -1,11 +1,4 @@
-{
-  config,
-  pkgs,
-  userSettings,
-  ...
-}:
-{
-
+{...}: {
   home.sessionPath = [
     "$HOME/.cargo/bin/"
     "$HOME/dev/flutter/bin"
@@ -22,5 +15,4 @@
     # PATH="$HOME/.r2env/versions/radare2@git/bin:$PATH"
     # PATH="$HOME/.local/bin:$PATH"
   ];
-
 }

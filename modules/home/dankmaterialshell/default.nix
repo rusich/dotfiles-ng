@@ -4,11 +4,9 @@
   config,
   system,
   ...
-}:
-let
+}: let
   colors = config.lib.stylix.colors;
-in
-{
+in {
   imports = [
     inputs.dms.homeModules.dank-material-shell
   ];
@@ -30,16 +28,12 @@ in
 
   # Map the niri config files to standard location
   home.file = {
-    # this is readonly
-    # ".config/niri".source = config.lib.file.mkOutOfStoreSymlink "${homeModules}/niri/config";
-
-    #and this is editable
     ".config/DankMaterialShell/settings.json".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/modules/home/dankmaterialshell/settings.json";
+      config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/dankmaterialshell/settings.json";
     ".config/DankMaterialShell/plugin_settings.json".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/modules/home/dankmaterialshell/plugin_settings.json";
+      config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/dankmaterialshell/plugin_settings.json";
     ".config/DankMaterialShell/plugins".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/modules/home/dankmaterialshell/plugins";
+      config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/dankmaterialshell/plugins";
     ".config/DankMaterialShell/themes/cyberpunk_electric_dark.json".text = ''
             {
         "dark": {
@@ -135,5 +129,4 @@ in
       };
     };
   };
-
 }

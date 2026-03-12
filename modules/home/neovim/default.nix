@@ -2,9 +2,7 @@
   config,
   pkgs,
   ...
-}:
-{
-
+}: {
   home.packages = with pkgs; [
     tree-sitter # for latext TS
     # need for display math formulas via Snacks.nvim
@@ -14,13 +12,7 @@
     mermaid-cli
     sqlite # for vim-dadbod
   ];
-  # backup nvim config
-  home.file = {
-    ".config/nvim_old".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/modules/home/neovim/config";
-  };
 
   xdg.configFile."nvim".source =
-    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/modules/home/neovim/config";
-
+    config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/neovim/config";
 }

@@ -1,7 +1,7 @@
 ---@type vim.lsp.Config
 return {
   cmd = {
-    vim.fn.executable('OmniSharp') == 1 and 'OmniSharp' or 'omnisharp',
+    vim.fn.executable 'OmniSharp' == 1 and 'OmniSharp' or 'omnisharp',
     '-z', -- https://github.com/OmniSharp/omnisharp-vscode/pull/4300
     '--hostPID',
     tostring(vim.fn.getpid()),
@@ -13,8 +13,8 @@ return {
     '--languageserver',
   },
   handlers = {
-    ["textDocument/definition"] = function(...)
-      return require("omnisharp_extended").handler(...)
+    ['textDocument/definition'] = function(...)
+      return require('omnisharp_extended').handler(...)
     end,
   },
   capabilities = {

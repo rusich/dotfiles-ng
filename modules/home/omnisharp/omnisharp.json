@@ -4,8 +4,8 @@
   "RoslynExtensionsOptions": {
     "EnableAnalyzersSupport": true,
     "EnableImportCompletion": true,
-    "AnalyzeOpenDocumentsOnly": true,
-    "enableDecompilationSupport": true,
+    "AnalyzeOpenDocumentsOnly": false,
+    "EnableDecompilationSupport": false,
     "InlayHintsOptions": {
       "enableForParameters": true,
       "forLiteralParameters": true,
@@ -22,7 +22,7 @@
     }
   },
   "FormattingOptions": {
-    "EnableEditorConfigSupport": false
+    "EnableEditorConfigSupport": true
   },
   "RenameOptions": {
     "RenameOverloads": true,

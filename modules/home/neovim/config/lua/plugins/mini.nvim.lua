@@ -121,8 +121,8 @@ local spec = {
     -- }
 
     -- Whichkey replacement
-    local miniclue = require('mini.clue')
-    miniclue.setup({
+    local miniclue = require 'mini.clue'
+    miniclue.setup {
 
       window = {
         -- Show window immediately
@@ -135,14 +135,14 @@ local spec = {
           keys = '<Leader>',
         },
 
-        { mode = 'n',          keys = 'c' },
+        { mode = 'n', keys = 'c' },
 
         -- `[` and `]` keys
-        { mode = 'n',          keys = '[' },
-        { mode = 'n',          keys = ']' },
+        { mode = 'n', keys = '[' },
+        { mode = 'n', keys = ']' },
 
         -- Built-in completion
-        { mode = 'i',          keys = '<C-x>' },
+        { mode = 'i', keys = '<C-x>' },
 
         -- `g` key
         { mode = { 'n', 'x' }, keys = 'g' },
@@ -156,11 +156,10 @@ local spec = {
         { mode = { 'i', 'c' }, keys = '<C-r>' },
 
         -- Window commands
-        { mode = 'n',          keys = '<C-w>' },
+        { mode = 'n', keys = '<C-w>' },
 
         -- `z` key
         { mode = { 'n', 'x' }, keys = 'z' },
-
       },
 
       clues = {
@@ -173,34 +172,25 @@ local spec = {
         miniclue.gen_clues.windows(),
         miniclue.gen_clues.z(),
 
-        { mode = 'n', keys = '<Leader>c',  desc = '+Code' },
-        { mode = 'n', keys = '<Leader>s',  desc = '+Search' },
-        { mode = 'n', keys = '<Leader>u',  desc = '+ui' },
+        { mode = 'n', keys = '<Leader>c', desc = '+Code' },
+        { mode = 'n', keys = '<Leader>s', desc = '+Search' },
+        { mode = 'n', keys = '<Leader>u', desc = '+ui' },
         { mode = 'n', keys = '<Leader>ut', desc = '+Table Mode' },
-        { mode = 'n', keys = '<Leader>g',  desc = '+Git' },
-        { mode = 'n', keys = '<Leader>x',  desc = '+Trouble' },
-        { mode = 'n', keys = '<Leader>a',  desc = '+AI' },
-        { mode = 'n', keys = '<Leader>n',  desc = '+Notes' },
-        { mode = 'n', keys = '<Leader>d',  desc = '+Debug' },
-        { mode = 'n', keys = '<Leader>O',  desc = '+org' },
+        { mode = 'n', keys = '<Leader>g', desc = '+Git' },
+        { mode = 'n', keys = '<Leader>x', desc = '+Trouble' },
+        { mode = 'n', keys = '<Leader>a', desc = '+AI' },
+        { mode = 'n', keys = '<Leader>n', desc = '+Notes' },
+        { mode = 'n', keys = '<Leader>d', desc = '+Debug' },
+        { mode = 'n', keys = '<Leader>O', desc = '+org' },
         { mode = 'n', keys = '<Leader>up', desc = '+Paste' },
-        { mode = 'n', keys = '<Leader>f',  desc = '+Find' },
-        { mode = 'n', keys = '<Leader>t',  desc = '+Tests' },
+        { mode = 'n', keys = '<Leader>f', desc = '+Find' },
+        { mode = 'n', keys = '<Leader>t', desc = '+Tests' },
       },
-    })
-
-    local function lazy_stats()
-      local lazy_stats = require("lazy.stats").stats()
-      local ms = (math.floor(lazy_stats.startuptime * 100 + 0.5) / 100)
-      local icon = "⚡ "
-
-      return icon .. "Neovim loaded " .. lazy_stats.loaded .. "/" .. lazy_stats.count .. " plugins in " .. ms .. "ms"
-    end
+    }
 
     -- Dashboard
-    require('mini.starter').setup({
-      header =
-      [[
+    require('mini.starter').setup {
+      header = [[
       ████ ██████           █████      ██
      ███████████             █████ 
      █████████ ███████████████████ ███   ███████████
@@ -208,12 +198,12 @@ local spec = {
    █████████ ██████████ █████████ █████ █████ ████ █████
  ███████████ ███    ███ █████████ █████ █████ ████ █████
 ██████  █████████████████████ ████ █████ █████ ████ ██████
-]]
-    })
+]],
+    }
 
     -- leap-like
-    require('mini.jump').setup({})
-    require('mini.jump2d').setup({
+    require('mini.jump').setup {}
+    require('mini.jump2d').setup {
       view = {
         -- Whether to dim lines with at least one jump spot
         dim = false,
@@ -225,13 +215,13 @@ local spec = {
       -- Which lines are used for computing spots
       allowed_lines = {
         blank = false, -- Blank line (not sent to spotter even tf `true`)
-        fold = true,   -- Start of fold (not sent to spotter even if `true`)
+        fold = true, -- Start of fold (not sent to spotter even if `true`)
       },
 
       -- mappings = {
       --   start_jumping = '',
       -- },
-    })
+    }
     -- NOTE: заменяет стандартных хоткей 'gw'
     vim.keymap.set('n', 'gw', '<Cmd>lua   MiniJump2d.start(MiniJump2d.builtin_opts.word_start)<CR>', { silent = true })
     -- Создаем группу для наших highlight автокоманд
@@ -259,7 +249,7 @@ local spec = {
           set_jump2d_hl()
         end)
       end,
-      desc = 'Set MiniJump2d highlight after colorscheme change'
+      desc = 'Set MiniJump2d highlight after colorscheme change',
     })
   end,
 }

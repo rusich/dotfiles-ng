@@ -32,6 +32,7 @@ local spec = {
       nix = { 'alejandra' },
       gdscript = { 'gdformat' },
       json = { 'prettier' },
+      bash = { 'shfmt' },
     },
   },
 }

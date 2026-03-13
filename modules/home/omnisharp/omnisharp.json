@@ -4,8 +4,9 @@
   "RoslynExtensionsOptions": {
     "EnableAnalyzersSupport": true,
     "EnableImportCompletion": true,
-    "AnalyzeOpenDocumentsOnly": false,
-    "EnableDecompilationSupport": false,
+    "AnalyzeOpenDocumentsOnly": true,
+    "EnableDecompilationSupport": true,
+    "diagnosticWorkersThreadCount": 8,
     "InlayHintsOptions": {
       "enableForParameters": true,
       "forLiteralParameters": true,

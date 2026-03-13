@@ -9,7 +9,7 @@ local spec = {
       'ts_ls',
       'nil_ls',
       'pyright',
-      'lua_ls@3.16.4'
+      'lua_ls@3.16.4',
     },
   },
   dependencies = {
@@ -17,10 +17,10 @@ local spec = {
       'mason-org/mason.nvim',
       opts = {
         registries = {
-          "github:mason-org/mason-registry",
-          "github:Crashdummyy/mason-registry",
+          'github:mason-org/mason-registry',
+          'github:Crashdummyy/mason-registry',
         },
-      }
+      },
     },
     {
       'WhoIsSethDaniel/mason-tool-installer.nvim',
@@ -34,15 +34,16 @@ local spec = {
           -- Linters: enable it in ./nvim-lint.lua
           'sqlfluff',
           'jsonlint',
+          'shellcheck',
           -- Formatters: enable it in  ./conform.lua
           'alejandra',
           'sql-formatter',
           'csharpier',
           'prettier',
           'stylua',
-        }
-      }
-
+          'shfmt',
+        },
+      },
     },
     'neovim/nvim-lspconfig',
   },

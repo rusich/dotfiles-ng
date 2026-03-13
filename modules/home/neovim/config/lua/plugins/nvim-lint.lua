@@ -12,6 +12,7 @@ local spec = {
       -- ['markdown-inline'] = nil,
       sql = { 'sqlfluff' },
       json = { 'jsonlint' },
+      bash = { 'shellcheck' },
     }
 
     -- To allow other plugins to add linters to require('lint').linters_by_ft,

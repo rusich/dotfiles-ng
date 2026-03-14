@@ -4,7 +4,8 @@
   config,
   nixosModules,
   ...
-}: let
+}:
+let
   # custom amdgpu kernel module with some patches
   amdgpu-kernel-module = pkgs.callPackage ./amdgpu-kernel-module.nix {
     # Make sure the module targets the same kernel as your system is using.
@@ -20,7 +21,8 @@
   #   url = "https://github.com/torvalds/linux/compare/ffd294d346d185b70e28b1a28abe367bbfe53c04...SeryogaBrigada:linux:4c55a12d64d769f925ef049dd6a92166f7841453.diff";
   #   hash = "sha256-q/gWUPmKHFBHp7V15BW4ixfUn1kaeJhgDs0okeOGG9c=";
   # };
-in {
+in
+{
   # Move this to common config?
   system.stateVersion = "25.05";
 
@@ -65,10 +67,10 @@ in {
     anydesk
   ];
 
-  services.xserver.videoDrivers = ["amdgpu"];
+  services.xserver.videoDrivers = [ "amdgpu" ];
 
   # for corectrl full features
-  boot.kernelParams = ["amdgpu.ppfeaturemask=0xffffffff"];
+  boot.kernelParams = [ "amdgpu.ppfeaturemask=0xffffffff" ];
 
   boot.extraModulePackages = [
     (amdgpu-kernel-module.overrideAttrs (_: {
@@ -96,13 +98,13 @@ in {
   users.users.zaychik = {
     isNormalUser = true;
     description = "Sakhaya Sergina";
-    extraGroups = ["networkmanager"];
+    extraGroups = [ "networkmanager" ];
   };
 
   users.users.busya = {
     isNormalUser = true;
     description = "Kristina Sergina";
-    extraGroups = ["networkmanager"];
+    extraGroups = [ "networkmanager" ];
   };
 
   boot.supportedFilesystems = [
@@ -172,10 +174,12 @@ in {
   fileSystems."/mnt/truenas_public" = {
     device = "//192.168.5.3/public";
     fsType = "cifs";
-    options = let
-      # this line prevents hanging on network split
-      automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
-    in ["${automount_opts},credentials=/etc/smb-secrets,uid=1000,gid=100"];
+    options =
+      let
+        # this line prevents hanging on network split
+        automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
+      in
+      [ "${automount_opts},credentials=/etc/smb-secrets,uid=1000,gid=100" ];
   };
 
   environment.etc.smb-secrets.text = ''

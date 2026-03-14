@@ -1,5 +1,6 @@
 # Common `nix` settings
-{lib, ...}: {
+{ lib, inputs, ... }:
+{
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
@@ -16,7 +17,7 @@
   nix.settings.auto-optimise-store = true;
   nix.optimise = {
     automatic = true;
-    dates = ["daily"];
+    dates = [ "daily" ];
   };
 
   # Automatic upgrading
@@ -27,4 +28,6 @@
 
   # Fix hardware clock on dualboot
   time.hardwareClockInLocalTime = true;
+
+  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 }

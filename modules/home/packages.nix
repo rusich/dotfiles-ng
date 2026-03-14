@@ -1,5 +1,6 @@
 # User only packages
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   home.packages = with pkgs; [
     # desktop
     # libsForQt5.qt5ct

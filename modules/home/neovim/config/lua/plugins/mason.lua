@@ -36,7 +36,8 @@ local spec = {
           'jsonlint',
           'shellcheck',
           -- Formatters: enable it in  ./conform.lua
-          'alejandra',
+          -- 'alejandra',
+          'nixfmt',
           'sql-formatter',
           'csharpier',
           'prettier',

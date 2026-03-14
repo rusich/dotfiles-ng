@@ -39,7 +39,7 @@ local spec = {
           -- 'alejandra',
           'nixfmt',
           'sql-formatter',
-          'csharpier',
+          -- 'csharpier',
           'prettier',
           'stylua',
           'shfmt',

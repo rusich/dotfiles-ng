@@ -30,5 +30,6 @@
     nix-du
     unixtools.netstat
     progress
+    cifs-utils
   ];
 }

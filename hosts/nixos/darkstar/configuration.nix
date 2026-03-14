@@ -16,11 +16,6 @@ let
     url = "https://github.com/Frogging-Family/community-patches/raw/master/linux61-tkg/cap_sys_nice_begone.mypatch";
     hash = "sha256-Y3a0+x2xvHsfLax/uwycdJf3xLxvVfkfDVqjkxNaYEo=";
   };
-  # amdgpu-stability-patch = pkgs.fetchpatch {
-  #   name = "amdgpu-stability-patch";
-  #   url = "https://github.com/torvalds/linux/compare/ffd294d346d185b70e28b1a28abe367bbfe53c04...SeryogaBrigada:linux:4c55a12d64d769f925ef049dd6a92166f7841453.diff";
-  #   hash = "sha256-q/gWUPmKHFBHp7V15BW4ixfUn1kaeJhgDs0okeOGG9c=";
-  # };
 in
 {
   # Move this to common config?
@@ -34,6 +29,7 @@ in
     "${nixosModules}/gaming.nix"
     "${nixosModules}/DAW.nix"
     "${nixosModules}/gamedev.nix"
+    "${nixosModules}/virt/host.nix"
     # "${nixosModules}/plasma6.nix"
     # "${nixosModules}/gnome.nix"
     # "${nixosModules}/hyprland.nix"
@@ -55,13 +51,6 @@ in
 
   environment.systemPackages = with pkgs; [
     lmstudio
-    virt-manager
-    quickemu
-    quickgui
-    spice
-    spice-gtk
-    virt-viewer
-    cifs-utils # for smb share mount
     wlr-randr
     xorg.xrandr
     anydesk
@@ -198,11 +187,6 @@ in
   #     "umask=000"
   #   ];
   # };
-
-  virtualisation = {
-    libvirtd.enable = true;
-    spiceUSBRedirection.enable = true;
-  };
 
   boot.extraModprobeConfig = ''
     options kvm_intel nested=1

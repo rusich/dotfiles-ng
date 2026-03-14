@@ -11,6 +11,10 @@
     # for mermaid grapth support via Snacks.nvim
     mermaid-cli
     sqlite # for vim-dadbod
+    # LSP linters etc
+    nixfmt-rfc-style
+    nixd
+    nil
   ];
 
   xdg.configFile."nvim".source =

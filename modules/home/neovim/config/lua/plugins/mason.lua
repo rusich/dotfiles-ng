@@ -7,7 +7,7 @@ local spec = {
       'omnisharp',
       'jsonls',
       'ts_ls',
-      'nil_ls',
+      -- 'nil_ls', -- switch to nixd
       'pyright',
       'lua_ls@3.16.4',
     },

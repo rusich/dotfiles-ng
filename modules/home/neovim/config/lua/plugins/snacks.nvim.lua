@@ -13,20 +13,20 @@ local spec = {
       enabled = true,
       -- set ivy to default
       layout = {
-        preset = "ivy",
-      }
+        preset = 'ivy',
+      },
     },
     image = {
       debug = {
-        convert = false,   -- Shows LaTeX conversion commands
-        request = false,   -- Shows image display requests
+        convert = false, -- Shows LaTeX conversion commands
+        request = false, -- Shows image display requests
         placement = false, -- Shows image placement operations
       },
       enabled = true,
       math = {
         enabled = true,
         latex = {
-          font_size = "Small",
+          font_size = 'Small',
           tpl = [[
       \documentclass[preview,border=0pt,varwidth,12pt]{standalone}
       \usepackage{${packages}}
@@ -35,14 +35,14 @@ local spec = {
       { \${font_size} \selectfont
         \color[HTML]{${color}}
       ${content}}
-      \end{document}]]
-        }
+      \end{document}]],
+        },
       },
       convert = {
         magick = {
-          math = { "-density", 192, "{src}[{page}]", "-trim", "-transparent", "white" }
-        }
-      }
+          math = { '-density', 192, '{src}[{page}]', '-trim', '-transparent', 'white' },
+        },
+      },
     },
     bigfile = { enabled = true },
     dashboard = {
@@ -218,9 +218,12 @@ local spec = {
     {
       '<leader>fc',
       function()
-        Snacks.picker.files { cwd = vim.fn.stdpath 'config' }
+        -- Snacks.picker.files { cwd = vim.fn.stdpath 'config' }
+        -- Unificated config search test
+        Snacks.picker.files { cwd = '~/.dotfiles' }
       end,
-      desc = 'Find Nevim Config File',
+      -- desc = 'Find Nevim Config File',
+      desc = 'Find Dotfiles',
     },
     {
       '<leader>fd',

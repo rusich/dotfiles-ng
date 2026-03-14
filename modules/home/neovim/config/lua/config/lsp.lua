@@ -1,6 +1,7 @@
+-- Enable LSP servers that not handled by Mason
 -- Custom lsp servers setup (in ~/.config/nvim/after/lsp/)
-vim.lsp.enable("nixd")
-vim.lsp.enable("gdscript")
+vim.lsp.enable 'nixd'
+vim.lsp.enable 'gdscript'
 
 vim.diagnostic.config {
   virtual_lines = {
@@ -50,7 +51,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
     local is_omnisharp = client and client.name == 'omnisharp'
 
-
     map('gri', function()
       Snacks.picker.lsp_implementations()
     end, 'Goto Implementation')
@@ -60,7 +60,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
       -- Для OmniSharp используем расширенные функции
       map('gd', function()
         require('omnisharp_extended').lsp_definition()
-      end, "Go to Definition (OmniSharp)")
+      end, 'Go to Definition (OmniSharp)')
       -- map('grt', function()
       --   require('omnisharp_extended').lsp_type_definition()
       -- end, "Go to Type Definition (OmniSharp)")
@@ -77,7 +77,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
       end, 'Goto Definition')
     end
 
-
     map('grt', function()
       Snacks.picker.lsp_type_definitions()
     end, 'Goto Type Definition')
@@ -93,7 +92,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
     map('gD', function()
       Snacks.picker.lsp_declarations()
     end, 'Goto Declaration')
-
 
     map('<leader>ss', function()
       Snacks.picker.lsp_symbols()

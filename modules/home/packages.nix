@@ -1,11 +1,5 @@
 # User only packages
-{
-  pkgs,
-  ...
-}:
-
-{
-
+{pkgs, ...}: {
   home.packages = with pkgs; [
     # desktop
     # libsForQt5.qt5ct
@@ -34,8 +28,6 @@
     grimblast
     # base
     vlc
-    nixfmt-rfc-style
-    nixd
     mdcat
     xdg-user-dirs
     playerctl
@@ -66,5 +58,4 @@
     decibels
     loupe
   ];
-
 }

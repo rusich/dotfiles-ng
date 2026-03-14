@@ -21,6 +21,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixd.url = "github:nix-community/nixd";
+
     stylix = {
       url = "github:nix-community/stylix/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -50,10 +52,10 @@
 
   outputs = {
     self,
-    stylix,
-    nixpkgs,
-    nix-darwin,
-    home-manager,
+    # stylix,
+    # nixpkgs,
+    # nix-darwin,
+    # home-manager,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -76,17 +78,17 @@
       "aarch64-darwin"
     ];
 
-    forAllSystems = nixpkgs.lib.genAttrs systems;
+    forAllSystems = inputs.nixpkgs.lib.genAttrs systems;
 
     # Импортируем overlays
-    overlays = import ./overlays {inherit inputs;};
+    custom_overlays = import ./overlays {inherit inputs;};
 
     # Функция для создания pkgs с overlays для конкретной системы
     mkPkgs = system:
-      import nixpkgs {
+      import inputs.nixpkgs {
         inherit system;
         # stdenv.hostPlatform.system = system;
-        overlays = overlays;
+        overlays = custom_overlays;
         config.allowUnfree = true;
       };
 
@@ -98,7 +100,7 @@
     nixosConfigurations = builtins.listToAttrs (
       map (host: {
         name = host;
-        value = nixpkgs.lib.nixosSystem {
+        value = inputs.nixpkgs.lib.nixosSystem {
           specialArgs = {
             inherit inputs outputs;
             userConfig = users.rusich;
@@ -107,15 +109,17 @@
           };
           modules = [
             # Oerlays loading to nixpkgs
-            (
-              {...}: {
-                nixpkgs.overlays = overlays;
-                nixpkgs.config.allowUnfree = true;
-              }
-            )
+            {
+              nixpkgs.overlays =
+                custom_overlays
+                ++ [
+                  inputs.nixd.overlays.default
+                ];
+              nixpkgs.config.allowUnfree = true;
+            }
             ./modules/nixos/common
             ./hosts/nixos/${host}/configuration.nix
-            stylix.nixosModules.stylix
+            inputs.stylix.nixosModules.stylix
             # ./common/theme.nix
           ];
         };
@@ -126,7 +130,7 @@
     darwinConfigurations = builtins.listToAttrs (
       map (host: {
         name = host;
-        value = nix-darwin.lib.darwinSystem {
+        value = inputs.nix-darwin.lib.darwinSystem {
           specialArgs = {
             inherit inputs outputs;
             userConfig = users.rusich;
@@ -135,12 +139,14 @@
           };
           modules = [
             # Oerlays loading to nixpkgs
-            (
-              {...}: {
-                nixpkgs.overlays = overlays;
-                nixpkgs.config.allowUnfree = true;
-              }
-            )
+            {
+              nixpkgs.overlays =
+                custom_overlays
+                ++ [
+                  inputs.nixd.overlays.default
+                ];
+              nixpkgs.config.allowUnfree = true;
+            }
             ./hosts/darwin/${host}/configuration.nix
           ];
         };
@@ -150,10 +156,18 @@
     # Home-manager configuration
     legacyPackages = forAllSystems (system: {
       homeConfigurations = {
-        "rusich" = home-manager.lib.homeManagerConfiguration {
+        "rusich" = inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = pkgsFor.${system}; # Используем pkgs с overlays
           modules = [
-            stylix.homeModules.stylix
+            {
+              nixpkgs.overlays =
+                custom_overlays
+                ++ [
+                  inputs.nixd.overlays.default
+                ];
+              nixpkgs.config.allowUnfree = true;
+            }
+            inputs.stylix.homeModules.stylix
             "${self}/modules/home/default.nix"
           ];
 

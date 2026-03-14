@@ -6,14 +6,11 @@
   userConfig,
   hostname,
   ...
-}:
-{
-
+}: {
   imports = [
   ];
 
   config = {
-
     networking.hostName = hostname;
 
     # Enable networking
@@ -40,7 +37,7 @@
     console = {
       earlySetup = true;
       font = lib.mkDefault "ter-v14b";
-      packages = [ pkgs.terminus_font ];
+      packages = [pkgs.terminus_font];
       useXkbConfig = true;
     };
 
@@ -107,8 +104,8 @@
     networking.firewall.checkReversePath = "loose"; # nekoray
 
     # DCS-world server
-    networking.firewall.allowedTCPPorts = [ 10308 ];
-    networking.firewall.allowedUDPPorts = [ 10308 ];
+    networking.firewall.allowedTCPPorts = [10308];
+    networking.firewall.allowedUDPPorts = [10308];
 
     # Enable the OpenSSH daemon.
     services.openssh.enable = true;
@@ -134,7 +131,7 @@
     };
 
     # Bootloader how many configurations to show
-    boot.loader.systemd-boot.configurationLimit = 10;
+    boot.loader.systemd-boot.configurationLimit = 20;
 
     # fwupd is a simple daemon allowing you to update some devices' firmware, including UEFI for several machines.
     services.fwupd.enable = true;
@@ -144,6 +141,6 @@
     services.power-profiles-daemon.enable = true;
 
     # Disable gnome keyring for KeepassXC
-    services.gnome.gnome-keyring = pkgs.lib.mkForce { enable = false; };
+    services.gnome.gnome-keyring = pkgs.lib.mkForce {enable = false;};
   };
 }

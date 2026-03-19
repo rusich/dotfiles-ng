@@ -1,7 +1,8 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    godot
+    # godot
+    godot-mono
     gdtoolkit_4 # Godot4: Linter, Formatter, etc...
     blender
     # unstable.godot-mono

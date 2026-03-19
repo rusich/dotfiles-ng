@@ -56,6 +56,7 @@
     unetbootin
     # Gnome apps for test
     showtime
+    mpv
     decibels
     loupe
   ];

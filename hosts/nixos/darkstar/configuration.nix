@@ -33,6 +33,7 @@ in
     # "${nixosModules}/plasma6.nix"
     # "${nixosModules}/gnome.nix"
     # "${nixosModules}/hyprland.nix"
+    # "${nixosModules}/hashcat.nix"
   ];
 
   # Host-specific configuration
@@ -213,6 +214,8 @@ in
       wlr-randr --output DP-2 --toggle
     '';
   };
+
+  # HashCat
 
   # ${pkgs.wlr-randr}/bin/wlr-randr --output DP-2 --off
   # ${pkgs.xrandr}/bin/xrandr --output DP-2 --left-of DP-1

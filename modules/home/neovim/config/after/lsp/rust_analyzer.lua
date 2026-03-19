@@ -7,10 +7,10 @@ return {
         extraArgs = {
           '--',
           '--no-deps',
-          '-Aclippy::all',      -- сначала разрешаем всё
+          -- '-Aclippy::all',      -- сначала разрешаем всё
           '-Wclippy::pedantic', -- затем включаем pedantic как warnings
-          '-Wclippy::nursery',  -- если нужно nursery как warnings
-          '-Wclippy::cargo',    -- и т.д.
+          '-Wclippy::nursery', -- если нужно nursery как warnings
+          -- '-Wclippy::cargo',    -- и т.д.
         },
       },
       diagnostics = {

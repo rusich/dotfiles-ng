@@ -1,5 +1,5 @@
 # Common desktop packages for all hosts and users
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
 
   environment.systemPackages = with pkgs; [
@@ -19,23 +19,19 @@
     nextcloud-client
     # Nautilus + dependencies
     nautilus
-    nautilus-python
+    nautilus-python # for nextcloud integration
+    # libcloudproviders # for nextcloud integration
+    # python313Packages.pygobject3
     nautilus-open-any-terminal
-    python313Packages.pygobject3
-    # Nemo
-    nemo
-    nemo-preview
-    nemo-python
-    nemo-with-extensions
-
-    # kde package
-    kdePackages.dolphin
-    kdePackages.dolphin-plugins
-    kdePackages.qtsvg # for dolphin
-    kdePackages.kio-extras
     firefox
     # misc
     xkill
+  ];
+
+  # Let nautilus find extensions
+  environment.sessionVariables.NAUTILUS_4_EXTENSION_DIR = "${config.system.path}/lib/nautilus/extensions-4";
+  environment.pathsToLink = [
+    "/share/nautilus-python/extensions"
   ];
 
 }

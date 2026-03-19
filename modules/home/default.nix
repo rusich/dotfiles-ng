@@ -5,23 +5,23 @@
   lib,
   config,
   ...
-}: {
-  imports = with builtins;
+}:
+{
+  imports =
+    with builtins;
     map (fn: ./${fn}) (
       # filter (fn: fn != "default.nix" && fn != "disabled") (attrNames (readDir "${homeModules}"))
       # filter (fn: fn != "default.nix" && fn != "disabled") (attrNames (readDir "${inputs.self}/modules/home"))
-      filter (fn: fn != "default.nix" && fn != "disabled") (attrNames (readDir "${inputs.self}/modules/home"))
+      filter (fn: fn != "default.nix" && fn != "disabled") (
+        attrNames (readDir "${inputs.self}/modules/home")
+      )
     );
 
   options = {
     homePath = lib.mkOption {
       type = lib.types.str;
       default =
-        if pkgs.stdenv.isDarwin
-        then "/Users/"
-        else
-          "/home/"
-          + builtins.toString "${userConfig.username}";
+        if pkgs.stdenv.isDarwin then "/Users/" else "/home/" + builtins.toString "${userConfig.username}";
       description = "Path to home directory";
     };
     dotfilesPath = lib.mkOption {

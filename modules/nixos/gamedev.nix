@@ -15,7 +15,9 @@
     # gnome-terminal # needet to neovim integreation in unity editor
     # unstable.vscode
   ];
-  environment.sessionVariables = {
-    DOTNET_ROOT = "${pkgs.dotnet-sdk_10}/share/dotnet/";
-  };
+
+  # NOTE: Enable this if dotnet-sdk is enabled
+  # environment.sessionVariables = {
+  #   DOTNET_ROOT = "${pkgs.dotnet-sdk_10}/share/dotnet/";
+  # };
 }

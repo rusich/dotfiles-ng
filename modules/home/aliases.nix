@@ -3,10 +3,11 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   myAliases = {
     # Standard
-    "home-manager" = "home-manager --flake ~/.dotfiles/";
+    "home-manager" = "home-manager --flake " + config.dotfilesPath;
     "os" = "nh os switch";
     "hs" = "nh home switch";
     "s" = "os && hs";
@@ -15,7 +16,9 @@
     "ls" = "eza --icons --group-directories-first";
     "tree" = "eza --tree --icons --group-directories-first";
   };
-in {
+in
+{
+
   programs.bash.shellAliases = myAliases;
   programs.fish.shellAliases = myAliases;
   programs.zsh.shellAliases = myAliases;

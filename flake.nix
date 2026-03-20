@@ -11,16 +11,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    firefox-addons = {
-      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nixd.url = "github:nix-community/nixd";
 
     stylix = {
@@ -28,8 +18,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    yandex-browser = {
-      url = "github:miuirussia/yandex-browser.nix";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -39,11 +31,21 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # yandex-browser = {
+    #   url = "github:miuirussia/yandex-browser.nix";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+
     # using in ./modules/nixos/DAW.nix
     musnix.url = "github:musnix/musnix";
 
     nix-yazi-plugins = {
       url = "github:lordkekz/nix-yazi-plugins?ref=yazi-v0.2.5";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

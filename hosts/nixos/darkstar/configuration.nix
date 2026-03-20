@@ -31,7 +31,7 @@ in
     "${nixosModules}/gamedev.nix"
     "${nixosModules}/virt/host.nix"
     # "${nixosModules}/plasma6.nix"
-    # "${nixosModules}/gnome.nix"
+    "${nixosModules}/gnome.nix"
     # "${nixosModules}/hyprland.nix"
     # "${nixosModules}/hashcat.nix"
   ];

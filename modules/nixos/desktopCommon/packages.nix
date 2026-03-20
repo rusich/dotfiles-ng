@@ -6,9 +6,6 @@
     gcc
     python3
     home-manager
-    sddm-chili-theme
-    sddm-astronaut
-    sddm-sugar-dark
     libreoffice
     kitty
     hunspell

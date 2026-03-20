@@ -6,7 +6,8 @@
   userConfig,
   hostname,
   ...
-}: {
+}:
+{
   imports = [
   ];
 
@@ -37,19 +38,9 @@
     console = {
       earlySetup = true;
       font = lib.mkDefault "ter-v14b";
-      packages = [pkgs.terminus_font];
+      packages = [ pkgs.terminus_font ];
       useXkbConfig = true;
     };
-
-    # Enable the X11 windowing system.
-    # services.xserver.enable = true;
-    # Enable the GNOME Desktop Environment.
-    # services.xserver.displayManager.gdm.enable = true;
-    # services.xserver.desktopManager.gnome.enable = true;
-
-    # SDDM
-    services.displayManager.sddm.enable = true;
-    services.displayManager.sddm.wayland.enable = true;
 
     # Niri
     programs.niri.enable = true;
@@ -104,8 +95,8 @@
     networking.firewall.checkReversePath = "loose"; # nekoray
 
     # DCS-world server
-    networking.firewall.allowedTCPPorts = [10308];
-    networking.firewall.allowedUDPPorts = [10308];
+    networking.firewall.allowedTCPPorts = [ 10308 ];
+    networking.firewall.allowedUDPPorts = [ 10308 ];
 
     # Enable the OpenSSH daemon.
     services.openssh.enable = true;
@@ -141,6 +132,6 @@
     services.power-profiles-daemon.enable = true;
 
     # Disable gnome keyring for KeepassXC
-    services.gnome.gnome-keyring = pkgs.lib.mkForce {enable = false;};
+    services.gnome.gnome-keyring = pkgs.lib.mkForce { enable = false; };
   };
 }

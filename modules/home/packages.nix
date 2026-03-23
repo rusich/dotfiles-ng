@@ -59,5 +59,6 @@
     mpv
     decibels
     loupe
+    papers
   ];
 }

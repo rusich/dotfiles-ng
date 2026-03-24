@@ -20,7 +20,6 @@ map('n', '<C-Down>', '<cmd>resize -2<cr>', { desc = 'Decrease Window Height' })
 map('n', '<C-Left>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease Window Width' })
 map('n', '<C-Right>', '<cmd>vertical resize +2<cr>', { desc = 'Increase Window Width' })
 
-
 -- Comment with <c-/>
 map('n', '<C-/>', 'gcc', { desc = 'Toggle comment', remap = true })
 map('v', '<C-/>', 'gc', { desc = 'Toggle comment', remap = true })
@@ -41,12 +40,17 @@ map('n', '|', '<cmd>vsplit<CR>', { desc = 'Split window vertically' })
 map('n', '_', '<cmd>split<CR>', { desc = 'Split window horizontally' })
 
 -- Copy current file full path with:line_number to system clipboard
-map('n', '<leader>Olc', function()
+map('n', '<leader>nL', function()
   local file_path = vim.fn.expand '%:p'
+  local home_path = os.getenv 'HOME'
+
   -- Replace $HOME with ~
-  file_path = string.gsub(file_path, os.getenv 'HOME', '~')
-  vim.fn.setreg('+', file_path .. '::' .. vim.fn.line '.')
-end, { desc = 'org copy file link with line number to system buffer', silent = true })
+  if home_path ~= nil then
+    file_path = string.gsub(file_path, home_path, '~')
+  end
+
+  vim.fn.setreg('+', file_path .. ':' .. vim.fn.line '.')
+end, { desc = 'Copy file link with line number to system buffer', silent = true })
 
 -- Insert mode better navigation
 --
@@ -63,10 +67,8 @@ Snacks.toggle.option('wrap', { name = 'Wrap' }):map '<leader>uw'
 Snacks.toggle.option('relativenumber', { name = 'Relative Number' }):map '<leader>uL'
 Snacks.toggle.diagnostics():map '<leader>ud'
 Snacks.toggle.line_number():map '<leader>ul'
-Snacks.toggle.option('conceallevel',
-  { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2, name = 'Conceal Level' }):map '<leader>uc'
-Snacks.toggle.option('showtabline', { off = 0, on = vim.o.showtabline > 0 and vim.o.showtabline or 2, name = 'Tabline' })
-    :map '<leader>uA'
+Snacks.toggle.option('conceallevel', { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2, name = 'Conceal Level' }):map '<leader>uc'
+Snacks.toggle.option('showtabline', { off = 0, on = vim.o.showtabline > 0 and vim.o.showtabline or 2, name = 'Tabline' }):map '<leader>uA'
 Snacks.toggle.treesitter():map '<leader>uT'
 Snacks.toggle.option('background', { off = 'light', on = 'dark', name = 'Dark Background' }):map '<leader>ub'
 Snacks.toggle.dim():map '<leader>uD'

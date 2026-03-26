@@ -95,7 +95,8 @@
       jack = {
         "10-latency" = {
           "jack.properties" = {
-            "node.latency" = "128/48000";
+            # "node.latency" = "128/48000";
+            "node.latency" = "64/48000"; # NOTE: Testing
           };
         };
       };

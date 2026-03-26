@@ -1,9 +1,14 @@
-{pkgs, ...}: let
+{ pkgs, ... }:
+let
   ns = pkgs.writeShellScriptBin "ns" (builtins.readFile "${pkgs.nix-search-tv.src}/nixpkgs.sh");
-in {
+in
+{
   home.packages = with pkgs; [
-    nix-search-tv
     ns
     fzf
   ];
+
+  programs.nix-search-tv = {
+    enable = true;
+  };
 }

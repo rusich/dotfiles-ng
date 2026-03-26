@@ -3,7 +3,8 @@
   config,
   userConfig,
   ...
-}: {
+}:
+{
   nixpkgs.config.allowUnfree = true;
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
@@ -21,13 +22,14 @@
 
   # programs.nix-search-tv.enableTelevisionIntegration = true;
 
-  system.activationScripts.applications.text = let
-    env = pkgs.buildEnv {
-      name = "system-applications";
-      paths = config.environment.systemPackages;
-      pathsToLink = "/Applications";
-    };
-  in
+  system.activationScripts.applications.text =
+    let
+      env = pkgs.buildEnv {
+        name = "system-applications";
+        paths = config.environment.systemPackages;
+        pathsToLink = "/Applications";
+      };
+    in
     pkgs.lib.mkForce ''
       # Set up applications.
       echo "setting up /Applications..." >&2

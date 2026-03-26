@@ -21,7 +21,7 @@
   home.packages = with pkgs; [
     dwt1-shell-color-scripts
     fishPlugins.done
-    fishPlugins.fzf-fish
+    # fishPlugins.fzf-fish
     fishPlugins.grc
     grc
   ];

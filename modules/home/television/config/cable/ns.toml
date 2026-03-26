@@ -1,0 +1,29 @@
+[metadata]
+name = "ns"
+description = "Search nix options and packages"
+
+[source]
+command = "nix-search-tv print"
+
+[preview]
+command = "nix-search-tv preview {}"
+
+[keybindings]
+enter = "actions:print"
+ctrl-o = "actions:homepage"
+ctrl-s = "actions:source"
+
+[actions.homepage]
+description = "Open the package homepage"
+command = "xdg-open $(nix-search-tv homepage '{}')"
+mode = "execute"
+
+[actions.source]
+description = "Open the package source"
+command = "xdg-open $(nix-search-tv source '{}')"
+mode = "execute"
+
+[actions.print]
+description = "Print the package"
+command = "nix-search-tv preview '{}'"
+mode = "execute"

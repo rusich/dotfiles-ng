@@ -102,6 +102,7 @@ x-scheme-handler/tel=org.kde.kdeconnect.handler.desktop;
 x-scheme-handler/trash=org.kde.dolphin.desktop
 application/sql=nvim.desktop;
 application/xml=nvim.desktop;
+text/x-csharp=nvim.desktop;
 
 [Default Applications]
 application/json=nvim.desktop
@@ -286,3 +287,4 @@ x-scheme-handler/vnc=org.remmina.Remmina.desktop
 x-scheme-handler/x-rdp=org.remmina.Remmina.desktop
 application/sql=nvim.desktop
 application/xml=nvim.desktop
+text/x-csharp=nvim.desktop

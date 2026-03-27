@@ -1,0 +1,25 @@
+[metadata]
+name = "man-pages-complete"
+description = "Select man page names for shell completion"
+requirements = ["apropos"]
+
+[source]
+# List all man pages using apropos
+command = "apropos ."
+
+[preview]
+# Show the man page for the selected entry
+command = "man '{0}'"
+env = { "MANWIDTH" = "80" }
+
+[keybindings]
+enter = "actions:complete"
+
+[actions.complete]
+description = "Output man page name for shell completion"
+command = "echo -n '{0}'"
+mode = "execute"
+
+[ui]
+layout = "portrait"
+preview_panel = { header = "{0}" }

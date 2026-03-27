@@ -252,7 +252,8 @@ fallback_channel = "files"
 "git-log" = ["git log", "git show"]
 "docker-images" = ["docker run"]
 "git-repos" = ["code", "hx", "git clone"]
-"man-pages" = ["man"]
+"man-pages-complete" = ["man"]
+"man-pages" = []
 "procs" = ["kill"]
 "tldr" = ["tldr"]
 

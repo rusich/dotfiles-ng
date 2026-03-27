@@ -3,7 +3,8 @@
   pkgs,
   inputs,
   ...
-}: {
+}:
+{
   programs.firefox = {
     enable = true;
 
@@ -18,6 +19,7 @@
         "sidebar.verticalTabs" = true;
         "browser.toolbars.bookmarks.visibility" = "never";
         "identity.fxaccounts.enabled" = false;
+        "browser.ml.chat.provider" = "https://chat.deepseek.com/";
       };
 
       extensions = {
@@ -60,7 +62,7 @@
               url = "https://github.githubassets.com/favicons/favicon.svg";
               sha256 = "sha256-apV3zU9/prdb3hAlr4W5ROndE4g3O1XMum6fgKwurmA=";
             }}";
-            definedAliases = ["@gh"];
+            definedAliases = [ "@gh" ];
           };
 
           "Nix Packages" = {
@@ -80,7 +82,7 @@
               }
             ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = ["@np"];
+            definedAliases = [ "@np" ];
           };
 
           "Nix Options" = {
@@ -100,7 +102,7 @@
               }
             ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = ["@no"];
+            definedAliases = [ "@no" ];
           };
 
           "NixOS Wiki Official" = {
@@ -116,7 +118,7 @@
               }
             ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = ["@nwo"];
+            definedAliases = [ "@nwo" ];
           };
 
           "NixOS Wiki Unofficial" = {
@@ -132,7 +134,7 @@
               }
             ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = ["@nwu"];
+            definedAliases = [ "@nwu" ];
           };
 
           "Nixpkgs Issues" = {
@@ -148,7 +150,7 @@
               }
             ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = ["@ni"];
+            definedAliases = [ "@ni" ];
           };
 
           "MyNixOS" = {
@@ -164,13 +166,13 @@
               }
             ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = ["@ny"];
+            definedAliases = [ "@ny" ];
           };
 
           "Nixhub" = {
-            urls = [{template = "https://www.nixhub.io/packages/";}];
+            urls = [ { template = "https://www.nixhub.io/packages/"; } ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = ["@nh"];
+            definedAliases = [ "@nh" ];
           };
 
           "HM options" = {
@@ -186,7 +188,7 @@
               }
             ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = ["@nm"];
+            definedAliases = [ "@nm" ];
           };
 
           "Nix func" = {
@@ -202,7 +204,7 @@
               }
             ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = ["@nf"];
+            definedAliases = [ "@nf" ];
           };
 
           # A good way to find genuine discussion
@@ -222,7 +224,7 @@
               url = "https://www.redditstatic.com/accountmanager/favicon/favicon-512x512.png";
               sha256 = "sha256-4zWTcHuL1SEKk8KyVFsOKYPbM4rc7WNa9KrGhK4dJyg=";
             }}";
-            definedAliases = ["@r"];
+            definedAliases = [ "@r" ];
           };
 
           "Youtube" = {
@@ -241,7 +243,7 @@
               url = "www.youtube.com/s/desktop/8498231a/img/favicon_144x144.png";
               sha256 = "sha256-lQ5gbLyoWCH7cgoYcy+WlFDjHGbxwB8Xz0G7AZnr9vI=";
             }}";
-            definedAliases = ["@y"];
+            definedAliases = [ "@y" ];
           };
         };
       };

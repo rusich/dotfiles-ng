@@ -63,6 +63,7 @@
         email = "ruslan.sergin@gmail.com";
         # avatar = ./assets/avatar; # put actual file
       };
+      inherit (userConfig) username;
 
       # Supported systems
       systems = [
@@ -154,7 +155,7 @@
 
       legacyPackages = forAllSystems (system: {
         homeConfigurations = {
-          "rusich" = mkHomeConfig system;
+          ${username} = mkHomeConfig system;
         };
       });
     };

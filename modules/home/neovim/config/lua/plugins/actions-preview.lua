@@ -33,7 +33,7 @@ local spec = {
   events = { 'LspAttach' },
   keys = {
     {
-      '<C-.>',
+      '<A-.>',
       "<cmd>lua require('actions-preview').code_actions()<cr>",
       mode = { 'n', 'v' },
       desc = 'Code Actions (Preview)',

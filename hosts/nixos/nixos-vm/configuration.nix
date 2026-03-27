@@ -11,7 +11,7 @@
   imports = [
     ./hardware-configuration.nix
     # ../split_me.nix
-    "${nixosModules}/split_me.nix"
+    "${nixosModules}/desktopCommon/split_me.nix"
   ];
 
   # Host-specific configuration

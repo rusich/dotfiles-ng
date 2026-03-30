@@ -42,7 +42,7 @@ return {
     ---@type opencode.Opts
     vim.g.opencode_opts = {
       lsp = {
-        enabled = true,
+        enabled = false,
       },
       -- Use stacks.terminal
       server = {

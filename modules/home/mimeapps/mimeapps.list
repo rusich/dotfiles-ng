@@ -1,7 +1,7 @@
 [Added Associations]
 application/json=nvim.desktop;
 application/octet-stream=vim.desktop;
-application/pdf=org.kde.okular.desktop;xreader.desktop;libreoffice-draw.desktop;org.gnome.Evince.desktop;
+application/pdf=org.kde.okular.desktop;xreader.desktop;libreoffice-draw.desktop;org.gnome.Evince.desktop;org.gnome.Papers.desktop;
 application/vnd.oasis.opendocument.spreadsheet=calc.desktop;
 application/vnd.oasis.opendocument.text=writer.desktop;
 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=calc.desktop;onlyoffice-desktopeditors.desktop;
@@ -107,7 +107,7 @@ text/x-csharp=nvim.desktop;
 [Default Applications]
 application/json=nvim.desktop
 application/lrf=calibre-lrfviewer.desktop
-application/pdf=org.kde.okular.desktop;
+application/pdf=org.gnome.Papers.desktop
 application/vnd.flatpak.ref=io.github.flattool.Warehouse
 application/vnd.oasis.opendocument.spreadsheet=calc.desktop;
 application/vnd.oasis.opendocument.text=writer.desktop;

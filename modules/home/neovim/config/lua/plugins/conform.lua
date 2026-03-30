@@ -34,6 +34,7 @@ local spec = {
       gdscript = { 'gdformat' },
       json = { 'prettier' },
       bash = { 'shfmt' },
+      -- markdown = { 'prettier' },
     },
   },
 }

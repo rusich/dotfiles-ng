@@ -93,6 +93,6 @@ end, { desc = 'Inspect Tree' })
 
 -- Save with Ctrl+s
 map('n', '<C-s>', '<cmd>w<CR>', { desc = 'Save' })
-map('i', '<C-s>', '<cmd>w<CR>', { desc = 'Save' })
+-- map('i', '<C-s>', '<cmd>w<CR>', { desc = 'Save' })
 
 -- vim: ts=2 sts=2 sw=2 et

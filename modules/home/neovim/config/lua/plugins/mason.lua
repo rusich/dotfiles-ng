@@ -10,6 +10,7 @@ local spec = {
       -- 'nil_ls', -- switch to nixd
       'pyright',
       'lua_ls@3.16.4',
+      'marksman',
     },
   },
   dependencies = {
@@ -31,10 +32,14 @@ local spec = {
           'netcoredbg',
           'codelldb',
           'debugpy',
+
           -- Linters: enable it in ./nvim-lint.lua
           'sqlfluff',
           'jsonlint',
           'shellcheck',
+          -- 'vale', -- markdown, text, latex
+          -- 'markdownlint',
+
           -- Formatters: enable it in  ./conform.lua
           -- 'alejandra',
           'nixfmt',

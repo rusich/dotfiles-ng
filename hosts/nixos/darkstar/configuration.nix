@@ -215,16 +215,16 @@ in
     '';
   };
 
-  # HashCat
+  # DPI bypass on homelan via nfqws2-keenetic
+  boot.kernel.sysctl = {
+    "net.ipv4.tcp_timestamps" = 0;
+    "net.ipv4.tcp_sack" = 0;
+    # if rebuild slow try this ->
+    # "net.ipv4.tcp_fastopen" = 3;
+    # "net.ipv4.tcp_mtu_probing" = 1;
+  };
 
   # ${pkgs.wlr-randr}/bin/wlr-randr --output DP-2 --off
   # ${pkgs.xrandr}/bin/xrandr --output DP-2 --left-of DP-1
   # ${pkgs.wlr-randr}/bin/wlr-randr --output DP-1 --pos 0,0 --output DP-2 --pos 2560,0
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
 }

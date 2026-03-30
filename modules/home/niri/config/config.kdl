@@ -100,6 +100,10 @@ output "dp-2" {
     // If the position is unset or results in an overlap, the output is instead placed
     // automatically.
     position x=0 y=0
+
+    layout {
+       always-center-single-column 
+    }
     // off
 }
 
@@ -108,6 +112,11 @@ output "dp-1" {
     transform "normal"
     scale 1
     position x=2560 y=0
+    focus-at-startup
+    hot-corners {
+      off
+    }
+    // backdrop-color "#f01100"
     // off
 }
 
@@ -137,7 +146,7 @@ layout {
     //   together with the previously focused column.
     center-focused-column "never"
 
-    always-center-single-column
+    // always-center-single-column
 
     // You can customize the widths that "switch-preset-column-width" (Mod+R) toggles between.
     preset-column-widths {

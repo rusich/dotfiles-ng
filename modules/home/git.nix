@@ -1,4 +1,5 @@
-{...}: {
+{ ... }:
+{
   programs.lazygit.enable = true;
 
   programs.git = {
@@ -11,6 +12,13 @@
       init.defaultBranch = "main";
       alias = {
         "pr" = "pull --rebase";
+      };
+      merge = {
+        tool = "nvimdiff";
+        prompt = false;
+      };
+      mergetool."nvimdiff" = {
+        cmd = "nvim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'";
       };
     };
   };

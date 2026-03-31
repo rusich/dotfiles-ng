@@ -5,7 +5,25 @@ local spec = {
   'nvim-treesitter/nvim-treesitter',
   build = ':TSUpdate',
   opts = {
-    ensure_installed = { 'python', 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'typst', 'rust', 'vim', 'vimdoc', 'yaml', 'latex' },
+    ensure_installed = {
+      'bash',
+      'c',
+      'c_sharp',
+      'diff',
+      'html',
+      'json',
+      'latex',
+      'lua',
+      'luadoc',
+      'markdown',
+      'markdown_inline',
+      'python',
+      'rust',
+      'typst',
+      'vim',
+      'vimdoc',
+      'yaml',
+    },
     ignore_install = { 'org' },
     -- Autoinstall languages that are not installed
     auto_install = true,
@@ -18,13 +36,12 @@ local spec = {
     incremental_selection = {
       enable = true,
       keymaps = {
-        init_selection = "<M-o>",
-        scope_incremental = "<M-O>",
-        node_incremental = "<M-o>",
-        node_decremental = "<M-i>",
+        init_selection = '<M-o>',
+        scope_incremental = '<M-O>',
+        node_incremental = '<M-o>',
+        node_decremental = '<M-i>',
       },
     },
-
   },
   config = function(_, opts)
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`

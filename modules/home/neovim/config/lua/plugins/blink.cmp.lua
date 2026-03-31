@@ -1,15 +1,17 @@
 local spec = {
   'saghen/blink.cmp',
   dependencies = {
-    'rafamadriz/friendly-snippets',
-    'saghen/blink.compat',
+    { 'rafamadriz/friendly-snippets', lazy = true },
+    -- 'saghen/blink.compat',
   },
   version = '*',
   ---@module 'blink.cmp'
   opts = {
     -- snippets = { preset = 'mini_snippets' },
     snippets = { preset = 'default' },
+    friendly_snippets = { enabled = true },
     keymap = { preset = 'default' },
+
     appearance = {
       use_nvim_cmp_as_default = true,
       nerd_font_variant = 'mono',
@@ -17,6 +19,24 @@ local spec = {
 
     sources = {
       default = { 'snippets', 'lsp', 'path', 'buffer' },
+      providers = {
+        snippets = {
+          opts = {
+            friendly_snippets = true, -- default
+
+            -- see the list of frameworks in: https://github.com/rafamadriz/friendly-snippets/tree/main/snippets/frameworks
+            -- and search for possible languages in: https://github.com/rafamadriz/friendly-snippets/blob/main/package.json
+            -- the following is just an example, you should only enable the frameworks that you use
+            extended_filetypes = {
+              markdown = { 'jekyll' },
+              sh = { 'shelldoc' },
+              php = { 'phpdoc' },
+              cpp = { 'unreal' },
+              rust = { 'rustdoc' },
+            },
+          },
+        },
+      },
     },
 
     completion = {

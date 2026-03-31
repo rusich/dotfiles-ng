@@ -15,10 +15,10 @@ map('n', '?', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messa
 -- REPLACED WIT `vim-kitty-navigator`
 
 -- Resize window using <ctrl> arrow keys
-map('n', '<C-Up>', '<cmd>resize +2<cr>', { desc = 'Increase Window Height' })
-map('n', '<C-Down>', '<cmd>resize -2<cr>', { desc = 'Decrease Window Height' })
-map('n', '<C-Left>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease Window Width' })
-map('n', '<C-Right>', '<cmd>vertical resize +2<cr>', { desc = 'Increase Window Width' })
+map('n', '<C-M-=>', '<cmd>resize +2<cr>', { desc = 'Increase Window Height' })
+map('n', '<C-M-->', '<cmd>resize -2<cr>', { desc = 'Decrease Window Height' })
+map('n', '<C-->', '<cmd>vertical resize -2<cr>', { desc = 'Decrease Window Width' })
+map('n', '<C-=>', '<cmd>vertical resize +2<cr>', { desc = 'Increase Window Width' })
 
 -- Comment with <c-/>
 map('n', '<C-/>', 'gcc', { desc = 'Toggle comment', remap = true })
@@ -89,10 +89,7 @@ map('n', '<leader>uI', function()
   vim.api.nvim_input 'I'
 end, { desc = 'Inspect Tree' })
 
--- Vimscript mappings
-
 -- Save with Ctrl+s
 map('n', '<C-s>', '<cmd>w<CR>', { desc = 'Save' })
--- map('i', '<C-s>', '<cmd>w<CR>', { desc = 'Save' })
 
 -- vim: ts=2 sts=2 sw=2 et

@@ -5,6 +5,8 @@ local spec = {
     -- 'saghen/blink.compat',
   },
   version = '*',
+  lazy = true,
+  event = 'InsertEnter',
   ---@module 'blink.cmp'
   opts = {
     -- snippets = { preset = 'mini_snippets' },

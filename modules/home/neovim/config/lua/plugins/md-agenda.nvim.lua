@@ -1,11 +1,66 @@
 return {
-  "zenarvus/md-agenda.nvim",
+  'zenarvus/md-agenda.nvim',
+  lazy = true,
+  ft = 'markdown',
+  keys = {
+    -- vim.keymap.set('n', '<A-t>', ":CheckTask<CR>")
+    -- vim.keymap.set('n', '<A-c>', ":CancelTask<CR>")
+    --
+    -- vim.keymap.set('n', '<A-h>', ":HabitView<CR>")
+    -- vim.keymap.set('n', '<A-;>', ":AgendaDashboard<CR>")
+    -- vim.keymap.set('n', '<A-a>', ":AgendaView<CR>")
+    --
+    -- vim.keymap.set('n', '<A-s>', ":TaskScheduled<CR>")
+    -- vim.keymap.set('n', '<A-d>', ":TaskDeadline<CR>")
+    {
+      '<A-t>',
+      '<cmd>CheckTask<cr>',
+      mode = 'n',
+      desc = 'Check Task',
+    },
+    {
+      '<A-c>',
+      '<cmd>CancelTask<cr>',
+      mode = 'n',
+      desc = 'Cancel Task',
+    },
+    {
+      '<A-h>',
+      '<cmd>HabitView<cr>',
+      mode = 'n',
+      desc = 'Habit View',
+    },
+    {
+      '<A-;>',
+      '<cmd>AgendaDashboard<cr>',
+      mode = 'n',
+      desc = 'Agenda Dashboard',
+    },
+    {
+      '<A-a>',
+      '<cmd>AgendaView<cr>',
+      mode = 'n',
+      desc = 'Agenda View',
+    },
+    {
+      '<A-s>',
+      '<cmd>TaskScheduled<cr>',
+      mode = 'n',
+      desc = 'Task Scheduled',
+    },
+    {
+      '<A-d>',
+      '<cmd>TaskDeadline<cr>',
+      mode = 'n',
+      desc = 'Task Deadline',
+    },
+  },
   config = function()
-    require("md-agenda").setup({
+    require('md-agenda').setup {
       --- REQUIRED ---
       agendaFiles = {
         -- "~/notes/agenda.md", "~/notes/habits.md", -- Single Files
-        "~/Nextcloud/Notes/", -- Folders
+        '~/Nextcloud/Notes/', -- Folders
       },
 
       --- OPTIONAL ---
@@ -20,7 +75,7 @@ return {
       remindScheduledInDays = 2,
       -- "vertical" or "horizontal"
       -- Default: "horizontal"
-      agendaViewSplitOrientation = "horizontal",
+      agendaViewSplitOrientation = 'horizontal',
 
       -----
 
@@ -32,23 +87,24 @@ return {
       habitViewFutureItems = 3,
       -- "vertical" or "horizontal"
       -- Default: "horizontal"
-      habitViewSplitOrientation = "horizontal",
+      habitViewSplitOrientation = 'horizontal',
 
       -- Custom types that you can use instead of TODO.
       -- Default: {}
       -- The plugin will give an error if you use RGB colors (e.g. #ffffff)
-      customTodoTypes = { PAYMENT = "magenta", LEARNING = "yellow", SOMEDAY = "cyan" }, -- A map of item type and its color
+      customTodoTypes = { PAYMENT = 'magenta', LEARNING = 'yellow', SOMEDAY = 'cyan' }, -- A map of item type and its color
 
       -- "vertical" or "horizontal"
       -- Default: "horizontal"
-      dashboardSplitOrientation = "horizontal",
+      dashboardSplitOrientation = 'horizontal',
       -- Set the dashboard view.
       dashboard = {
-        { "All TODO Items", -- Group name
+        {
+          'All TODO Items', -- Group name
           {
             -- Item types, e.g., {"TODO", "INFO"}.
             -- Gets the items that match one of the given types. Ignored if empty.
-            type = { "TODO", "INFO", "LEARNING", "SOMEDAY" },
+            type = { 'TODO', 'INFO', 'LEARNING', 'SOMEDAY' },
 
             -- List of tags to filter. Use AND/OR conditions.
             -- e.g., {AND = {"tag1", "tag2"}, OR = {"tag1", "tag2"}}. Ignored if empty.
@@ -70,7 +126,7 @@ return {
       --   tagColor = "blue",
       --   titleColor = "yellow",
       --
-      todoTypeColor = "red",
+      todoTypeColor = 'red',
       --   habitTypeColor = "cyan",
       --   infoTypeColor = "lightgreen",
       --   dueTypeColor = "red",
@@ -88,19 +144,10 @@ return {
       --   habitFreeTimeColor = "blue",
       --   habitNotDoneColor = "red",
       --   habitDeadlineColor = "gray",
-      foldmarker = "}}},{{{",
-    })
+      foldmarker = '}}},{{{',
+    }
 
     -- Optional: Set keymaps for commands
-    vim.keymap.set('n', '<A-t>', ":CheckTask<CR>")
-    vim.keymap.set('n', '<A-c>', ":CancelTask<CR>")
-
-    vim.keymap.set('n', '<A-h>', ":HabitView<CR>")
-    vim.keymap.set('n', '<A-;>', ":AgendaDashboard<CR>")
-    vim.keymap.set('n', '<A-a>', ":AgendaView<CR>")
-
-    vim.keymap.set('n', '<A-s>', ":TaskScheduled<CR>")
-    vim.keymap.set('n', '<A-d>', ":TaskDeadline<CR>")
 
     -- Optional: Set a foldmethod to use when folding the logbook entries.
     -- The plugin tries to respect to the user default.
@@ -114,16 +161,16 @@ return {
     -- vim.o.foldmethod = "none"
 
     -- restore my original foldexpr
-    vim.api.nvim_create_autocmd({ 'BufReadPost', }, {
+    vim.api.nvim_create_autocmd({ 'BufReadPost' }, {
       pattern = { '*.md' },
       callback = function(ev)
         vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-      end
+      end,
     })
 
     -- Optional: Create a custom agenda view command to only show the tasks with specific tags
-    vim.api.nvim_create_user_command("WorkAgenda", function()
-      vim.cmd("AgendaViewWTF work companyA") -- Run the agenda view with tag filters
+    vim.api.nvim_create_user_command('WorkAgenda', function()
+      vim.cmd 'AgendaViewWTF work companyA' -- Run the agenda view with tag filters
     end, {})
-  end
+  end,
 }

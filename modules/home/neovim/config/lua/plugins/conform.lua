@@ -3,7 +3,8 @@
 ---@type LazyPluginSpec
 local spec = {
   'stevearc/conform.nvim',
-  lazy = false,
+  lazy = true,
+  event = 'BufRead',
   keys = {
     {
       '<leader>cf',

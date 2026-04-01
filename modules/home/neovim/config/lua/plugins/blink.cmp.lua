@@ -11,7 +11,6 @@ local spec = {
   opts = {
     -- snippets = { preset = 'mini_snippets' },
     snippets = { preset = 'default' },
-    friendly_snippets = { enabled = true },
     keymap = { preset = 'default' },
 
     appearance = {

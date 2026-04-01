@@ -1,15 +1,20 @@
 -- For `plugins/markview.lua` users.
 return {
-  "OXY2DEV/markview.nvim",
+  'OXY2DEV/markview.nvim',
   lazy = true,
-  ft = { "markdown", "markdown_inline" },
+  ft = { 'markdown', 'markdown_inline', 'Avante' },
 
   -- Completion for `blink.cmp`
-  dependencies = { "saghen/blink.cmp" },
+  dependencies = { 'saghen/blink.cmp' },
   keys = {
-    { '<leader>um', "<cmd>Markview<cr>", desc = 'Toggle Markview render' },
+    { '<leader>um', '<cmd>Markview<cr>', desc = 'Toggle Markview render' },
   },
   opts = {
+    preview = {
+      filetypes = { 'markdown', 'quarto', 'rmd', 'typst', 'Avante' },
+      ignore_buftypes = {},
+    },
+
     latex = {
       -- using Snacks.nvim
       enable = false,
@@ -19,15 +24,15 @@ return {
         enable = true,
         org_indent = true,
         heading_1 = {
-          style = "icon",
-          icon = "◉ "
-        }
+          style = 'icon',
+          icon = '◉ ',
+        },
       },
       list_items = {
         --   enable = false, -- Using checkmate.nvim for checkbox render
 
         marker_minus = {
-          text = "-",
+          text = '-',
         },
       },
     },
@@ -40,31 +45,31 @@ return {
 
     yaml = {
       properties = {
-        ["^created$"] = {
-          match_string = "^created$",
+        ['^created$'] = {
+          match_string = '^created$',
           use_types = false,
-          text = "󰃭 ",
-          hl = "MarkviewIcon3"
+          text = '󰃭 ',
+          hl = 'MarkviewIcon3',
         },
-        ["^updated$"] = {
-          match_string = "^updated$",
+        ['^updated$'] = {
+          match_string = '^updated$',
           use_types = false,
-          text = "󰃭 ",
-          hl = "MarkviewIcon3"
+          text = '󰃭 ',
+          hl = 'MarkviewIcon3',
         },
-        ["^hubs$"] = {
-          match_string = "^hubs$",
+        ['^hubs$'] = {
+          match_string = '^hubs$',
           use_types = false,
-          text = "⟗ ",
-          hl = "MarkviewIcon3"
+          text = '⟗ ',
+          hl = 'MarkviewIcon3',
         },
-        ["^urls$"] = {
-          match_string = "^urls$",
+        ['^urls$'] = {
+          match_string = '^urls$',
           use_types = false,
-          text = " ",
-          hl = "MarkviewIcon3"
-        }
+          text = ' ',
+          hl = 'MarkviewIcon3',
+        },
       },
-    }
-  }
-};
+    },
+  },
+}

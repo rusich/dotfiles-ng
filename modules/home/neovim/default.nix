@@ -2,7 +2,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   home.packages = with pkgs; [
     tree-sitter # for latext TS
     # need for display math formulas via Snacks.nvim
@@ -15,6 +16,7 @@
     nixfmt-rfc-style
     nixd
     nil
+    gnumake
   ];
 
   xdg.configFile."nvim".source =

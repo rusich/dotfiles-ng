@@ -37,6 +37,11 @@ local spec = {
       bash = { 'shfmt' },
       -- markdown = { 'prettier' },
     },
+    formatters = {
+      sql_formatter = {
+        prepend_args = { '-c', '{ "tabWidth": 4, "language": "sql", "keywordCase": "upper"}' },
+      },
+    },
   },
 }
 

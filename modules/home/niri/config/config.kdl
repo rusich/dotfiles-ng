@@ -499,15 +499,15 @@ binds {
     Mod+Alt+Home { move-column-to-first; }
     Mod+Alt+End  { move-column-to-last; }
 
-    Mod+Shift+H     { focus-monitor-left; }
-    Mod+Shift+J     { focus-monitor-down; }
-    Mod+Shift+K     { focus-monitor-up; }
-    Mod+Shift+L     { focus-monitor-right; }
+    Mod+Ctrl+H     { focus-monitor-left; }
+    Mod+Ctrl+J     { focus-monitor-down; }
+    Mod+Ctrl+K     { focus-monitor-up; }
+    Mod+Ctrl+L     { focus-monitor-right; }
 
-    Mod+Shift+Alt+H     { move-column-to-monitor-left; }
-    Mod+Shift+Alt+J     { move-column-to-monitor-down; }
-    Mod+Shift+Alt+K     { move-column-to-monitor-up; }
-    Mod+Shift+Alt+L     { move-column-to-monitor-right; }
+    Mod+Ctrl+Alt+H     { move-column-to-monitor-left; }
+    Mod+Ctrl+Alt+J     { move-column-to-monitor-down; }
+    Mod+Ctrl+Alt+K     { move-column-to-monitor-up; }
+    Mod+Ctrl+Alt+L     { move-column-to-monitor-right; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Shift+Alt+Left  { move-window-to-monitor-left; }

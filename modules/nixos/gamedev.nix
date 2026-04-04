@@ -6,7 +6,7 @@
     gdtoolkit_4 # Godot4: Linter, Formatter, etc...
     blender
     # unstable.godot-mono
-    # dotnet-sdk_10
+    dotnet-sdk_10
     # unstable.godot-export-templates-bin
     # omnisharp-roslyn
     # dotnet-sdk_9
@@ -17,7 +17,7 @@
   ];
 
   # NOTE: Enable this if dotnet-sdk is enabled
-  # environment.sessionVariables = {
-  #   DOTNET_ROOT = "${pkgs.dotnet-sdk_10}/share/dotnet/";
-  # };
+  environment.sessionVariables = {
+    DOTNET_ROOT = "${pkgs.dotnet-sdk_10}/share/dotnet/";
+  };
 }

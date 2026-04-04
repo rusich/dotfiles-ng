@@ -15,6 +15,7 @@ vim.api.nvim_create_autocmd({ 'BufWinLeave' }, {
     -- vim.cmd 'set foldmethod=expr'
   end,
 })
+
 vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
   pattern = { '*.*' },
   desc = 'load view (folds), when opening file',
@@ -96,6 +97,7 @@ vim.api.nvim_create_autocmd('FileType', {
     'startuptime',
     'tsplayground',
     'codecompanion',
+    'dap-float',
   },
 
   callback = function(event)
@@ -139,33 +141,33 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
 local function continue_list()
   local line = vim.api.nvim_get_current_line()
   local row = vim.api.nvim_win_get_cursor(0)[1]
-  local indent = line:match("^(%s*)") or ""
+  local indent = line:match '^(%s*)' or ''
 
   -- Проверяем разные типы списков
   local patterns = {
     -- Checkbox: "- [ ] текст" или "* [ ] текст"
     {
-      pattern = "^%s*([-*])%s+%[(%s)%]%s+(.*)$",
+      pattern = '^%s*([-*])%s+%[(%s)%]%s+(.*)$',
       handler = function(bullet, checked)
-        local next_checked = checked == "x" and "x" or " "
-        return indent .. bullet .. " [" .. next_checked .. "] "
-      end
+        local next_checked = checked == 'x' and 'x' or ' '
+        return indent .. bullet .. ' [' .. next_checked .. '] '
+      end,
     },
     -- Обычный маркированный список: "- текст" или "* текст"
     {
-      pattern = "^%s*([-*])%s+(.*)$",
+      pattern = '^%s*([-*])%s+(.*)$',
       handler = function(bullet)
-        return indent .. bullet .. " "
-      end
+        return indent .. bullet .. ' '
+      end,
     },
     -- Нумерованный список: "1. текст"
     {
-      pattern = "^%s*(%d+)%.%s+(.*)$",
+      pattern = '^%s*(%d+)%.%s+(.*)$',
       handler = function(num)
         local next_num = tonumber(num) + 1
-        return indent .. tostring(next_num) .. ". "
-      end
-    }
+        return indent .. tostring(next_num) .. '. '
+      end,
+    },
   }
 
   for _, p in ipairs(patterns) do
@@ -179,62 +181,74 @@ local function continue_list()
 end
 
 -- Автоматическое продолжение списков
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'markdown',
   callback = function()
     local bufnr = vim.api.nvim_get_current_buf()
 
     -- INSERT MODE: Ctrl+Enter для продолжения списка
-    vim.keymap.set("i", "<C-CR>", function()
+    vim.keymap.set('i', '<C-CR>', function()
       local continuation = continue_list()
       if continuation then
         -- В insert mode: перейти на новую строку и вставить продолжение
-        return "<CR>" .. continuation
+        return '<CR>' .. continuation
       else
         -- Если не список - обычный новый абзац
-        return "<CR><CR>"
+        return '<CR><CR>'
       end
     end, { expr = true, buffer = bufnr })
 
     -- NORMAL MODE: Ctrl+Enter для добавления нового элемента списка
-    vim.keymap.set("n", "<C-CR>", function()
+    vim.keymap.set('n', '<C-CR>', function()
       local continuation = continue_list()
       if continuation then
         -- В normal mode: перейти на новую строку ниже и вставить продолжение
-        vim.api.nvim_feedkeys("o" .. continuation, "n", false)
+        vim.api.nvim_feedkeys('o' .. continuation, 'n', false)
       else
         -- Если не список - просто новая строка
-        vim.api.nvim_feedkeys("o", "n", false)
+        vim.api.nvim_feedkeys('o', 'n', false)
       end
     end, { buffer = bufnr })
 
     -- Опционально: можно оставить обычный Enter умным для списков
-    vim.keymap.set("i", "<CR>", function()
+    vim.keymap.set('i', '<CR>', function()
       local line = vim.api.nvim_get_current_line()
       local col = vim.api.nvim_win_get_cursor(0)[2] + 1
 
       -- Если курсор не в конце строки
       if col <= #line then
-        return "<CR>"
+        return '<CR>'
       end
 
       -- Если строка пустая или содержит только пробелы
-      if line:match("^%s*$") then
-        return "<CR>"
+      if line:match '^%s*$' then
+        return '<CR>'
       end
 
       -- Проверяем, пустой ли элемент списка
-      if line:match("^%s*[-*]%s+%[%s%]%s*$") or
-          line:match("^%s*[-*]%s*$") or
-          line:match("^%s*%d+%.%s*$") then
+      if line:match '^%s*[-*]%s+%[%s%]%s*$' or line:match '^%s*[-*]%s*$' or line:match '^%s*%d+%.%s*$' then
         -- На пустом элементе списка - выйти из списка
-        return "<CR><C-u>"
+        return '<CR><C-u>'
       end
 
       -- Обычный Enter
-      return "<CR>"
+      return '<CR>'
     end, { expr = true, buffer = bufnr })
-  end
+  end,
+})
+
+-- open help in vertical split
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'help',
+  command = 'wincmd L',
+})
+
+-- no auto continue comments on new line
+vim.api.nvim_create_autocmd('FileType', {
+  group = vim.api.nvim_create_augroup('no_auto_comment', {}),
+  callback = function()
+    vim.opt_local.formatoptions:remove { 'c', 'r', 'o' }
+  end,
 })
 
 -- vim: ts=2 sts=2 sw=2 et

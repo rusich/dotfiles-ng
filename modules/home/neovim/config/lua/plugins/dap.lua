@@ -3,7 +3,7 @@
 ---Starts debugging session for the current file
 ---Automatically handles Flutter/Dart projects by calling FlutterDebug
 ---before continuing with standard DAP debugging
-local function continue_debugging()
+local function dap_continue()
   local dap = require 'dap'
 
   if vim.bo.filetype == 'dart' and dap.session() == nil then
@@ -35,7 +35,7 @@ local function build_and_get_path(build_cmd)
     elseif build_cmd == 'make' then
       return '${workspaceFolder}/${workspaceFolderBasename}'
     elseif build_cmd == 'dotnet build -c Debug' then
-      return '${workspaceFolder}/bin/Debug/net9.0/${workspaceFolderBasename}.dll'
+      return '${workspaceFolder}/bin/Debug/net10.0/${workspaceFolderBasename}.dll'
     end
   end
 end
@@ -64,36 +64,24 @@ local function run_in_terminal()
   end, 300)
 end
 
-local function setup_dap_hilights()
-  -- vim.api.nvim_set_hl(0, "DapBreakpoint", { fg = "#ffffff", bg = "#4a1717" })
+local function setup_dap_highlights()
   vim.api.nvim_set_hl(0, 'DapBreakpoint', { bg = '#33111a' })
   vim.api.nvim_set_hl(0, 'DapLogPoint', { fg = '#61afef', bg = '#31353f' })
   vim.api.nvim_set_hl(0, 'DapStoppedBg', { bg = '#31353f' })
   vim.api.nvim_set_hl(0, 'DapStoppedFg', { fg = '#98c379', bg = '#31353f' })
 
-  vim.fn.sign_define('DapBreakpoint',
-    { text = '', texthl = 'DapBreakpoint', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
-  vim.fn.sign_define('DapBreakpointCondition',
-    { text = '', texthl = 'DapBreakpoint', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
-  vim.fn.sign_define('DapBreakpointRejected',
-    { text = '', texthl = 'DapBreakpoint', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
+  vim.fn.sign_define('DapBreakpoint', { text = '', texthl = 'DapBreakpoint', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
+  vim.fn.sign_define('DapBreakpointCondition', { text = '', texthl = 'DapBreakpoint', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
+  vim.fn.sign_define('DapBreakpointRejected', { text = '', texthl = 'DapBreakpoint', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
   vim.fn.sign_define('DapLogPoint', { text = '', texthl = 'DapLogPoint', linehl = 'DapLogPoint', numhl = 'DapLogPoint' })
-  vim.fn.sign_define('DapStopped',
-    { text = '', texthl = 'DapStoppedFg', linehl = 'DapStoppedBg', numhl = 'DapStoppedBg' })
+  vim.fn.sign_define('DapStopped', { text = '➟', texthl = 'DapStoppedFg', linehl = 'DapStoppedBg', numhl = 'DapStoppedBg' })
 end
 
----@type LazyPluginSpec
 local spec = {
   'mfussenegger/nvim-dap',
   event = 'LspAttach',
   dependencies = {
-    -- Creates a beautiful debugger UI
-    'rcarriga/nvim-dap-ui',
     { 'theHamsta/nvim-dap-virtual-text', config = true },
-
-    -- Required dependency for nvim-dap-ui
-    'nvim-neotest/nvim-nio',
-
     -- Installs the debug adapters for you
     'mason-org/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
@@ -102,6 +90,25 @@ local spec = {
     -- 'leoluz/nvim-dap-go',
     -- 'mfussenegger/nvim-dap-python',
     -- 'jbyuki/one-small-step-for-vimkind',
+
+    -- Creates a beautiful debugger UI
+    -- { 'rcarriga/nvim-dap-ui', dependencies = { 'nvim-neotest/nvim-nio' }, config = true, lazy = true },
+    {
+      'igorlfs/nvim-dap-view',
+      -- let the plugin lazy load itself
+      version = '1.*',
+      ---@module 'dap-view'
+      ---@type dapview.Config
+      opts = {
+        winbar = {
+          sections = { 'console', 'watches', 'scopes', 'exceptions', 'breakpoints', 'threads', 'repl', 'disassembly' },
+          default_section = 'console',
+          controls = { enabled = false },
+        },
+      },
+    },
+    -- Disassembly support
+    { url = 'https://codeberg.org/Jorenar/nvim-dap-disasm.git', dependencies = 'igorlfs/nvim-dap-view', config = true },
   },
 
   keys = {
@@ -136,14 +143,14 @@ local spec = {
     {
       '<leader>dc',
       function()
-        continue_debugging()
+        dap_continue()
       end,
       desc = 'Start/Continue (F5)',
     },
     {
       '<F5>',
       function()
-        continue_debugging()
+        dap_continue()
       end,
       desc = 'Debug: Start/Continue',
     },
@@ -261,15 +268,8 @@ local spec = {
     },
     {
       '<leader>dr',
-      function()
-        require('dap').repl.toggle()
-      end,
-      desc = 'Toggle REPL',
-    },
-    {
-      '<leader>dI',
-      "<Cmd>lua vim.ui.input('Input: ', function (input) local pid = vim.fn.system(\"pidof -s dotnet | tr -d '\\n' \"); vim.fn.system('echo ' .. input .. ' > /proc/'..pid.. '/fd/0') end)<cr>",
-      desc = 'Netcoredbg STDIN',
+      '<cmd>DapViewJump repl<cr>',
+      desc = 'Open REPL',
     },
     {
       '<leader>ds',
@@ -294,13 +294,14 @@ local spec = {
     },
     {
       '<leader>dw',
-      "\"wyiw<cmd>lua require('dapui').elements.watches.add(vim.fn.getreg('w'))<cr>",
+      '<cmd>DapViewWatch<cr>',
       desc = 'Add to watchlist',
+      mode = { 'n', 'v' },
     },
     {
       -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
       '<leader>du',
-      "<cmd>lua require('dapui').toggle()<cr>",
+      '<cmd>DapViewToggle<cr>',
       desc = 'Toggle UI',
     },
     {
@@ -317,8 +318,7 @@ local spec = {
     {
       '<leader>de',
       function()
-        ---@diagnostic disable-next-line: missing-fields
-        require('dapui').eval(nil, { enter = true })
+        require('dap.ui.widgets').hover()
       end,
       desc = 'Eval (F3)',
       mode = { 'n', 'v' },
@@ -326,8 +326,7 @@ local spec = {
     {
       '<F3>',
       function()
-        ---@diagnostic disable-next-line: missing-fields
-        require('dapui').eval(nil, { enter = true })
+        require('dap.ui.widgets').hover()
       end,
       desc = 'DAP Eval',
       mode = { 'n', 'v' },
@@ -335,7 +334,6 @@ local spec = {
   },
   config = function()
     local dap = require 'dap'
-    local dapui = require 'dapui'
 
     require('mason-nvim-dap').setup {
       automatic_installation = true,
@@ -427,27 +425,9 @@ local spec = {
       },
     }
 
-    -- customp DAP
+    -- CUSTOM DAP ADAPTERS
 
     -- Godot4
-    -- Функция для поиска корня проекта по файлу project.godot
-    local function find_godot_project_root()
-      local current_file = vim.fn.expand("%:p")
-      if current_file == "" then
-        current_file = vim.fn.getcwd()
-      end
-
-      local dir = vim.fn.fnamemodify(current_file, ":h")
-      while dir ~= "/" do
-        local project_file = dir .. "/project.godot"
-        if vim.fn.filereadable(project_file) == 1 then
-          return dir
-        end
-        dir = vim.fn.fnamemodify(dir, ":h")
-      end
-      return vim.fn.getcwd()
-    end
-
     dap.adapters.godot = {
       type = 'server',
       host = '127.0.0.1',
@@ -456,30 +436,33 @@ local spec = {
     }
     dap.configurations.gdscript = {
       {
-        type = "godot",
-        request = "launch",
-        name = "Launch scene",
+        type = 'godot',
+        request = 'launch',
+        name = 'Launch scene',
         -- project = "${workspaceFolder}", -- попробуйте явный путь
         -- project = "/home/rusich/Nextcloud/Devel/tutorials/Godot/first-game", -- попробуйте явный путь
         -- project = vim.fn.getcwd(),
-        project = find_godot_project_root(),
+        project = function()
+          local current_file = vim.fn.expand '%:p'
+          if current_file == '' then
+            current_file = vim.fn.getcwd()
+          end
+
+          local dir = vim.fn.fnamemodify(current_file, ':h')
+          while dir ~= '/' do
+            local project_file = dir .. '/project.godot'
+            if vim.fn.filereadable(project_file) == 1 then
+              return dir
+            end
+            dir = vim.fn.fnamemodify(dir, ':h')
+          end
+          return vim.fn.getcwd()
+        end,
         launch_scene = true,
       },
     }
 
     -- LUA
-    -- dap.configurations.lua = {
-    --   {
-    --     type = 'nlua',
-    --     request = 'attach',
-    --     name = 'Attach to running Neovim instance',
-    --   },
-    -- }
-    --
-    -- dap.adapters.nlua = function(callback, config)
-    --   callback { type = 'server', host = config.host or '127.0.0.1', port = config.port or 8086 }
-    -- end
-
     dap.configurations.lua = {
       {
         name = 'Current file (local-lua-dbg, nlua)',
@@ -505,40 +488,21 @@ local spec = {
           local c = vim.deepcopy(config)
           -- 💀 If this is missing or wrong you'll see
           -- "module 'lldebugger' not found" errors in the dap-repl when trying to launch a debug session
-          c.extensionPath = vim.fn.expand '$HOME/.local/share/nvim/mason/packages/local-lua-debugger-vscode/extension/',
-              on_config(c)
+          c.extensionPath = vim.fn.expand '$HOME/.local/share/nvim/mason/packages/local-lua-debugger-vscode/extension/', on_config(c)
         else
           on_config(config)
         end
       end,
     }
 
-    setup_dap_hilights()
+    setup_dap_highlights()
 
-    -- Dap UI setup
-    ---@diagnostic disable-next-line: missing-fields
-    dapui.setup {
-      icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
-      ---@diagnostic disable-next-line: missing-fields
-      controls = {
-        icons = {
-          pause = '⏸',
-          play = '▶',
-          step_into = '⏎',
-          step_over = '⏭',
-          step_out = '⏮',
-          step_back = 'b',
-          run_last = '▶▶',
-          terminate = '⏹',
-          disconnect = '⏏',
-        },
-      },
-    }
-
-    dap.listeners.after.event_initialized['dapui_config'] = dapui.open
-    dap.listeners.after.disconnect['dapui_config'] = dapui.close
-    dap.listeners.before.event_terminated['dapui_config'] = dapui.close
-    dap.listeners.before.event_exited['dapui_config'] = dapui.close
+    -- Dap View setup
+    local dapview = require 'dap-view'
+    dap.listeners.after.event_initialized['dapui_config'] = dapview.open
+    dap.listeners.after.disconnect['dapui_config'] = dapview.close
+    dap.listeners.before.event_terminated['dapui_config'] = dapview.close
+    dap.listeners.before.event_exited['dapui_config'] = dapview.close
   end,
 }
 

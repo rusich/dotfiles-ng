@@ -35,7 +35,7 @@ local spec = {
       gdscript = { 'gdformat' },
       json = { 'prettier' },
       bash = { 'shfmt' },
-      -- markdown = { 'prettier' },
+      markdown = { 'prettier' },
     },
     formatters = {
       sql_formatter = {

@@ -31,5 +31,6 @@
     unixtools.netstat
     progress
     cifs-utils
+    sshpass
   ];
 }

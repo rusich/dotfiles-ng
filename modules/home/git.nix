@@ -12,14 +12,22 @@
       init.defaultBranch = "main";
       alias = {
         "pr" = "pull --rebase";
+        "dt" = "difftool -d";
       };
-      merge = {
-        tool = "nvimdiff";
+      diff = {
+        tool = "nvim.difftool";
         prompt = false;
       };
-      mergetool."nvimdiff" = {
-        cmd = "nvim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'";
+      difftool."nvim.difftool" = {
+        cmd = "LC_ALL=C nvim -c \"packadd nvim.difftool\" -c \"DiffTool $LOCAL $REMOTE\"";
       };
+      # merge = {
+      #   tool = "nvimdiff";
+      #   prompt = false;
+      # };
+      # mergetool."nvimdiff" = {
+      #   cmd = "nvim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'";
+      # };
     };
   };
 }

@@ -93,10 +93,7 @@ opt.winblend = 5
 
 opt.icm = 'split'
 
+opt.hlsearch = true
 
--- Global Float transparency
--- opt.winblend = require('core.config').ui.winblend
-
--- Vimscript Plugins global configuration
---
---
+-- enable builtin plugins
+vim.cmd 'packadd nvim.undotree'

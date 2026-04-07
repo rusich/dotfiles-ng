@@ -3,7 +3,6 @@
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 local map = vim.keymap.set
-vim.opt.hlsearch = true
 map('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
@@ -95,7 +94,7 @@ map('n', '<C-s>', '<cmd>w<CR>', { desc = 'Save' })
 -- Keymaps for incremental selection
 -- Builtin keymaps is: v_an - select parent node v_in - select child node v_]n - select prev node v_[n - select next node
 
-vim.keymap.set({ 'n', 'x', 'o' }, '<A-o>', function()
+map({ 'n', 'x', 'o' }, '<A-o>', function()
   if vim.treesitter.get_parser(nil, nil, { error = false }) then
     require('vim.treesitter._select').select_parent(vim.v.count1)
   else
@@ -103,12 +102,15 @@ vim.keymap.set({ 'n', 'x', 'o' }, '<A-o>', function()
   end
 end, { desc = 'Select parent treesitter node or outer incremental lsp selections' })
 
-vim.keymap.set({ 'n', 'x', 'o' }, '<A-i>', function()
+map({ 'n', 'x', 'o' }, '<A-i>', function()
   if vim.treesitter.get_parser(nil, nil, { error = false }) then
     require('vim.treesitter._select').select_child(vim.v.count1)
   else
     vim.lsp.buf.selection_range(-vim.v.count1)
   end
 end, { desc = 'Select child treesitter node or inner incremental lsp selections' })
+
+-- builtin undotree
+map('n', 'U', require('undotree').open, { desc = '[U]ndoTree' })
 
 -- vim: ts=2 sts=2 sw=2 et

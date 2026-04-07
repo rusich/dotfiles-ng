@@ -30,17 +30,13 @@ vim.diagnostic.config {
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
   callback = function(event)
-    -- Enable CodeLens
-    local bufnr = event.buf
-    local client = vim.lsp.get_client_by_id(event.data.client_id)
-
-    if client and client:supports_method 'textDocument/codeLens' then
-      vim.lsp.codelens.refresh()
-      vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
-        buffer = bufnr,
-        callback = vim.lsp.codelens.refresh,
-      })
-    end
+    -- -- Enable CodeLens
+    -- local bufnr = event.buf
+    -- local client = vim.lsp.get_client_by_id(event.data.client_id)
+    --
+    -- if client and client:supports_method 'textDocument/codeLens' then
+    --   vim.lsp.codelens.enable(true, { bufnr = bufnr })
+    -- end
 
     -- Set LSP Keymaps
     -- Сочетания клавиш заменяют стадартные для Neovim 0.11
@@ -101,6 +97,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
       Snacks.picker.lsp_workspace_symbols()
     end, 'LSP Workspace Symbols')
 
-    map('<leader>cl', vim.lsp.codelens.run, '[C]ode [L]ens')
+    map('<leader>cl', function()
+      vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled())
+    end, 'Toggle [C]ode [L]ens')
   end,
 })

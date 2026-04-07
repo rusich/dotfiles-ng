@@ -1,57 +1,81 @@
--- Highlight, edit, and navigate code
-
----@type LazyPluginSpec
-local spec = {
+return {
   'nvim-treesitter/nvim-treesitter',
+  lazy = false,
+  branch = 'main',
   build = ':TSUpdate',
-  opts = {
-    ensure_installed = {
+  init = function()
+    local ensure_installed = {
+      -- PROGRAMMING LANGS
       'bash',
       'c',
       'c_sharp',
-      'diff',
-      'html',
-      'json',
-      'latex',
+      'fish',
+      'javascript',
       'lua',
-      'luadoc',
+      'python',
+      'ruby', -- used by `Brewfile`
+      'rust',
+      'typescript',
+      'vim',
+      'zsh',
+
+      -- DATAFORMATS
+      'json',
+      'toml',
+      'xml', -- also used by .plist and .svg files, since they are essentially xml
+      'yaml',
+      'bibtex',
+      -- "csv", -- disabled, since bad highlighting
+
+      -- CONTENT
+      'css',
+      'html',
       'markdown',
       'markdown_inline',
-      'python',
-      'rust',
+      'latex',
       'typst',
-      'vim',
-      'vimdoc',
-      'yaml',
-    },
-    ignore_install = { 'org' },
-    -- Autoinstall languages that are not installed
-    auto_install = true,
-    highlight = {
-      enable = true,
-      additional_vim_regex_highlighting = false,
-    },
-    indent = { enable = true, disable = { 'ruby' } },
-    -- helix-like treesitter selection
-    incremental_selection = {
-      enable = true,
-      keymaps = {
-        init_selection = '<M-o>',
-        scope_incremental = '<M-O>',
-        node_incremental = '<M-o>',
-        node_decremental = '<M-i>',
-      },
-    },
-  },
-  config = function(_, opts)
-    -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
 
-    -- Prefer git instead of curl in order to improve connectivity in some environments
-    require('nvim-treesitter.install').prefer_git = true
-    ---@diagnostic disable-next-line: missing-fields
-    -- require('nvim-treesitter.configs').setup(opts)
+      -- SPECIAL FILETYPES
+      'diff',
+      'editorconfig',
+      'git_config',
+      'git_rebase',
+      'gitattributes',
+      'gitcommit',
+      'gitignore',
+      'just',
+      'query', -- treesitter query files (.scm)
+      'requirements', -- python's `requirements.txt`
+      'vimdoc', -- `:help` files
+
+      -- EMBEDDED LANGUAGES
+      'comment',
+      'graphql',
+      'jsdoc',
+      'luadoc',
+      'luap', -- lua patterns
+      'regex',
+      'bash', -- embedded in GitHub Actions, etc.
+    }
+
+    vim.defer_fn(function()
+      require('nvim-treesitter').install(ensure_installed)
+    end, 1000)
+    require('nvim-treesitter').update()
+
+    -- auto-start highlights & indentation
+    vim.api.nvim_create_autocmd('FileType', {
+      desc = 'User: enable treesitter highlighting',
+      callback = function(ctx)
+        -- highlights
+        local hasStarted = pcall(vim.treesitter.start) -- errors for filetypes with no parser
+
+        -- indent
+        local noIndent = {}
+        if hasStarted and not vim.list_contains(noIndent, ctx.match) then
+          vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
+      end,
+    })
   end,
 }
-
-return spec
--- vim: ts=2 sts=2 sw=2 et

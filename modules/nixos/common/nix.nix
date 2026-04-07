@@ -6,6 +6,10 @@
     "flakes"
   ];
 
+  nix.settings = {
+    http2 = false;
+  };
+
   # cleanup system automatically
   nix.gc = {
     automatic = lib.mkDefault true;

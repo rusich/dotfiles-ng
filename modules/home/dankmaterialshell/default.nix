@@ -4,9 +4,11 @@
   config,
   system,
   ...
-}: let
+}:
+let
   colors = config.lib.stylix.colors;
-in {
+in
+{
   imports = [
     inputs.dms.homeModules.dank-material-shell
   ];
@@ -31,7 +33,8 @@ in {
     ".config/DankMaterialShell/settings.json".source =
       config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/dankmaterialshell/settings.json";
     ".config/DankMaterialShell/plugin_settings.json".source =
-      config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/dankmaterialshell/plugin_settings.json";
+      config.lib.file.mkOutOfStoreSymlink config.homeModulesPath
+      + "/dankmaterialshell/plugin_settings.json";
     ".config/DankMaterialShell/plugins".source =
       config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/dankmaterialshell/plugins";
     ".config/DankMaterialShell/themes/cyberpunk_electric_dark.json".text = ''

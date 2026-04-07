@@ -51,7 +51,7 @@ in
   hardware.cpu.amd.updateMicrocode = true;
 
   environment.systemPackages = with pkgs; [
-    lmstudio
+    # lmstudio
     wlr-randr
     xorg.xrandr
     anydesk
@@ -172,6 +172,17 @@ in
       [ "${automount_opts},credentials=/etc/smb-secrets,uid=1000,gid=100" ];
   };
 
+  fileSystems."/mnt/keenetic_opkg" = {
+    device = "//192.168.5.1/opkg";
+    fsType = "cifs";
+    options =
+      let
+        # this line prevents hanging on network split
+        automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
+      in
+      [ "${automount_opts},username=root,domain=WORKGROUP,uid=1000,gid=100" ];
+  };
+
   environment.etc.smb-secrets.text = ''
     username=guest
     password=guest
@@ -215,14 +226,21 @@ in
     '';
   };
 
-  # DPI bypass on homelan via nfqws2-keenetic
-  boot.kernel.sysctl = {
-    "net.ipv4.tcp_timestamps" = 0;
-    "net.ipv4.tcp_sack" = 0;
-    # if rebuild slow try this ->
-    # "net.ipv4.tcp_fastopen" = 3;
-    # "net.ipv4.tcp_mtu_probing" = 1;
-  };
+  # # # DPI fixes on homelan via nfqws2-keenetic
+  # boot.kernel.sysctl = {
+  #   # "net.ipv4.tcp_timestamps" = 0;
+  #   "net.ipv4.tcp_sack" = 0;
+  #   # "net.ipv4.tcp_dsack" = 0;
+  #   #   # if rebuild slow try this ->
+  #   #   # "net.ipv4.tcp_fastopen" = 3;
+  #   #   # "net.ipv4.tcp_mtu_probing" = 1;
+  # };
+
+  # Defaults is:
+  # net.ipv4.tcp_sack = 1
+  # net.ipv4.tcp_timestamps = 1
+  # net.ipv4.tcp_fastopen = 1
+  # net.ipv4.tcp_mtu_probing = 0
 
   # ${pkgs.wlr-randr}/bin/wlr-randr --output DP-2 --off
   # ${pkgs.xrandr}/bin/xrandr --output DP-2 --left-of DP-1

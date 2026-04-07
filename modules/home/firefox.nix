@@ -34,10 +34,10 @@
 
       search = {
         force = true;
-        default = "ddg";
+        default = "google";
         order = [
-          "ddg"
           "google"
+          "ddg"
         ];
         engines = {
           "Amazon.ca".metaData.alias = "@a";

@@ -7,7 +7,7 @@
   ];
 
   nix.settings = {
-    http2 = false;
+    http2 = true; # NOTE: turn off with DPI problems
   };
 
   # cleanup system automatically

@@ -38,12 +38,14 @@
   #   # amdgpuBusId = "PCI:5@0:0:0"; # If you have an AMD iGPU
   # };
   #
-  # environment.systemPackages = with pkgs; [
-  #   brightnessctl
-  #   powertop
-  # ];
+  # Host-specific packages
+  environment.systemPackages = with pkgs; [
+    # brightnessctl
+    # powertop
+    wireguard-tools
+    wireguard-ui
+  ];
   #
-  # # Host-specific packages
   # powerManagement.enable = true;
   # powerManagement.powertop.enable = true;
 

@@ -60,5 +60,6 @@
     decibels
     loupe
     papers
+    telegram-desktop
   ];
 }

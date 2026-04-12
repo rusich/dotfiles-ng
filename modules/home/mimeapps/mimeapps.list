@@ -103,6 +103,8 @@ x-scheme-handler/trash=org.kde.dolphin.desktop
 application/sql=nvim.desktop;
 application/xml=nvim.desktop;
 text/x-csharp=nvim.desktop;
+x-scheme-handler/tg=org.telegram.desktop.desktop;
+x-scheme-handler/tonsite=org.telegram.desktop.desktop;
 
 [Default Applications]
 application/json=nvim.desktop
@@ -288,3 +290,5 @@ x-scheme-handler/x-rdp=org.remmina.Remmina.desktop
 application/sql=nvim.desktop
 application/xml=nvim.desktop
 text/x-csharp=nvim.desktop
+x-scheme-handler/tg=org.telegram.desktop.desktop
+x-scheme-handler/tonsite=org.telegram.desktop.desktop

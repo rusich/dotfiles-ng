@@ -226,8 +226,6 @@ in
     '';
   };
 
-  networking.firewall.enable = false;
-
   # # # DPI fixes on homelan via nfqws2-keenetic
   # boot.kernel.sysctl = {
   #   # "net.ipv4.tcp_timestamps" = 0;

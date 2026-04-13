@@ -91,8 +91,25 @@
       tunMode.enable = true;
       #   # tunMode.setuid = true;
     };
-    services.resolved.enable = false; # nekoray
-    networking.firewall.checkReversePath = "loose"; # nekoray
+    services.resolved.enable = false; # throne
+    networking.firewall.checkReversePath = "loose"; # throne
+
+    # Firewall
+    networking.firewall.enable = true;
+    # DPI youtube fix
+    networking.firewall.extraCommands = ''
+      # Разрешить ответные HTTPS пакеты (порт 443) от серверов
+      # Без флага SYN (новые соединения инициируем мы)
+      iptables -I nixos-fw 3 -p tcp --sport 443 -m tcp '!' --tcp-flags SYN SYN -j nixos-fw-accept
+
+      # enable upnp client
+      iptables -I nixos-fw  3 -p udp --sport 1900 -j nixos-fw-accept
+    '';
+    # Loggin for Debug firewall
+    networking.firewall.logRefusedPackets = true; # Включить логирование ВСЕХ блокируемых пакетов
+    networking.firewall.logRefusedUnicastsOnly = false;
+
+    # enable upnp
 
     # DCS-world server
     networking.firewall.allowedTCPPorts = [ 10308 ];

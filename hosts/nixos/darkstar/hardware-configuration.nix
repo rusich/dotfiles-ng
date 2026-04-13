@@ -15,17 +15,7 @@
   # Bootloader.
   boot = {
     loader.systemd-boot.enable = true;
-    # loader.systemd-boot.edk2-uefi-shell.enable = true;
-    loader.systemd-boot.windows = {
-      "11" = {
-        title = "War Thunder Launcher";
-        efiDeviceHandle = "HD1b";
-      };
-    };
     loader.efi.canTouchEfiVariables = true;
-    # loader.grub.device = "/dev/nvme0n1";
-    # loader.grub.enable = true;
-    # loader.grub.useOSProber = true;
     plymouth = {
       enable = true;
     };

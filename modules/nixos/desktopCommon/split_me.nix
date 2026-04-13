@@ -65,7 +65,7 @@
     # Define a user account. Don't forget to set a password with ‘passwd’.
     users.users.${userConfig.username} = {
       isNormalUser = true;
-      description = userConfig.username;
+      description = userConfig.fullName;
       extraGroups = [
         "networkmanager"
         "wheel"

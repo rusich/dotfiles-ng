@@ -20,8 +20,6 @@
 
   # Required groups
   users.users.${userConfig.username} = {
-    isNormalUser = true;
-    description = userConfig.username;
     extraGroups = [
       "jackaudio"
       "audio"

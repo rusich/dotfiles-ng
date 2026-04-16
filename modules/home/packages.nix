@@ -54,6 +54,7 @@
     unstable.chatbox
     unrar
     unetbootin
+    just
     # Gnome apps for test
     showtime
     mpv

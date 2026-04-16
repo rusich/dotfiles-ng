@@ -1,9 +1,23 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
+with lib;
 {
-  services.desktopManager.gnome.enable = true;
+  options = {
+    my-service = {
+      enable = mkEnableOption "My custom service";
 
-  environment.systemPackages = with pkgs; [
-    whitesur-cursors
-    gnome-tweaks
-  ];
+      port = mkOption {
+        type = types.port;
+        default = 8080;
+        description = "Port for my service";
+      };
+    };
+  };
+  config = {
+    services.desktopManager.gnome.enable = true;
+
+    environment.systemPackages = with pkgs; [
+      whitesur-cursors
+      gnome-tweaks
+    ];
+  };
 }

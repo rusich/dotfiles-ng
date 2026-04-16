@@ -72,7 +72,7 @@
                 params = [
                   {
                     name = "channel";
-                    value = "25.11";
+                    value = "unstable";
                   }
                   {
                     name = "query";
@@ -92,7 +92,7 @@
                 params = [
                   {
                     name = "channel";
-                    value = "25.11";
+                    value = "unstable";
                   }
                   {
                     name = "query";

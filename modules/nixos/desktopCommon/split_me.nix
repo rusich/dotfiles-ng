@@ -139,7 +139,12 @@
     };
 
     # Bootloader how many configurations to show
-    boot.loader.systemd-boot.configurationLimit = 20;
+    boot = {
+      loader.systemd-boot.configurationLimit = 10;
+      plymouth = {
+        enable = true;
+      };
+    };
 
     # fwupd is a simple daemon allowing you to update some devices' firmware, including UEFI for several machines.
     services.fwupd.enable = true;

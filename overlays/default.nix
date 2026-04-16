@@ -37,6 +37,9 @@ let
             prev.python313Packages.legacy-cgi
           ];
         });
+
+        # nixd-nightly
+        nixd-nightly = inputs.nixd.packages.${prev.system}.default;
       };
     };
 

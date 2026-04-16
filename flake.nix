@@ -74,11 +74,11 @@
       forAllSystems = lib.genAttrs systems;
 
       # Import overlays
-      customOverlays = import ./overlays { inherit inputs; };
+      myOverlays = import ./overlays { inherit inputs; };
 
-      # Common module configuration with overlays and allowUnfree
+      # Common module for NixOS, nix-darwin and home-manager
       commonModule = {
-        nixpkgs.overlays = customOverlays ++ [ inputs.nixd.overlays.default ];
+        nixpkgs.overlays = myOverlays;
         nixpkgs.config.allowUnfree = true;
       };
 
@@ -87,7 +87,7 @@
         system:
         import inputs.nixpkgs {
           inherit system;
-          overlays = customOverlays;
+          overlays = myOverlays;
           config.allowUnfree = true;
         };
 
@@ -149,13 +149,18 @@
       darwinHosts = builtins.attrNames (builtins.readDir ./hosts/darwin);
 
     in
-    {
-      nixosConfigurations = lib.genAttrs nixosHosts mkNixosConfig;
-      darwinConfigurations = lib.genAttrs darwinHosts mkDarwinConfig;
+    rec {
+      nixosConfigurations = lib.genAttrs nixosHosts mkNixosConfig // {
+        default = nixosConfigurations.darkstar; # nixd stub
+      };
+      darwinConfigurations = lib.genAttrs darwinHosts mkDarwinConfig // {
+        default = darwinConfigurations.macos-sonoma-vm; # nixd stub
+      };
 
       legacyPackages = forAllSystems (system: {
         homeConfigurations = {
           ${username} = mkHomeConfig system;
+          default = legacyPackages.${system}.homeConfigurations.${username}; # nixd stub
         };
       });
     };

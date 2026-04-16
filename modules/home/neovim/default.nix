@@ -4,6 +4,7 @@
   ...
 }:
 {
+
   home.packages = with pkgs; [
     tree-sitter # for latext TS
     # need for display math formulas via Snacks.nvim
@@ -14,8 +15,8 @@
     sqlite # for vim-dadbod
     # LSP linters etc
     nixfmt-rfc-style
-    nixd
-    nil
+    # nixd
+    custom.nixd-nightly
     gnumake
   ];
 

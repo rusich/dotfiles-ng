@@ -51,7 +51,7 @@ in
   hardware.cpu.amd.updateMicrocode = true;
 
   environment.systemPackages = with pkgs; [
-    # lmstudio
+    lmstudio
     wlr-randr
     xorg.xrandr
     anydesk

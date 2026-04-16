@@ -27,12 +27,12 @@
     dotfilesPath = lib.mkOption {
       type = lib.types.str;
       default = config.homePath + "/.dotfiles";
-      description = "Path to home directory";
+      description = "Path to dotfiles directory";
     };
     homeModulesPath = lib.mkOption {
       type = lib.types.str;
       default = config.dotfilesPath + "/modules/home";
-      description = "Path to home directory";
+      description = "Path to home modules directory";
     };
   };
 
@@ -68,6 +68,7 @@
       packages = with pkgs; [
         fastfetch
         neofetch
+        neo
       ];
     };
 

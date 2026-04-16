@@ -1,5 +1,10 @@
 # Common `nix` settings
-{ lib, inputs, ... }:
+{
+  lib,
+  inputs,
+  pkgs,
+  ...
+}:
 {
   nix.settings.experimental-features = [
     "nix-command"
@@ -26,12 +31,20 @@
 
   # Automatic upgrading
   system.autoUpgrade = {
-    enable = true;
+    enable = false;
+    allowReboot = false;
+    # flake = "/path/to/flake";
     dates = "weekly";
+
   };
 
   # Fix hardware clock on dualboot
   time.hardwareClockInLocalTime = true;
 
+  # Userful for nixd
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+
+  environment.systemPackages = with pkgs; [
+    nix-inspect
+  ];
 }

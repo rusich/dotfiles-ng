@@ -17,13 +17,7 @@
   # Bootloader.
   boot = {
     loader.systemd-boot.enable = true;
-    # loader.grub.enable = true;
     loader.efi.canTouchEfiVariables = true;
-    # loader.grub.device = "/dev/nvme0n1";
-    # loader.grub.useOSProber = true;
-    plymouth = {
-      enable = true;
-    };
   };
 
   boot.initrd.luks.devices."luks-52a00d0e-a2c5-4fe1-84ed-3d2c487e1f54".device =

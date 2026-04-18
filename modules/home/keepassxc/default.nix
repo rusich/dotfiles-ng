@@ -1,9 +1,9 @@
 {
-  inputs,
   pkgs,
   config,
   ...
-}: {
+}:
+{
   home.packages = with pkgs; [
     keepassxc
   ];
@@ -15,5 +15,5 @@
   };
 
   # To run as system keyring agent need to disable other keyring agents
-  services.gnome-keyring = pkgs.lib.mkForce {enable = false;}; # also need to disable in nixos config
+  services.gnome-keyring = pkgs.lib.mkForce { enable = false; }; # also need to disable in nixos config
 }

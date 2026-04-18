@@ -18,6 +18,7 @@ return {
       'typescript',
       'vim',
       'zsh',
+      'nix',
 
       -- DATAFORMATS
       'json',

@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   programs.bash = {
@@ -12,4 +12,3 @@
     '';
   };
 }
-

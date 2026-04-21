@@ -69,19 +69,11 @@
       darwinHosts = builtins.attrNames (builtins.readDir ./hosts/darwin);
 
       # Supported systems
-      forAllSystems = nixpkgs.lib.genAttrs [
+      forEachSystem = nixpkgs.lib.genAttrs [
         "x86_64-linux"
         "x86_64-darwin"
         "aarch64-darwin"
       ];
-
-      eachSystem =
-        f:
-        inputs.nixpkgs.lib.genAttrs [
-          "x86_64-linux"
-          "x86_64-darwin"
-          "aarch64-darwin"
-        ] (system: f inputs.nixpkgs.legacyPackages.${system});
     in
     rec {
       nixosConfigurations =
@@ -91,12 +83,11 @@
             specialArgs = {
               inherit inputs outputs;
               userConfig = userConfig;
-              nixosModules = "${self}/modules/nixos";
               hostname = host;
             };
             modules = [
               commonModule
-              ./modules/nixos/common
+              ./modules/nixos
               ./hosts/nixos/${host}/configuration.nix
               inputs.stylix.nixosModules.stylix
             ];
@@ -106,61 +97,27 @@
           default = nixosConfigurations.darkstar; # nixd stub
         };
 
-      homeConfigurations =
-        let
-          systems = [
-            "x86_64-linux"
-            "x86_64-darwin"
-            "aarch64-darwin"
-          ];
-          mkHomeConfig =
-            system:
-            inputs.home-manager.lib.homeManagerConfiguration {
-              pkgs = import nixpkgs {
-                inherit system;
-                overlays = myOverlays;
-              };
-              modules = [
-                commonModule
-                inputs.stylix.homeModules.stylix
-                "${self}/modules/home/default.nix"
-              ];
-              extraSpecialArgs = {
-                inherit inputs outputs self;
-                userConfig = userConfig;
-              };
-            };
-        in
-        builtins.listToAttrs (
-          map (system: {
-            name = "${userConfig.username}";
-            value = mkHomeConfig system;
-          }) systems
-        )
-        // {
-          default = homeConfigurations.${userConfig.username}; # nixd stub
-        };
       # home-manager
-      # legacyPackages = forAllSystems (system: {
-      #   homeConfigurations = {
-      #     ${userConfig.username} = inputs.home-manager.lib.homeManagerConfiguration {
-      #       pkgs = import nixpkgs {
-      #         inherit system;
-      #         overlays = myOverlays;
-      #       };
-      #       modules = [
-      #         commonModule
-      #         inputs.stylix.homeModules.stylix
-      #         "${self}/modules/home/default.nix"
-      #       ];
-      #       extraSpecialArgs = {
-      #         inherit inputs outputs self;
-      #         userConfig = userConfig;
-      #       };
-      #     };
-      #     default = legacyPackages.${system}.homeConfigurations.${userConfig.username}; # nixd stub
-      #   };
-      # });
+      legacyPackages = forEachSystem (system: {
+        homeConfigurations = {
+          ${userConfig.username} = inputs.home-manager.lib.homeManagerConfiguration {
+            pkgs = import nixpkgs {
+              inherit system;
+              overlays = myOverlays;
+            };
+            modules = [
+              commonModule
+              inputs.stylix.homeModules.stylix
+              "${self}/modules/home/default.nix"
+            ];
+            extraSpecialArgs = {
+              inherit inputs outputs self;
+              userConfig = userConfig;
+            };
+          };
+          default = legacyPackages.${system}.homeConfigurations.${userConfig.username}; # nixd stub
+        };
+      });
 
       darwinConfigurations =
         nixpkgs.lib.genAttrs darwinHosts (

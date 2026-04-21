@@ -11,8 +11,9 @@
 
   imports = [
     ./hardware-configuration.nix
-    "${nixosModules}/desktopCommon"
-    "${nixosModules}/gamedev.nix"
+    ../../../modules/nixos/desktopCommon.nix
+    ../../../modules/nixos/desktopPackages.nix
+    ../../../modules/nixos/optional/gamedev.nix
     inputs.nixos-hardware.nixosModules.huawei-machc-wa
   ];
 

@@ -1,8 +1,6 @@
 {
   pkgs,
-  lib,
   config,
-  nixosModules,
   ...
 }:
 let
@@ -24,16 +22,15 @@ in
   imports = [
     ./hardware-configuration.nix
     # Common for desktops
-    "${nixosModules}/desktopCommon"
+    ../../../modules/nixos/desktopCommon.nix
+    ../../../modules/nixos/desktopPackages.nix
     # Optional
-    "${nixosModules}/gaming.nix"
-    "${nixosModules}/DAW.nix"
-    "${nixosModules}/gamedev.nix"
-    "${nixosModules}/virt/host.nix"
-    # "${nixosModules}/plasma6.nix"
-    "${nixosModules}/gnome.nix"
-    # "${nixosModules}/hyprland.nix"
-    # "${nixosModules}/hashcat.nix"
+    ../../../modules/nixos/desktopPackages.nix
+    ../../../modules/nixos/optional/gaming.nix
+    ../../../modules/nixos/optional/DAW.nix
+    ../../../modules/nixos/optional/gamedev.nix
+    ../../../modules/nixos/optional/virt/host.nix
+    ../../../modules/nixos/optional/gnome.nix
   ];
 
   # Host-specific configuration

@@ -46,7 +46,8 @@
     unstable.tonelib-jam
     tuxguitar # for export from .gp to .gp3 ↖
     unstable.tonelib-metal
-    unstable.tonelib-gfx
+    # unstable.tonelib-gfx
+    tonelib-gfx
     # custom.tonelib-gfx
     custom.tonelib-grand-magus
     neural-amp-modeler-lv2

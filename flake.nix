@@ -61,7 +61,7 @@
       # Common module for NixOS, nix-darwin and home-manager
       commonModule = {
         nixpkgs.overlays = myOverlays;
-        nixpkgs.config.allowUnfree = true;
+        # nixpkgs.config.allowUnfree = true;
       };
 
       # Get host directories
@@ -87,6 +87,7 @@
             };
             modules = [
               commonModule
+              ./modules/common
               ./modules/nixos
               ./hosts/nixos/${host}/configuration.nix
               inputs.stylix.nixosModules.stylix
@@ -103,10 +104,12 @@
           ${userConfig.username} = inputs.home-manager.lib.homeManagerConfiguration {
             pkgs = import nixpkgs {
               inherit system;
+              # stdenv.hostPlatform.system
               overlays = myOverlays;
             };
             modules = [
               commonModule
+              ./modules/common
               inputs.stylix.homeModules.stylix
               "${self}/modules/home/default.nix"
             ];
@@ -126,11 +129,11 @@
             specialArgs = {
               inherit inputs outputs;
               userConfig = userConfig;
-              darwinModules = "${self}/modules/darwin";
               hostname = host;
             };
             modules = [
               commonModule
+              ./modules/common
               ./hosts/darwin/${host}/configuration.nix
             ];
           }

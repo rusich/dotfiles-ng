@@ -41,20 +41,13 @@
 
     ########
 
-    # cleanup system automatically
-    nix.gc = {
-      automatic = lib.mkDefault true;
-      dates = "daily";
-      options = lib.mkDefault "--delete-older-than 7d";
-    };
-
     ###########
 
-    nixpkgs = {
-      config = {
-        allowUnfreePredicate = _: true;
-      };
-    };
+    # nixpkgs = {
+    #   config = {
+    #     allowUnfreePredicate = _: true;
+    #   };
+    # };
 
     home = {
       stateVersion = "25.05";
@@ -73,9 +66,6 @@
 
     # Enable alacritty
     programs.alacritty.enable = true;
-
-    # # SwayOSD
-    # services.swayosd.enable = true;
 
     # Remmina
     services.remmina.enable = true;

@@ -5,7 +5,6 @@
   ...
 }:
 {
-  nixpkgs.config.allowUnfree = true;
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
@@ -13,7 +12,6 @@
     alacritty
     mkalias
     tmux
-    obsidian
     nix-search-tv
     btop
     # home-manager
@@ -80,9 +78,6 @@
     onActivation.autoUpdate = true;
     onActivation.upgrade = true;
   };
-
-  # Necessary for using flakes on this system.
-  nix.settings.experimental-features = "nix-command flakes";
 
   # Enable alternative shell support in nix-darwin.
   programs.fish.enable = true;

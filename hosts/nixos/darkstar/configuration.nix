@@ -23,6 +23,7 @@ in
     ./hardware-configuration.nix
     # Common for desktops
     ../../../modules/nixos/desktopCommon.nix
+    ../../../modules/nixos/commonPackages.nix
     ../../../modules/nixos/desktopPackages.nix
     # Optional
     ../../../modules/nixos/desktopPackages.nix

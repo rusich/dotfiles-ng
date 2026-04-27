@@ -110,8 +110,8 @@
             modules = [
               commonModule
               ./modules/common
+              ./modules/home
               inputs.stylix.homeModules.stylix
-              "${self}/modules/home/default.nix"
             ];
             extraSpecialArgs = {
               inherit inputs outputs self;
@@ -134,6 +134,7 @@
             modules = [
               commonModule
               ./modules/common
+              ./modules/darwin
               ./hosts/darwin/${host}/configuration.nix
             ];
           }

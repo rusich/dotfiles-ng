@@ -8,7 +8,6 @@
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
-    neovim
     alacritty
     mkalias
     tmux
@@ -16,7 +15,8 @@
     btop
     # home-manager
     cowsay
-  ];
+    firefox
+  ] ++ config.commonSystemPackages;
 
   # programs.nix-search-tv.enableTelevisionIntegration = true;
 
@@ -25,7 +25,7 @@
       env = pkgs.buildEnv {
         name = "system-applications";
         paths = config.environment.systemPackages;
-        pathsToLink = "/Applications";
+        pathsToLink = ["/Applications"];
       };
     in
     pkgs.lib.mkForce ''
@@ -65,8 +65,8 @@
     ];
     # Gui apps
     casks = [
-      "iina" # media player
-      "hammerspoon" # interact with MacOS api with LUA
+      # "iina" # media player
+      # "hammerspoon" # interact with MacOS api with LUA
       # "the-unarchiver"
     ];
     # App Store

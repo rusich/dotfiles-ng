@@ -6,6 +6,7 @@
 
 let
   commonSystemPackages = with pkgs; [
+    unstable.neovim
     file
     usbutils
     pciutils
@@ -21,8 +22,6 @@ let
     unzip
     elinks
     killall
-    traceroute
-    lm_sensors
     inetutils
     nix-index
     nix-inspect # TODO: move to nix module
@@ -34,7 +33,6 @@ let
     nix-du
     unixtools.netstat
     progress
-    cifs-utils
     sshpass
   ];
 in

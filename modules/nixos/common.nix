@@ -1,5 +1,8 @@
+# Common nixos settings for both desktop and servers
 {
   pkgs,
+  hostname,
+  lib,
   ...
 }:
 let
@@ -10,7 +13,60 @@ let
   };
 in
 {
-  # NEOVIM
+
+  # Bootloader how many configurations to show
+  boot = {
+    loader.systemd-boot.configurationLimit = 10;
+  };
+
+  # Networking
+  networking.networkmanager.enable = true;
+  networking.hostName = hostname;
+  environment.etc.smb-secrets.text = ''
+    username=guest
+    password=guest
+  '';
+
+  # Enable the OpenSSH daemon.
+  services.openssh.enable = true;
+
+  # Set your time zone.
+  time.timeZone = "Asia/Yakutsk";
+
+  # Fix hardware clock on dualboot
+  time.hardwareClockInLocalTime = true;
+
+  # Select internationalisation properties.
+  i18n.defaultLocale = "ru_RU.UTF-8";
+
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "ru_RU.UTF-8";
+    LC_IDENTIFICATION = "ru_RU.UTF-8";
+    LC_MEASUREMENT = "ru_RU.UTF-8";
+    LC_MONETARY = "ru_RU.UTF-8";
+    LC_NAME = "ru_RU.UTF-8";
+    LC_NUMERIC = "ru_RU.UTF-8";
+    LC_PAPER = "ru_RU.UTF-8";
+    LC_TELEPHONE = "ru_RU.UTF-8";
+    LC_TIME = "ru_RU.UTF-8";
+  };
+
+  console = {
+    earlySetup = true;
+    font = lib.mkDefault "ter-v14b";
+    packages = [ pkgs.terminus_font ];
+    useXkbConfig = true;
+  };
+
+  # Automatic upgrading
+  system.autoUpgrade = {
+    enable = false;
+    allowReboot = false;
+    # flake = "/path/to/flake";
+    dates = "weekly";
+  };
+
+  # Neovim
   programs.neovim = {
     enable = true;
     defaultEditor = true;
@@ -20,23 +76,5 @@ in
   programs.bash.shellAliases = vimAliases;
   programs.fish.shellAliases = vimAliases;
   programs.zsh.shellAliases = vimAliases;
-
-  # Nix store optimisation
-  nix.optimise = {
-    automatic = true;
-    dates = [ "daily" ];
-  };
-
-  # Automatic upgrading
-  system.autoUpgrade = {
-    enable = false;
-    allowReboot = false;
-    # flake = "/path/to/flake";
-    dates = "weekly";
-
-  };
-
-  # Fix hardware clock on dualboot
-  time.hardwareClockInLocalTime = true;
 
 }

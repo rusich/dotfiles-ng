@@ -1,3 +1,4 @@
+# packages for desktops and servers
 { pkgs, config, ... }:
 {
   environment.systemPackages =
@@ -8,5 +9,6 @@
       lm_sensors
       cifs-utils
     ]
-    ++ config.commonSystemPackages;
+    ++ config.my.nixosAndDarwinPackages;
+
 }

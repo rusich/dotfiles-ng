@@ -17,8 +17,6 @@
     # Nautilus + dependencies
     nautilus
     nautilus-python # for nextcloud integration
-    # libcloudproviders # for nextcloud integration
-    # python313Packages.pygobject3
     nautilus-open-any-terminal
     firefox
     # misc

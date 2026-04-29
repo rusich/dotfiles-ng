@@ -21,17 +21,12 @@ in
 
   imports = [
     ./hardware-configuration.nix
-    # Common for desktops
-    ../../../modules/nixos/desktopCommon.nix
-    ../../../modules/nixos/commonPackages.nix
-    ../../../modules/nixos/desktopPackages.nix
-    # Optional
-    ../../../modules/nixos/desktopPackages.nix
-    ../../../modules/nixos/optional/gaming.nix
-    ../../../modules/nixos/optional/DAW.nix
-    ../../../modules/nixos/optional/gamedev.nix
-    ../../../modules/nixos/optional/virt/host.nix
-    ../../../modules/nixos/optional/gnome.nix
+    #   # Optional
+    #   ../../../modules/nixos/optional/gaming.nix
+    #   ../../../modules/nixos/optional/DAW.nix
+    #   ../../../modules/nixos/optional/gamedev.nix
+    #   ../../../modules/nixos/optional/virt/host.nix
+    #   ../../../modules/nixos/optional/gnome.nix
   ];
 
   # Host-specific configuration
@@ -181,49 +176,6 @@ in
       [ "${automount_opts},username=root,domain=WORKGROUP,uid=1000,gid=100" ];
   };
 
-  environment.etc.smb-secrets.text = ''
-    username=guest
-    password=guest
-  '';
-  # fileSystems."/mnt/SteamLibAS/SteamLibrary/steamapps/compatdata" = {
-  #   device = "/home/rusich/Games/SteamLibrary/steamapps/compatdata/";
-  #   depends = [ "/mnt/SteamLibAS" ];
-  #   fsType = "none";
-  #   options = [
-  #     "bind"
-  #     "rw"
-  #     "uid=1000"
-  #     "gid=100"
-  #     "umask=000"
-  #   ];
-  # };
-
-  boot.extraModprobeConfig = ''
-    options kvm_intel nested=1
-    options kvm_intel emulate_invalid_guest_state=0
-    options kvm ignore_msrs=1
-  '';
-
-  # # Создаем скрипт для настройки дисплеев
-  # environment.etc."sddm/display_setup.sh" = {
-  #   text = ''
-  #     #!/bin/sh
-  #     sleep 3  # Ждем инициализации Wayland
-  #
-  #     # Меняем дисплеи местами (пример)
-  #     # wlr-randr --output DP-2 --left-of DP-1
-  #     wlr-randr --output DP-2 --pos 0,0 --output DP-1 --pos 2560,0
-  #     xrandr --output DP-2 --pos 0,0 --output DP-1 --pos 2560,0
-  #   '';
-  #   mode = "0755";
-  # };
-
-  services.displayManager.sddm = {
-    setupScript = ''
-      wlr-randr --output DP-2 --toggle
-    '';
-  };
-
   # # # DPI fixes on homelan via nfqws2-keenetic
   # boot.kernel.sysctl = {
   #   # "net.ipv4.tcp_timestamps" = 0;
@@ -243,4 +195,8 @@ in
   # ${pkgs.wlr-randr}/bin/wlr-randr --output DP-2 --off
   # ${pkgs.xrandr}/bin/xrandr --output DP-2 --left-of DP-1
   # ${pkgs.wlr-randr}/bin/wlr-randr --output DP-1 --pos 0,0 --output DP-2 --pos 2560,0
+
+  # DCS-world server
+  networking.firewall.allowedTCPPorts = [ 10308 ];
+  networking.firewall.allowedUDPPorts = [ 10308 ];
 }

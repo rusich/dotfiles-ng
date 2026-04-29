@@ -5,7 +5,7 @@
 }:
 
 let
-  commonSystemPackages = with pkgs; [
+  nixosAndDarwinPackages = with pkgs; [
     unstable.neovim
     file
     usbutils
@@ -40,9 +40,9 @@ in
 {
   # Определяем опцию, которая будет содержать список пакетов
   options = {
-    commonSystemPackages = lib.mkOption {
+    my.nixosAndDarwinPackages = lib.mkOption {
       type = lib.types.listOf lib.types.package;
-      default = commonSystemPackages;
+      default = nixosAndDarwinPackages;
       readOnly = true;
       description = "Common packages list for NixOS and Darwin.\n(for use in environment.systemPackages)";
     };

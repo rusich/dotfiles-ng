@@ -1,3 +1,5 @@
+# common nixos and home-manager settings for nix
+# This module automatically loaded in all nixos configurations
 {
   ...
 }:

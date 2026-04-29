@@ -1,0 +1,75 @@
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+let
+  cfg = config.my.nixosModules.gaming;
+in
+{
+  options = {
+    my.nixosModules.gaming.enable = lib.mkEnableOption "gaming software";
+  };
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      opencomposite
+      wlx-overlay-s
+      mangohud
+      sidequest
+      jstest-gtk
+      # Lutris
+      protonup-qt
+      protonup-rs
+      lutris # there are alsow -unwrapped and -free versions available
+      cartridges # GTK4 + Libadwaita game launcher
+      #retroarch-full
+      ryubing
+    ];
+
+    programs.steam = {
+      enable = true;
+      gamescopeSession.enable = true;
+      protontricks.enable = true;
+      remotePlay.openFirewall = true;
+      localNetworkGameTransfers.openFirewall = true;
+      extraCompatPackages = with pkgs; [ proton-ge-bin ];
+    };
+
+    programs.gamemode.enable = true;
+    programs.gamescope.enable = true;
+    programs.adb.enable = true; # for WiVRN
+
+    services.wivrn = {
+      enable = true;
+      openFirewall = true;
+      # defaultRuntime = true;
+      # steam.importOXRRuntimes = true; # for Steam auto discover WivRN
+    };
+
+    programs.alvr = {
+      enable = true;
+      openFirewall = true;
+      package = pkgs.alvr;
+    };
+
+    # Power profile management for gaming
+    programs.corectrl.enable = true;
+    security.polkit = {
+      enable = true;
+      extraConfig = ''
+
+        /* Allow regular users to run corectrl as root */
+        polkit.addRule(function(action, subject) {
+            if ((action.id == "org.corectrl.helper.init" ||
+                 action.id == "org.corectrl.helperkiller.init") &&
+                subject.local == true &&
+                subject.active == true &&
+                subject.isInGroup("users")) {
+                    return polkit.Result.YES;
+            }
+        });
+      '';
+    };
+  };
+}

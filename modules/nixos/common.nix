@@ -1,8 +1,11 @@
 # Common nixos settings for both desktop and servers
+# This module automatically loaded in all nixos configurations
 {
   pkgs,
   hostname,
   lib,
+  config,
+  userConfig,
   ...
 }:
 let
@@ -13,6 +16,21 @@ let
   };
 in
 {
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users.${userConfig.username} = {
+    isNormalUser = true;
+    description = userConfig.fullName;
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "libvirtd"
+      "kvm"
+      "input"
+      "adbusers"
+      "qemu"
+    ];
+  };
 
   # Bootloader how many configurations to show
   boot = {
@@ -76,5 +94,18 @@ in
   programs.bash.shellAliases = vimAliases;
   programs.fish.shellAliases = vimAliases;
   programs.zsh.shellAliases = vimAliases;
+
+  environment.systemPackages =
+    with pkgs;
+    [
+      gcc
+      python3
+      home-manager
+      # misc
+      traceroute
+      lm_sensors
+      cifs-utils
+    ]
+    ++ config.my.nixosAndDarwinPackages;
 
 }

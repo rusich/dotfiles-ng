@@ -1,0 +1,47 @@
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+let
+  cfg = config.my.nixosModules.virt.guest;
+in
+{
+  options = {
+    my.nixosModules.virt.guest.enable = lib.mkEnableOption "virtualization suport for guest system";
+  };
+  config = lib.mkIf cfg.enable {
+    # ============================================
+    # ОПЦИИ КЛИЕНТА ВИРТУАЛИЗАЦИИ (гостевой системы)
+    # Используются, когда NixOS работает как ГОСТЕВАЯ ОС внутри ВМ
+    # ============================================
+
+    # Включает службы гостевой системы QEMU
+    # Устанавливает qemu-guest-agent для взаимодействия с гипервизором
+    # Включает: синхронизацию времени, монтирование общих папок, обмен файлами
+    services.qemuGuest.enable = true;
+
+    # Включает SPICE vdagent daemon для улучшения взаимодействия через SPICE
+    # Функции: копирование текста, передача файлов, управление разрешением экрана
+    services.spice-vdagentd.enable = true;
+
+    # Автоматически изменяет разрешение экрана при подключении/отключении мониторов
+    # Работает вместе с spice-vdagentd для автоматического управления разрешением
+    services.spice-autorandr.enable = true;
+
+    # # Видеодрайвер для SPICE/QXL:
+    services.xserver.videoDrivers = [ "qxl" ];
+
+    # # Для лучшей производительности в гостевой системе:
+    boot.kernelModules = [
+      "virtio"
+      "virtio_pci"
+      "virtio_net"
+      "virtio_blk"
+    ];
+
+    # # Сетевой драйвер для virtio:
+    networking.useDHCP = true;
+  };
+}

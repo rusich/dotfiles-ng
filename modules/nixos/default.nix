@@ -1,11 +1,4 @@
-# { ... }:
-# {
-#   imports = [
-#     ./common.nix
-#     ./nix.nix
-#   ];
-# }
-
+# Auto-load all modules in the modules/nixos directory
 { inputs, ... }:
 {
   imports =

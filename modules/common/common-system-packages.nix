@@ -34,6 +34,7 @@ let
     unixtools.netstat
     progress
     sshpass
+    home-manager
   ];
 in
 

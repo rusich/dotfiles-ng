@@ -1,29 +1,25 @@
 {
-  pkgs,
-  nixosModules,
   inputs,
   ...
 }:
 
 {
-  # Move this to common config?
-  system.stateVersion = "25.05";
+
+  # Using modules
+  my.nixosModules.desktop-common.enable = true;
 
   imports = [
     ./hardware-configuration.nix
-    ../../../modules/nixos/desktopCommon.nix
-    ../../../modules/nixos/desktopPackages.nix
-    ../../../modules/nixos/optional/gamedev.nix
     inputs.nixos-hardware.nixosModules.huawei-machc-wa
   ];
 
   # Old Hardware-Specifice settings replaced by NixOS-Hardware module
   # hardware.cpu.intel.updateMicrocode = true;
-  #
-  # # Host-specific configuration
-  # console = {
-  #   font = "ter-v32b";
-  # };
+
+  # Host-specific configuration
+  console = {
+    font = "ter-v32b";
+  };
   #
   # hardware.graphics = {
   #   enable = true;
@@ -43,4 +39,6 @@
   # powerManagement.enable = true;
   # powerManagement.powertop.enable = true;
 
+  # Move this to common config?
+  system.stateVersion = "25.05";
 }

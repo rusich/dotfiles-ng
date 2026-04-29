@@ -46,7 +46,7 @@ local spec = {
     },
     bigfile = { enabled = true },
     dashboard = {
-      enabled = true,
+      enabled = false,
       example = 'compact_files',
       preset = {
         --         header = [[

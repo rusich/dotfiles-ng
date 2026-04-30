@@ -40,7 +40,7 @@ in
         patches = [
           # amdgpu-stability-patch
           amd-gpu-ignore-ctx-privileges-patch
-          # ./patches/amdgpu-stability-patch.diff
+          # ./amdgpu-stability-patch.diff
         ];
       }))
     ];

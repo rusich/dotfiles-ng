@@ -35,6 +35,16 @@ let
     progress
     sshpass
     home-manager
+    # To explore:
+    # duf
+    # glances
+    # termshark
+    # ipcalc
+    # lsof
+    # procs
+    # lazydocker
+    # unp
+    # asciinema + agg
   ];
 in
 

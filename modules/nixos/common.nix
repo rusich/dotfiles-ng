@@ -105,6 +105,9 @@ in
       traceroute
       lm_sensors
       cifs-utils
+      # to explore:
+      # lshw
+      # iotop
     ]
     ++ config.my.nixosAndDarwinPackages;
 

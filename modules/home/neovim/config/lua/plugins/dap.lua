@@ -81,7 +81,7 @@ local spec = {
   'mfussenegger/nvim-dap',
   event = 'LspAttach',
   dependencies = {
-    { 'theHamsta/nvim-dap-virtual-text', config = true },
+    -- { 'theHamsta/nvim-dap-virtual-text', config = true },
     -- Installs the debug adapters for you
     'mason-org/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
@@ -96,7 +96,12 @@ local spec = {
     {
       'igorlfs/nvim-dap-view',
       -- let the plugin lazy load itself
+      -- lazy = false,
       version = '1.*',
+      dependencies = {
+        -- Disassembly support
+        { url = 'https://codeberg.org/Jorenar/nvim-dap-disasm.git', dependencies = 'igorlfs/nvim-dap-view', config = true },
+      },
       ---@module 'dap-view'
       ---@type dapview.Config
       opts = {
@@ -107,8 +112,6 @@ local spec = {
         },
       },
     },
-    -- Disassembly support
-    { url = 'https://codeberg.org/Jorenar/nvim-dap-disasm.git', dependencies = 'igorlfs/nvim-dap-view', config = true },
   },
 
   keys = {
@@ -303,6 +306,12 @@ local spec = {
       '<leader>du',
       '<cmd>DapViewToggle<cr>',
       desc = 'Toggle UI',
+    },
+    {
+      -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
+      '<leader>dv',
+      '<cmd>DapViewVirtualTextToggle<cr>',
+      desc = 'Toggle DAP Virtual Text',
     },
     {
       '<leader>dE',

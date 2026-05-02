@@ -5,10 +5,16 @@ local spec = {
   'saecki/crates.nvim',
   event = { 'BufRead Cargo.toml' },
   opts = {
+    -- completion = {
+    --   blink = { enabled = true },
+    -- },
     completion = {
-      cmp = { enabled = true },
+      crates = {
+        enabled = true, -- disabled by default
+        max_results = 10, -- The maximum number of search results to display
+        min_chars = 3, -- The minimum number of charaters to type before completions begin appearing
+      },
     },
-
     lsp = {
       enabled = true,
       -- on_attach = function(client, bufnr)

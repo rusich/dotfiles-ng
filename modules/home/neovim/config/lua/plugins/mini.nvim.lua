@@ -30,7 +30,7 @@ local spec = {
     -- autopairs
     require('mini.pairs').setup {
 
-      modes = { insert = true, command = true, terminal = false },
+      modes = { insert = true, command = true, terminal = false, normal = false },
     }
 
     -- Add/delete/replace surroundings (brackets, quotes, etc.)

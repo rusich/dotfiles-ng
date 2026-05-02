@@ -113,4 +113,7 @@ end, { desc = 'Select child treesitter node or inner incremental lsp selections'
 -- builtin undotree
 map('n', 'U', require('undotree').open, { desc = '[U]ndoTree' })
 
+-- exit term mode
+map('t', '<Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
 -- vim: ts=2 sts=2 sw=2 et

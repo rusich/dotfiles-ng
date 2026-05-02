@@ -12,6 +12,11 @@ local spec = {
       'lua_ls@3.16.4',
       'marksman',
     },
+    automatic_enable = {
+      exclude = {
+        'rust_analyzer', -- using rustacean.nvim
+      },
+    },
   },
   dependencies = {
     {

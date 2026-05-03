@@ -78,6 +78,7 @@ local spec = {
         signs = { add = '┃', change = '┃', delete = '‣' },
       },
     }
+    -- TODO: read manual
     vim.keymap.set('n', '<leader>gv', function()
       require('mini.diff').toggle_overlay(0)
     end, { desc = 'Preview changes' })
@@ -106,19 +107,174 @@ local spec = {
     require('mini.icons').setup()
     MiniIcons.mock_nvim_web_devicons()
 
-    -- indentscope
     require('mini.indentscope').setup {
       draw = { delay = 1 },
       symbol = '│',
     }
 
-    -- -- statusline -- Lualine is better
-    -- require('mini.statusline').setup {
-    --   content = {
-    --     -- Content for active window
-    --     active = nil,
-    --   },
-    -- }
+    -- STATUSL_INE START
+    local statusline = require 'mini.statusline'
+
+    local opts = {
+      content = {
+        active = function()
+          -- SECTIONS
+          local section_mode = function(args)
+            local modes = {
+              ['n'] = { text = 'N', hl = 'MiniStatuslineModeNormal' },
+              ['v'] = { text = 'V', hl = 'MiniStatuslineModeVisual' },
+              ['V'] = { text = 'V-L', hl = 'MiniStatuslineModeVisual' },
+              [''] = { text = 'V-B', hl = 'MiniStatuslineModeVisual' },
+              ['s'] = { text = 'S', hl = 'MiniStatuslineModeVisual' },
+              ['S'] = { text = 'S-L', hl = 'MiniStatuslineModeVisual' },
+              [''] = { text = 'S-B', hl = 'MiniStatuslineModeVisual' },
+              ['i'] = { text = 'I', hl = 'MiniStatuslineModeInsert' },
+              ['R'] = { text = 'R', hl = 'MiniStatuslineModeReplace' },
+              ['c'] = { text = 'C', hl = 'MiniStatuslineModeCommand' },
+              ['r'] = { text = 'P', hl = 'MiniStatuslineModeOther' },
+              ['!'] = { text = 'Sh', hl = 'MiniStatuslineModeOther' },
+              ['t'] = { text = 'T', hl = 'MiniStatuslineModeOther' },
+            }
+
+            local mode_info = modes[vim.fn.mode()]
+            local mode = '  ' .. mode_info.text
+            return mode, mode_info.hl
+          end
+
+          local section_diff = function()
+            local diff = MiniStatusline.section_diff { trunc_width = 75 }
+            if diff:find '%+' then
+              diff = diff:gsub('%+', '%%#SL_DiffAdd#+')
+            end
+            if diff:find '%~' then
+              diff = diff:gsub('%~', '%%#SL_DiffChange#~')
+            end
+            if diff:find '%-' then
+              diff = diff:gsub('%-', '%%#SL_DiffDelete#-')
+            end
+            return diff
+          end
+
+          local section_lsp = function()
+            if MiniStatusline.is_truncated(75) then
+              return ''
+            end
+
+            local bufnr = vim.api.nvim_get_current_buf()
+            local clients = vim.lsp.get_clients { bufnr = bufnr }
+
+            if #clients == 0 then
+              return ''
+            end
+
+            local current_clients = {}
+            for _, client in ipairs(clients) do
+              table.insert(current_clients, client.name)
+            end
+
+            return ' ' .. table.concat(current_clients, '|')
+          end
+
+          local section_fileformat = function()
+            local fileformat = vim.o.fileformat
+            local symbols = {
+              unix = '', -- e712
+              dos = '', -- e70f
+              mac = '', -- e711
+            }
+            return symbols[fileformat]
+          end
+
+          local section_filesize = function()
+            local size = math.max(vim.fn.line2byte(vim.fn.line '$' + 1) - 1, 0)
+            if size < 1024 then
+              return string.format('%dB', size)
+            elseif size < 1048576 then
+              return string.format('%.1fK', size / 1024)
+            else
+              return string.format('%.1fM', size / 1048576)
+            end
+          end
+
+          local function section_location()
+            local pos = vim.api.nvim_win_get_cursor(0)
+            local row = pos[1]
+            local col = pos[2] + 1
+
+            local total = vim.api.nvim_buf_line_count(0)
+            local progress = math.floor((row / total) * 100)
+
+            return string.format('%d:%d %d%%%%', row, col, progress)
+          end
+
+          -- HIGHLIGHTS
+          local utils = require 'utils'
+          local colors = {
+            bg = utils.color.get_hl_color('NormalFloat', 'bg'),
+            fg = utils.color.get_hl_color('NormalFloat', 'fg'),
+            inactive_fg = utils.color.get_hl_color('StatusLineNC', 'fg'),
+            yellow = '#ECBE7B',
+            cyan = '#7AA79F',
+            green = '#98BB6C',
+            orange = '#FF9F65',
+            violet = '#a9a1e1',
+            magenta = '#c678dd',
+            blue = '#7E9CD8',
+            red = '#ec5f67',
+          }
+          vim.api.nvim_set_hl(0, 'StatusLine', { bg = colors.bg, fg = colors.fg })
+          vim.api.nvim_set_hl(0, 'StatusLineNC', { bg = colors.bg, fg = colors.inactive_fg })
+          vim.api.nvim_set_hl(0, 'MiniStatuslineModeNormal', { fg = colors.red, bg = colors.bg })
+          vim.api.nvim_set_hl(0, 'MiniStatuslineModeVisual', { fg = colors.blue, bg = colors.bg })
+          vim.api.nvim_set_hl(0, 'MiniStatuslineModeInsert', { fg = colors.green, bg = colors.bg })
+          vim.api.nvim_set_hl(0, 'MiniStatuslineModeReplace', { fg = colors.violet, bg = colors.bg })
+          vim.api.nvim_set_hl(0, 'MiniStatuslineModeCommand', { fg = colors.magenta, bg = colors.bg })
+          vim.api.nvim_set_hl(0, 'MiniStatuslineModeOther', { fg = colors.cyan, bg = colors.bg })
+          vim.api.nvim_set_hl(0, 'MiniStatuslineModeInactive', { fg = colors.bg, bg = colors.fg })
+          vim.api.nvim_set_hl(0, 'SL_DiagError', { fg = colors.red })
+          vim.api.nvim_set_hl(0, 'SL_DiagWarn', { fg = colors.yellow })
+          vim.api.nvim_set_hl(0, 'SL_DiagInfo', { fg = colors.violet })
+          vim.api.nvim_set_hl(0, 'SL_DiagHint', { fg = colors.cyan })
+          vim.api.nvim_set_hl(0, 'SL_LspInfo', { fg = colors.green, bold = false })
+          vim.api.nvim_set_hl(0, 'SL_Git', { fg = colors.orange, bold = true })
+          vim.api.nvim_set_hl(0, 'SL_DiffAdd', { fg = colors.green })
+          vim.api.nvim_set_hl(0, 'SL_DiffChange', { fg = colors.orange })
+          vim.api.nvim_set_hl(0, 'SL_DiffDelete', { fg = colors.red })
+          vim.api.nvim_set_hl(0, 'SL_Codeium', { fg = colors.magenta })
+          vim.api.nvim_set_hl(0, 'SL_Encoding', { fg = colors.yellow })
+          vim.api.nvim_set_hl(0, 'SL_fileinfo', { fg = colors.fg, bold = true })
+
+          local git = MiniStatusline.section_git { trunc_width = 40 }
+          local diagnostics = MiniStatusline.section_diagnostics {
+            trunc_width = 75,
+            signs = { ERROR = '%#SL_DiagError# ', WARN = '%#SL_DiagWarn# ', INFO = '%#SL_DiagInfo# ', HINT = '%#SL_DiagHint# ' },
+          }
+          local filename = MiniStatusline.section_filename { trunc_width = 140 }
+          local search = MiniStatusline.section_searchcount { trunc_width = 75 }
+
+          local mode, mode_hl = section_mode { trunc_width = 120 }
+          return MiniStatusline.combine_groups {
+            { hl = mode_hl, strings = { mode } },
+            { hl = 'SL_Git', strings = { git, '%#StatusLineNC#', section_diff(), '%#StatusLineNC#', diagnostics, '%*' } },
+            '%<', -- Mark general truncate point
+            { hl = 'MiniStatuslineFilename', strings = { filename } },
+            '%=', -- End left alignment
+            { hl = 'IncSearch', strings = { search } },
+            { hl = 'SL_LspInfo', strings = { section_lsp() } },
+            -- { hl = 'SL_LspInfo', strings = { lsp } },
+            { hl = 'SL_Codeium', strings = { '{…}' .. vim.api.nvim_call_function('codeium#GetStatusString', {}) } },
+            -- { hl = 'MiniStatuslineFileinfo', strings = { fileinfo } },
+            { hl = 'SL_Encoding', strings = { string.upper(vim.o.fileencoding) } },
+            { hl = 'StatusLineNC', strings = { section_fileformat() } },
+            { hl = 'SL_fileinfo', strings = { section_filesize(), section_location() } },
+            ' ',
+          }
+        end,
+      },
+    }
+    statusline.setup(opts)
+    -- statusline.setup()
+    --- STATUSLINE END
 
     -- Whichkey replacement
     local miniclue = require 'mini.clue'

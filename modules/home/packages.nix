@@ -62,5 +62,6 @@
     loupe
     papers
     telegram-desktop
+    calibre
   ];
 }

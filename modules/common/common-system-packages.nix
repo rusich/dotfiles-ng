@@ -36,7 +36,7 @@ let
     sshpass
     home-manager
     # To explore:
-    # duf
+    duf
     # glances
     # termshark
     # ipcalc

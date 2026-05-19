@@ -33,7 +33,13 @@ in
     hardware.cpu.amd.updateMicrocode = true;
     services.xserver.videoDrivers = [ "amdgpu" ];
     # for corectrl full features
-    boot.kernelParams = [ "amdgpu.ppfeaturemask=0xffffffff" ];
+    boot.kernelParams = [
+      "amdgpu.ppfeaturemask=0xffffffff"
+      # Добавляем правильные:
+      # "amdgpu.runpm=0" # Отключает runtime PM amdgpu (может помочь)
+      # "amdgpu.dpm=0" # Если runpm не поможет
+      # "amdgpu.gpu_recovery=0" # Отключает GPU recovery при suspend
+    ];
 
     boot.extraModulePackages = [
       (amdgpu-kernel-module.overrideAttrs (_: {

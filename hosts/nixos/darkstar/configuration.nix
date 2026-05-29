@@ -17,6 +17,7 @@
   my.nixosModules.virt.hypervisor.enable = true;
   my.nixosModules.virt.client.enable = true;
   my.nixosModules.gnome.enable = true;
+  my.nixosModules.embedded-dev.enable = true;
 
   console = {
     font = "ter-v24b";

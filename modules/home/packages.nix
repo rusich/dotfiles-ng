@@ -63,5 +63,9 @@
     papers
     telegram-desktop
     calibre
+    # embedded rust addition
+    gdb
+    openocd
+    minicom
   ];
 }

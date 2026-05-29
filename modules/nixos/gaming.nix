@@ -19,9 +19,10 @@ in
       sidequest
       jstest-gtk
       # Lutris
+      heroic
       protonup-qt
       protonup-rs
-      lutris # there are alsow -unwrapped and -free versions available
+      # lutris # there are alsow -unwrapped and -free versions available
       cartridges # GTK4 + Libadwaita game launcher
       #retroarch-full
       ryubing

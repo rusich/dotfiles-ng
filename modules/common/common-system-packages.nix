@@ -23,6 +23,7 @@ let
     elinks
     killall
     inetutils
+    iperf3
     nix-index
     nix-inspect # TODO: move to nix module
     mtr

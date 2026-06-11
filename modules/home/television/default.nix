@@ -10,7 +10,6 @@
   services.tldr-update.enable = true;
 
   programs.television = {
-    package = pkgs.unstable.television;
     enable = true;
     enableFishIntegration = true;
     enableBashIntegration = true;

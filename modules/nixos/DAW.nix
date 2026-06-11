@@ -39,7 +39,7 @@ in
 
     environment.systemPackages = with pkgs; [
       # reaper - ardour fully replaces reaper, and its open source and free
-      unstable.ardour
+      ardour
       gmetronome
       audacity
       # pavucontrol, not needed?
@@ -54,10 +54,9 @@ in
       alsa-lib-with-plugins
       hydrogen # drums app
       drumgizmo # drums plugin
-      unstable.tonelib-jam
+      tonelib-jam
       tuxguitar # for export from .gp to .gp3 ↖
-      unstable.tonelib-metal
-      # unstable.tonelib-gfx
+      tonelib-metal
       tonelib-gfx
       # custom.tonelib-gfx
       custom.tonelib-grand-magus

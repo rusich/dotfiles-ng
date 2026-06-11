@@ -161,5 +161,15 @@ in
       "/share/nautilus-python/extensions"
     ];
 
+    # DankMaterialShell
+    programs.dms-shell = {
+      enable = true;
+      enableSystemMonitoring = true; # System monitoring widgets (dgop)
+      enableVPN = true; # VPN management widget
+      enableDynamicTheming = false; # Wallpaper-based theming (matugen)
+      enableAudioWavelength = true; # Audio visualizer (cava)
+      enableCalendarEvents = true; # Calendar integration (khal)
+    };
+
   };
 }

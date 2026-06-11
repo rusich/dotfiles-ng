@@ -19,9 +19,9 @@ vim.api.nvim_create_autocmd('InsertLeave', {
       vim.g.last_input_kb_layout = cur_kb_layout
     end
 
-    if vim.g.last_input_kb_layout ~= 'en' then
-      vim.fn.system { layout_toggle_tool, '--toggle' }
-    end
+    -- FIXME: if vim.g.last_input_kb_layout ~= 'en' then
+    --   vim.fn.system { layout_toggle_tool, '--toggle' }
+    -- end
   end,
 })
 
@@ -30,9 +30,9 @@ vim.api.nvim_create_autocmd('InsertEnter', {
   group = vim.api.nvim_create_augroup('restore-input-layout', { clear = true }),
   callback = function()
     local cur_kb_layout = get_kb_layout()
-    if cur_kb_layout ~= vim.g.last_input_kb_layout then
-      vim.fn.system { layout_toggle_tool, '--toggle' }
-    end
+    --  FIXME: if cur_kb_layout ~= vim.g.last_input_kb_layout then
+    --   vim.fn.system { layout_toggle_tool, '--toggle' }
+    -- end
   end,
 })
 

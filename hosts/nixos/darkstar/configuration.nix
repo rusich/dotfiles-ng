@@ -27,7 +27,7 @@
   environment.systemPackages = with pkgs; [
     lmstudio
     wlr-randr
-    xorg.xrandr
+    xrandr
     anydesk
   ];
 

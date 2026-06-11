@@ -6,7 +6,7 @@
 
 let
   nixosAndDarwinPackages = with pkgs; [
-    unstable.neovim
+    neovim
     file
     usbutils
     pciutils

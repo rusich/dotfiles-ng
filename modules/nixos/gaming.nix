@@ -14,7 +14,7 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       opencomposite
-      wlx-overlay-s
+      wayvr
       mangohud
       sidequest
       jstest-gtk
@@ -39,7 +39,6 @@ in
 
     programs.gamemode.enable = true;
     programs.gamescope.enable = true;
-    programs.adb.enable = true; # for WiVRN
 
     services.wivrn = {
       enable = true;

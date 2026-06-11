@@ -59,7 +59,6 @@
 
       packages = with pkgs; [
         fastfetch
-        neofetch
         neo
       ];
     };

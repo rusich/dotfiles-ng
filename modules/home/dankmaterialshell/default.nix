@@ -8,24 +8,11 @@ let
   colors = config.lib.stylix.colors;
 in
 {
-  imports = [
-    inputs.dms.homeModules.dank-material-shell
-  ];
 
-  home.packages = with pkgs; [
-    kdePackages.qtmultimedia
-    adw-gtk3
-  ];
-
-  programs.dank-material-shell = {
-    enable = true;
-    dgop.package = pkgs.unstable.dgop;
-    enableSystemMonitoring = true; # System monitoring widgets (dgop)
-    enableVPN = true; # VPN management widget
-    enableDynamicTheming = false; # Wallpaper-based theming (matugen)
-    enableAudioWavelength = true; # Audio visualizer (cava)
-    enableCalendarEvents = true; # Calendar integration (khal)
-  };
+  # home.packages = with pkgs; [
+  #   kdePackages.qtmultimedia
+  #   adw-gtk3
+  # ];
 
   # Map the niri config files to standard location
   home.file = {

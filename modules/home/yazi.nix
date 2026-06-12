@@ -10,6 +10,7 @@
     enableZshIntegration = true;
     enableFishIntegration = true;
     enableBashIntegration = true;
+    shellWrapperName = "y";
 
     plugins = {
       mediainfo = pkgs.yaziPlugins.mediainfo;

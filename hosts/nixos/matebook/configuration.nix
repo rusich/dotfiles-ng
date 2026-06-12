@@ -7,6 +7,9 @@
 
   # Using modules
   my.nixosModules.desktop-common.enable = true;
+  # TODO: it is temporary fix for niri destkop session
+  # is broken in NixOS 26.05 (not shown in GDM greeter)
+  my.nixosModules.gnome.enable = true;
 
   imports = [
     ./hardware-configuration.nix

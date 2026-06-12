@@ -2,7 +2,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   # Включаем управление XDG User Directories (но с кастомными путями)
   xdg.userDirs = {
     enable = true;
@@ -15,10 +16,11 @@
     videos = "$HOME/Nextcloud/Videos";
     pictures = "$HOME/Nextcloud/Pictures";
     publicShare = "$HOME/Public";
+    setSessionVariables = true;
   };
 
   # Dolphin force recreate bookmarks from user-dirs
-  home.activation.removeConfigFile = config.lib.dag.entryAfter ["writeBoundary"] ''
+  home.activation.removeConfigFile = config.lib.dag.entryAfter [ "writeBoundary" ] ''
     rm -f "$HOME/.local/share/user-places.xbel"
   '';
 
@@ -26,7 +28,7 @@
     enable = false;
     config = {
       common = {
-        default = ["gtk"];
+        default = [ "gtk" ];
       };
       hyprland = {
         default = [

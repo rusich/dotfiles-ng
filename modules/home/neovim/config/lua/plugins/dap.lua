@@ -100,7 +100,7 @@ local spec = {
       version = '1.*',
       dependencies = {
         -- Disassembly support
-        { url = 'https://codeberg.org/Jorenar/nvim-dap-disasm.git', dependencies = 'igorlfs/nvim-dap-view', config = true },
+        { url = 'https://codeberg.org/Jorenar/nvim-dap-disasm.git', config = true },
       },
       ---@module 'dap-view'
       ---@type dapview.Config
@@ -395,7 +395,7 @@ local spec = {
               stopOnEntry = false,
               initCommands = function()
                 -- Find out where to look for the pretty printer Python module
-                local rustc_sysroot = vim.fn.trim(vim.fn.system 'rustc --print sysroot')
+                local rustc_sysroot = vim.fn.trim(vim.fn.system 'cargo rustc -Z unstable-options --print sysroot')
 
                 local script_import = 'command script import "' .. rustc_sysroot .. '/lib/rustlib/etc/lldb_lookup.py"'
                 local commands_file = rustc_sysroot .. '/lib/rustlib/etc/lldb_commands'

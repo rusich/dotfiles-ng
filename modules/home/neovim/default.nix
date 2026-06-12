@@ -14,9 +14,9 @@
     mermaid-cli
     sqlite # for vim-dadbod
     # LSP linters etc
-    nixfmt-rfc-style
-    # nixd
-    custom.nixd-nightly
+    nixfmt
+    nixd
+    # custom.nixd-nightly
     gnumake
     graphviz # `dot` for rustaceanvim
   ];

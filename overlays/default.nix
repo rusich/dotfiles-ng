@@ -38,8 +38,9 @@ let
           ];
         });
 
+        # TODO: Remove if not needed
         # nixd-nightly
-        nixd-nightly = inputs.nixd.packages.${prev.system}.default;
+        # nixd-nightly = inputs.nixd.packages.${prev.system}.default;
       };
     };
 

@@ -22,8 +22,6 @@
     waybar
     waylock
     wlogout
-    hyprlock
-    hypridle
     wpaperd
     # misc
     grimblast

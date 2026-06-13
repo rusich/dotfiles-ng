@@ -5,6 +5,7 @@
   stylix.targets = {
     helix.enable = false;
     nixvim.enable = false;
+    # dank-material-shell.enable = true;
     gtk.enable = true;
     qt = {
       enable = true;

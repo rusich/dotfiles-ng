@@ -72,10 +72,10 @@ in
       }
     '';
 
-    ".config/DankMaterialShell/themes/stylix.json".text = builtins.toJSON {
+    ".config/DankMaterialShell/themes/stylix_my.json".text = builtins.toJSON {
       dark = with colors.withHashtag; {
-        name = "Stylix generatated dark theme";
-        primary = base0D;
+        name = "Stylix generatated dark theme (my)";
+        primary = base0B;
         primaryText = base00;
         primaryContainer = base0C;
         secondary = base0E;
@@ -83,7 +83,7 @@ in
         surfaceText = base05;
         surfaceVariant = base02;
         surfaceVariantText = base04;
-        surfaceTint = base0D;
+        surfaceTint = base0B;
         background = base00;
         backgroundText = base05;
         outline = base03;
@@ -96,8 +96,8 @@ in
       };
 
       light = with colors.withHashtag; {
-        name = "Stylix generatated light theme";
-        primary = base0D;
+        name = "Stylix generatated light theme (my)";
+        primary = base0B;
         primaryText = base07;
         primaryContainer = base0C;
         secondary = base0E;
@@ -105,7 +105,7 @@ in
         surfaceText = base01;
         surfaceVariant = base07;
         surfaceVariantText = base02;
-        surfaceTint = base0D;
+        surfaceTint = base0B;
         background = base07;
         backgroundText = base00;
         outline = base04;

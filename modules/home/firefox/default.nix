@@ -12,7 +12,7 @@
       settings = {
         "dom.security.https_only_mode" = true;
         "browser.translations.enable" = false;
-        "signon.rememberSignons" = false;
+        "signon.rememberSignons" = true;
         "browser.places.importBookmarksHTML" = false;
         "browser.bookmarks.autoExportHTML" = false;
         # Look'n'feel
@@ -23,7 +23,8 @@
         # Приватность
         "privacy.donottrackheader.enabled" = true;
         "privacy.trackingprotection.enabled" = true;
-        # "privacy.sanitize.sanitizeOnShutdown" = true;
+        "privacy.sanitize.sanitizeOnShutdown" = false;
+        "privacy.clearOnShutdown_v2.formdata" = false;
 
         # Производительность
         "browser.sessionhistory.max_entries" = 50; # стандарт 50, но можно уменьшить
@@ -57,7 +58,6 @@
           "google".metaData.alias = "@g";
           "wikipedia".metaData.alias = "@w";
           "ddg" = {
-            # ← добавить
             urls = [ { template = "https://duckduckgo.com/?q={searchTerms}"; } ];
             definedAliases = [ "@ddg" ];
           };

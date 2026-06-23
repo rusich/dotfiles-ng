@@ -3,8 +3,6 @@
 {
   home.packages = with pkgs; [
     # desktop
-    # libsForQt5.qt5ct
-    # qt6ct
     # breeze-hacked-cursor-theme
     whitesur-gtk-theme
     whitesur-icon-theme
@@ -19,10 +17,10 @@
     # wayland
     rofi
     # swaynotificationcenter
-    waybar
-    waylock
-    wlogout
-    wpaperd
+    # waybar
+    # waylock
+    # wlogout
+    # wpaperd
     # misc
     grimblast
     # base
@@ -65,5 +63,7 @@
     gdb
     openocd
     minicom
+    fastfetch
+    neo
   ];
 }

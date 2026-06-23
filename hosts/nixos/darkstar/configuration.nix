@@ -18,6 +18,7 @@
   my.nixosModules.virt.client.enable = true;
   my.nixosModules.gnome.enable = true;
   my.nixosModules.embedded-dev.enable = true;
+  my.nixosModules.wireshark.enable = true;
 
   console = {
     font = "ter-v24b";
@@ -64,6 +65,7 @@
   ];
 
   networking.hostId = "69cfd900"; # for zfs support
+  boot.zfs.forceImportRoot = false;
 
   fileSystems."/mnt/nvme500g/wt" = {
     device = "/dev/disk/by-uuid/2B52D7E135A3AB06";

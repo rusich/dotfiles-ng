@@ -56,11 +56,6 @@
       # if pkgs.stdenv.isDarwin
       # then "/Users/${username}"
       # else "/home/${username}";
-
-      packages = with pkgs; [
-        fastfetch
-        neo
-      ];
     };
 
     # Enable alacritty

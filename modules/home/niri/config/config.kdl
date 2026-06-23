@@ -7,12 +7,7 @@
 
 environment {
     XDG_CURRENT_DESKTOP "niri"
-    // QT_QPA_PLATFORM "wayland"
     ELECTRON_OZONE_PLATFORM_HINT "auto"
-    QT_QPA_PLATFORMTHEME "qt6ct"
-//     // QT_QPA_PLATFORMTHEME "gtk3"
-//     // QT_QPA_PLATFORMTHEME_QT6 "gtk3"
-//     QT_QPA_PLATFORMTHEME_QT6 "qt6ct"
 }
 
 // Input device configuration.
@@ -299,7 +294,7 @@ layout {
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
-// spawn-sh-at-startup "QT_QPA_PLATFORMTHEME=gtk3 dms run"
+spawn-at-startup "noctalia"
 spawn-sh-at-startup "wl-paste --watch cliphist store"
 spawn-sh-at-startup "sleep 3 && kill -9 $(pgrep 'kwalletd6|ksecretd|gnome-keyring'); sleep 3; keepassxc"
 spawn-sh-at-startup "sleep 60 && nextcloud"
@@ -440,7 +435,7 @@ binds {
     Mod+Return hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Space hotkey-overlay-title="Open launcher: rofi" { spawn "rofi" "-show" "combi"; }
     // using power menu instead -> Ctrl+Alt+L hotkey-overlay-title="Lock the Screen" { spawn "dms" "ipc" "call" "lock" "lock"; }
-    Ctrl+Shift+Escape hotkey-overlay-title="Process List" { spawn "dms" "ipc" "call" "processlist" "toggle"; }
+    // Ctrl+Shift+Escape hotkey-overlay-title="Process List" { spawn "dms" "ipc" "call" "processlist" "toggle"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
@@ -670,7 +665,7 @@ binds {
 
     // The quit action will show a confirmation dialog to avoid accidental exits.
     Mod+Shift+Ctrl+Q { quit; }
-    Mod+Shift+Q hotkey-overlay-title="Poweroff menu" { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
+    // Mod+Shift+Q hotkey-overlay-title="Poweroff menu" { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
 
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.
@@ -680,9 +675,4 @@ binds {
     Mod+E hotkey-overlay-title="Open file explorer: Nautilus" { spawn "nautilus"; }
 }
 
-
-// Dms settings
-// include "dms/binds.kdl"
-include "dms/colors.kdl"
-// include "dms/layout.kdl"
-// include "dms/wpblur.kdl"
+include "noctalia.kdl"

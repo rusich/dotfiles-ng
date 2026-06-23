@@ -6,15 +6,15 @@
     helix.enable = false;
     nixvim.enable = false;
     # dank-material-shell.enable = true;
-    gtk.enable = true;
+    gtk.enable = false;
     qt = {
-      enable = true;
+      enable = false;
       platform = "qtct";
     };
     kde.enable = false;
-    gnome.enable = true;
+    gnome.enable = false;
     firefox = {
-      enable = true;
+      enable = false;
       profileNames = [ "${config.home.username}" ];
       colorTheme.enable = true;
     };

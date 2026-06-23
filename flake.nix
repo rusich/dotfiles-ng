@@ -1,6 +1,14 @@
 {
   description = "NixOS, nix-darwin and home-manager config in one place!";
 
+  # extra Caches
+  nixConfig = {
+    extra-substituters = [ "https://noctalia.cachix.org" ];
+    extra-trusted-public-keys = [
+      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+    ];
+  };
+
   inputs = rec {
     nixpkgs-stable.url = "nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
@@ -13,10 +21,11 @@
 
     # nixd.url = "github:nix-community/nixd";
 
-    stylix = {
-      url = "github:nix-community/stylix/release-26.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # using noctalia thiming now
+    # stylix = {
+    #   url = "github:nix-community/stylix/release-26.05";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
@@ -36,6 +45,14 @@
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Noctalia shell
+    noctalia = {
+      url = "github:noctalia-dev/noctalia";
+      # omit following nixpkgs to use prebuild noctalia binaries
+      # inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -71,6 +88,7 @@
       ];
     in
     rec {
+      # noctalia cache
       nixosConfigurations =
         nixpkgs.lib.genAttrs nixosHosts (
           host:
@@ -85,7 +103,7 @@
               ./modules/common
               ./modules/nixos
               ./hosts/nixos/${host}/configuration.nix
-              inputs.stylix.nixosModules.stylix
+              # inputs.stylix.nixosModules.stylix
             ];
           }
         )
@@ -106,7 +124,7 @@
               commonModule
               ./modules/common
               ./modules/home
-              inputs.stylix.homeModules.stylix
+              # inputs.stylix.homeModules.stylix
             ];
             extraSpecialArgs = {
               inherit inputs outputs self;

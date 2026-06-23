@@ -8,6 +8,9 @@
   programs.firefox = {
     enable = true;
     configPath = "${config.xdg.configHome}/mozilla/firefox";
+    nativeMessagingHosts = [
+      pkgs.pywalfox-native
+    ];
     profiles.${config.home.username} = {
       settings = {
         "dom.security.https_only_mode" = true;
@@ -43,6 +46,7 @@
           simple-translate
           floccus
           firefox-color
+          pywalfox
         ];
       };
 

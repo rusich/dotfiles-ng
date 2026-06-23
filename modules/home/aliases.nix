@@ -11,6 +11,7 @@ let
     "os" = "nh os switch";
     "hs" = "nh home switch";
     "s" = "os && hs";
+    "neo" = "neo -D";
 
     # ls and tree replacement with eza
     "ls" = "eza --icons --group-directories-first";

@@ -66,4 +66,5 @@ in
   custom-packages # ← ДОЛЖЕН БЫТЬ ПЕРВЫМ, чтобы другие overlays могли его использовать
   stable-packages
   unstable-packages
+  inputs.millennium.overlays.default
 ]

@@ -144,4 +144,5 @@ run-shell-command: "{terminal} -e {cmd}; read -n 1 -s";
 }
 /* @theme "material" */
 /* @theme "slate" */
-@theme "spootlight-dark"
+// @theme "spootlight-dark"
+@theme "noctalia"

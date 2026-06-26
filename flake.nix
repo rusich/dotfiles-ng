@@ -53,6 +53,9 @@
       # inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Use noctalia theme in steam. Overlay must be set in ./overlays/default.nix
+    millennium.url = "github:SteamClientHomebrew/Millennium?dir=packages/nix";
+
   };
 
   outputs =

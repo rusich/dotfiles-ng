@@ -27,6 +27,7 @@
         "flakes"
       ];
       http2 = true; # NOTE: turn off with DPI problems
+      accept-flake-config = true;
     };
 
   };

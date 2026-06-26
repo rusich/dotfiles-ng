@@ -78,7 +78,7 @@ in
     services.pipewire = {
       enable = true;
       alsa.enable = true;
-      alsa.support32Bit = true;
+      alsa.support32Bit = lib.mkForce false; # FIXME: diseble due to successful build openblas
       # If you want to use JACK applications, uncomment this
       jack.enable = true;
       pulse.enable = true;

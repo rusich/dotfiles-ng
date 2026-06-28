@@ -15,7 +15,15 @@ in
 
     # FIXME: Discard manual `cargo install or rustup add`
     # Add embedded discovery guide requirements there: cargo-binutils, etc
-    environment.systemPackages = with pkgs; [ gcc-arm-embedded ];
+    environment.systemPackages = with pkgs; [
+      gcc-arm-embedded
+      # embedded rust addition
+      gdb
+      openocd
+      minicom
+      fastfetch
+      neo
+    ];
 
     services.udev = {
       enable = true;

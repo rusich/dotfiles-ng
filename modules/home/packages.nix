@@ -32,9 +32,6 @@
     gnome-calculator
     cht-sh
     luarocks
-    # rustup
-    cargo
-    # rustc
     libnotify
     delta
     jq
@@ -59,11 +56,5 @@
     papers
     telegram-desktop
     calibre
-    # embedded rust addition
-    gdb
-    openocd
-    minicom
-    fastfetch
-    neo
   ];
 }

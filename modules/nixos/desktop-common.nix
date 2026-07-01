@@ -150,6 +150,8 @@ in
       nautilus
       nautilus-python # for nextcloud integration
       nautilus-open-any-terminal
+      nfs-utils
+      file-roller
       firefox
       # misc
       xkill

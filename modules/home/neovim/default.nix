@@ -19,6 +19,7 @@
     # custom.nixd-nightly
     gnumake
     graphviz # `dot` for rustaceanvim
+    neovim-remote
   ];
 
   xdg.configFile."nvim".source =

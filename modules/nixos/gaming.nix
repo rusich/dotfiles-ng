@@ -16,6 +16,7 @@ in
       opencomposite
       wayvr
       mangohud
+      mangojuice
       sidequest
       jstest-gtk
       # Lutris

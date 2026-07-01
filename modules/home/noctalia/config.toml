@@ -17,6 +17,7 @@ end = [
     "volume",
     "brightness",
     "battery",
+    "power_profile",
     "control-center",
     "session"
 ]
@@ -40,6 +41,7 @@ opacity = 1.0
 padding = 6.0
 
 [calendar]
+refresh_minutes = 5
 enabled = true
 
 [dock]
@@ -128,9 +130,21 @@ community_ids = [ "pywalfox", "rofi", "steam", "telegram", "yazi" ]
 directory = "/home/rusich/Nextcloud/Pictures/Wallpapers/"
 
 [widget.clock]
-format = "{:%d-%m-%Y %H:%M}"
+format = "{:%A %d %B %H:%M}"
 scale = 1.1500000000000001
 
 [widget.tray]
 capsule = true
 drawer = true
+
+[widget.weather]
+show_condition = false
+
+[plugins]
+enabled = [ "noctalia/translator" ]
+
+[battery.device."/org/freedesktop/UPower/devices/battery_hidpp_battery_5"]
+warning_threshold = 20
+
+[battery.device."/org/freedesktop/UPower/devices/headset_dev_6A_77_3C_83_8E_F8"]
+warning_threshold = 20

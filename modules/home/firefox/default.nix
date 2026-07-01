@@ -16,6 +16,7 @@
         "dom.security.https_only_mode" = true;
         "browser.translations.enable" = false;
         "signon.rememberSignons" = true;
+        "signon.rememberSignons.visibility" = false;
         "browser.places.importBookmarksHTML" = false;
         "browser.bookmarks.autoExportHTML" = false;
         # Look'n'feel

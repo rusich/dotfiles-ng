@@ -116,6 +116,14 @@ local spec = {
 
   keys = {
     {
+      '<leader>dS',
+      function()
+        local widgets = require 'dap.ui.widgets'
+        widgets.centered_float(widgets.scopes, { border = 'rounded' })
+      end,
+      desc = 'DAP Scopes',
+    },
+    {
       '<leader>dB',
       function()
         require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ')
@@ -327,7 +335,8 @@ local spec = {
     {
       '<leader>de',
       function()
-        require('dap.ui.widgets').hover()
+        -- require('dap.ui.widgets').hover()
+        vim.cmd.DapViewHover()
       end,
       desc = 'Eval (F3)',
       mode = { 'n', 'v' },
@@ -335,7 +344,8 @@ local spec = {
     {
       '<F3>',
       function()
-        require('dap.ui.widgets').hover()
+        -- require('dap.ui.widgets').hover()
+        vim.cmd.DapViewHover()
       end,
       desc = 'DAP Eval',
       mode = { 'n', 'v' },
@@ -436,40 +446,40 @@ local spec = {
 
     -- CUSTOM DAP ADAPTERS
 
-    -- Godot4
-    dap.adapters.godot = {
-      type = 'server',
-      host = '127.0.0.1',
-      port = '6006',
-      debugServer = '6007',
-    }
-    dap.configurations.gdscript = {
-      {
-        type = 'godot',
-        request = 'launch',
-        name = 'Launch scene',
-        -- project = "${workspaceFolder}", -- попробуйте явный путь
-        -- project = "/home/rusich/Nextcloud/Devel/tutorials/Godot/first-game", -- попробуйте явный путь
-        -- project = vim.fn.getcwd(),
-        project = function()
-          local current_file = vim.fn.expand '%:p'
-          if current_file == '' then
-            current_file = vim.fn.getcwd()
-          end
-
-          local dir = vim.fn.fnamemodify(current_file, ':h')
-          while dir ~= '/' do
-            local project_file = dir .. '/project.godot'
-            if vim.fn.filereadable(project_file) == 1 then
-              return dir
-            end
-            dir = vim.fn.fnamemodify(dir, ':h')
-          end
-          return vim.fn.getcwd()
-        end,
-        launch_scene = true,
-      },
-    }
+    -- -- Godot4
+    -- dap.adapters.godot = {
+    --   type = 'server',
+    --   host = '127.0.0.1',
+    --   port = '6006',
+    --   debugServer = '6007',
+    -- }
+    -- dap.configurations.gdscript = {
+    --   {
+    --     type = 'godot',
+    --     request = 'launch',
+    --     name = 'Launch scene',
+    --     -- project = "${workspaceFolder}", -- попробуйте явный путь
+    --     -- project = "/home/rusich/Nextcloud/Devel/tutorials/Godot/first-game", -- попробуйте явный путь
+    --     -- project = vim.fn.getcwd(),
+    --     project = function()
+    --       local current_file = vim.fn.expand '%:p'
+    --       if current_file == '' then
+    --         current_file = vim.fn.getcwd()
+    --       end
+    --
+    --       local dir = vim.fn.fnamemodify(current_file, ':h')
+    --       while dir ~= '/' do
+    --         local project_file = dir .. '/project.godot'
+    --         if vim.fn.filereadable(project_file) == 1 then
+    --           return dir
+    --         end
+    --         dir = vim.fn.fnamemodify(dir, ':h')
+    --       end
+    --       return vim.fn.getcwd()
+    --     end,
+    --     launch_scene = true,
+    --   },
+    -- }
 
     -- LUA
     dap.configurations.lua = {

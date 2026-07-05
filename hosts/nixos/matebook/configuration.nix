@@ -4,17 +4,17 @@
 }:
 
 {
-
-  # Using modules
-  my.nixosModules.desktop-common.enable = true;
-  # TODO: it is temporary fix for niri destkop session
-  # is broken in NixOS 26.05 (not shown in GDM greeter)
-  my.nixosModules.gnome.enable = true;
-
   imports = [
     ./hardware-configuration.nix
     inputs.nixos-hardware.nixosModules.huawei-machc-wa
   ];
+
+  # Enable custom modules
+  my.nixosModules.desktop-common.enable = true;
+
+  # TODO: it is temporary fix for niri destkop session
+  # is broken in NixOS 26.05 (not shown in GDM greeter)
+  my.nixosModules.gnome.enable = true;
 
   # Old Hardware-Specifice settings replaced by NixOS-Hardware module
   # hardware.cpu.intel.updateMicrocode = true;

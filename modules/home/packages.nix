@@ -37,7 +37,6 @@
     jq
     pamixer
     keepassxc
-    ncdu
     fd
     eza
     networkmanagerapplet
@@ -50,10 +49,11 @@
     just
     # Gnome apps for test
     showtime
-    mpv
     decibels
     loupe
+    mpv
     papers
+    # zathura # Document viewer
     telegram-desktop
     calibre
   ];

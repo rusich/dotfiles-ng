@@ -8,11 +8,11 @@
       },
       "locked": {
         "dir": "pkgs/firefox-addons",
-        "lastModified": 1782619356,
-        "narHash": "sha256-sde3f0uM5mEUwl6Bxom69P+9KOdpJ9YnSj0umSB2qdQ=",
+        "lastModified": 1783137763,
+        "narHash": "sha256-MedB3zphmF3ie1tQDYLJbpIdDByYD9Sf9gkjC7et+h4=",
         "owner": "rycee",
         "repo": "nur-expressions",
-        "rev": "9ad2019bb522c7eeecd9e3e2d18dd681f697f4d0",
+        "rev": "d84e72970b14f90170b1b7fb09adc59cbf40eb3b",
         "type": "gitlab"
       },
       "original": {
@@ -29,11 +29,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781981105,
-        "narHash": "sha256-/1nNBbA7PrSQpTc9Qazkhl4kIPg+TNl0CjxS3UQJKlw=",
+        "lastModified": 1782704057,
+        "narHash": "sha256-G1I1gd32F7mp9LAe1DaZ4ZL7NX5gyiKwdCMwro1Vrck=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "7bfff44b465909f69a442701293bc0badcf476dc",
+        "rev": "868d0a692de703c2de98fab61968e4e310b7c28e",
         "type": "github"
       },
       "original": {
@@ -50,11 +50,11 @@
       },
       "locked": {
         "dir": "packages/nix",
-        "lastModified": 1782487025,
-        "narHash": "sha256-torOOjdUo1AxKV4zEKD0cdOZhigyIYpLCHZ2Y4w0lkE=",
+        "lastModified": 1782693511,
+        "narHash": "sha256-ytACEe0dcb9RgBB4sioGZGzn9H/zhSYI4HE9uXcRgw0=",
         "owner": "SteamClientHomebrew",
         "repo": "Millennium",
-        "rev": "583149e477c0ed1114827d28708e6ea6619cada4",
+        "rev": "e58ead4df900a4391ee1e6a7efe9294d6283aeb3",
         "type": "github"
       },
       "original": {
@@ -67,17 +67,17 @@
     "millennium-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1782335834,
-        "narHash": "sha256-nqNRtEkYgXawzpw/xCAgMSyaHKl5GFvzKm8WOoaUN24=",
+        "lastModified": 1782175707,
+        "narHash": "sha256-nAgnski2c247PqLtcK3g5NER7hVj/zlCJd9CTb2lne4=",
         "owner": "SteamClientHomebrew",
         "repo": "Millennium",
-        "rev": "dc3eae41082dd6b3b3eacffc3bfc711afbbda707",
+        "rev": "5729ba4bb432a071a0276abb416b2c26d27afa71",
         "type": "github"
       },
       "original": {
         "owner": "SteamClientHomebrew",
         "repo": "Millennium",
-        "rev": "dc3eae41082dd6b3b3eacffc3bfc711afbbda707",
+        "rev": "5729ba4bb432a071a0276abb416b2c26d27afa71",
         "type": "github"
       }
     },
@@ -157,11 +157,11 @@
     },
     "nixpkgs-stable": {
       "locked": {
-        "lastModified": 1782375420,
-        "narHash": "sha256-f+/IH5ng5P91VHrhcNxqpW2RYDySD68V1fcX00COQy4=",
-        "rev": "4062d36ebeae843c750011eef6b61ec9a9dbc9a9",
+        "lastModified": 1782999065,
+        "narHash": "sha256-68sbHaR2H5mXnLSjtAii1YESzudwgaiVIK5N1kC/As8=",
+        "rev": "80d591ed473cfc46329932c2aadac9b435342c7c",
         "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/26.05/nixos-26.05.3250.4062d36ebeae/nixexprs.tar.xz"
+        "url": "https://releases.nixos.org/nixos/26.05/nixos-26.05.4028.80d591ed473c/nixexprs.tar.xz"
       },
       "original": {
         "id": "nixpkgs",
@@ -171,11 +171,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1782467914,
-        "narHash": "sha256-inDx/w70OSJoJPqtKh0BrzAsbZZhpya7YgS43jHnhwg=",
-        "rev": "e73de5be04e0eff4190a1432b946d469c794e7b4",
+        "lastModified": 1782959384,
+        "narHash": "sha256-l57y2CK9dTSChgb6Edg7kkXu5DA4rucVbNFoQHUBjmw=",
+        "rev": "65179426c83bb3f6bc14898b42ea1c6f01d374b0",
         "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.11pre1022855.e73de5be04e0/nixexprs.tar.xz"
+        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.11pre1026231.65179426c83b/nixexprs.tar.xz"
       },
       "original": {
         "id": "nixpkgs",
@@ -214,11 +214,11 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1782375420,
-        "narHash": "sha256-f+/IH5ng5P91VHrhcNxqpW2RYDySD68V1fcX00COQy4=",
-        "rev": "4062d36ebeae843c750011eef6b61ec9a9dbc9a9",
+        "lastModified": 1782999065,
+        "narHash": "sha256-68sbHaR2H5mXnLSjtAii1YESzudwgaiVIK5N1kC/As8=",
+        "rev": "80d591ed473cfc46329932c2aadac9b435342c7c",
         "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/26.05/nixos-26.05.3250.4062d36ebeae/nixexprs.tar.xz"
+        "url": "https://releases.nixos.org/nixos/26.05/nixos-26.05.4028.80d591ed473c/nixexprs.tar.xz"
       },
       "original": {
         "id": "nixpkgs",
@@ -244,11 +244,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1782616749,
-        "narHash": "sha256-gUcSMzP3eS8BsNFK4Vz/nzOn6rhfDpOVd2tAYi4WCAk=",
+        "lastModified": 1783164634,
+        "narHash": "sha256-Wd3bi9JUHDz5rsGyxjgXq4ihu0q78D3DptEvo3OJVvM=",
         "owner": "noctalia-dev",
         "repo": "noctalia",
-        "rev": "dfa00a4d316fa846f3b60760ad02faa7cacfdcbc",
+        "rev": "737aa65a9b95c422aedf1021868e054bfd1a8358",
         "type": "github"
       },
       "original": {

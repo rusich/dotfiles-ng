@@ -36,8 +36,9 @@ let
     progress
     sshpass
     home-manager
-    # To explore:
     duf
+    ncdu
+    # To explore:
     # glances
     # termshark
     # ipcalc

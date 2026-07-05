@@ -105,8 +105,8 @@ in
       lm_sensors
       cifs-utils
       # to explore:
-      # lshw
-      # iotop
+      lshw
+      iotop
     ]
     ++ config.my.nixosAndDarwinPackages;
 

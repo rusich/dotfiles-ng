@@ -72,7 +72,7 @@ in
       ];
     };
     programs.fish.enable = true;
-    # programs.firefox.enable = true;
+    programs.firefox.enable = true;
 
     programs.throne = {
       enable = true;

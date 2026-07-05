@@ -105,6 +105,7 @@ application/xml=nvim.desktop;
 text/x-csharp=nvim.desktop;
 x-scheme-handler/tg=org.telegram.desktop.desktop;
 x-scheme-handler/tonsite=org.telegram.desktop.desktop;
+application/vnd.efi.iso=gnome-disk-image-mounter.desktop;
 
 [Default Applications]
 application/json=nvim.desktop
@@ -292,3 +293,4 @@ application/xml=nvim.desktop
 text/x-csharp=nvim.desktop
 x-scheme-handler/tg=org.telegram.desktop.desktop
 x-scheme-handler/tonsite=org.telegram.desktop.desktop
+application/vnd.efi.iso=gnome-disk-image-mounter.desktop

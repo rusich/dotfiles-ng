@@ -56,5 +56,6 @@
     # zathura # Document viewer
     telegram-desktop
     calibre
+    custom.freelib
   ];
 }

@@ -16,12 +16,20 @@ in
     # Enable some useful desktop modules
     my.nixosModules.GDM.enable = true;
 
+    # Appimage support
     programs.appimage.enable = true;
     programs.appimage.binfmt = true;
     programs.appimage.package = pkgs.appimage-run.override {
       extraPkgs = pkgs: [
         pkgs.python312
       ];
+    };
+
+    # Hardware accelerated graphics
+
+    hardware.graphics = {
+      enable = true;
+      enable32Bit = true;
     };
 
     # BLUETOOTH

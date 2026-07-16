@@ -20,21 +20,22 @@ in
       sidequest
       jstest-gtk
       # Lutris
-      heroic
+      # heroic
       protonup-qt
       protonup-rs
       # lutris # there are alsow -unwrapped and -free versions available
-      cartridges # GTK4 + Libadwaita game launcher
+      # cartridges # GTK4 + Libadwaita game launcher
       #retroarch-full
       ryubing
     ];
 
     programs.steam = {
       enable = true;
-      package = pkgs.millennium-steam;
+      # package = pkgs.millennium-steam;
       gamescopeSession.enable = true;
       protontricks.enable = true;
       remotePlay.openFirewall = true;
+      dedicatedServer.openFirewall = true;
       localNetworkGameTransfers.openFirewall = true;
       extraCompatPackages = with pkgs; [ proton-ge-bin ];
     };
@@ -55,23 +56,28 @@ in
       package = pkgs.alvr;
     };
 
-    # Power profile management for gaming
-    programs.corectrl.enable = true;
-    security.polkit = {
-      enable = true;
-      extraConfig = ''
+    # Linux GPU Configuration Tool for AMD and NVIDIA
+    # NOTE: If you are on an AMD GPU, it is recommended to enable overdrive mode by using hardware.amdgpu.overdrive.enable = true;
+    services.lact.enable = true;
 
-        /* Allow regular users to run corectrl as root */
-        polkit.addRule(function(action, subject) {
-            if ((action.id == "org.corectrl.helper.init" ||
-                 action.id == "org.corectrl.helperkiller.init") &&
-                subject.local == true &&
-                subject.active == true &&
-                subject.isInGroup("users")) {
-                    return polkit.Result.YES;
-            }
-        });
-      '';
-    };
+    # NOTE: repaced by LACT
+    # Power profile management for gaming
+    # programs.corectrl.enable = true;
+    # security.polkit = {
+    #   enable = true;
+    #   extraConfig = ''
+    #
+    #     /* Allow regular users to run corectrl as root */
+    #     polkit.addRule(function(action, subject) {
+    #         if ((action.id == "org.corectrl.helper.init" ||
+    #              action.id == "org.corectrl.helperkiller.init") &&
+    #             subject.local == true &&
+    #             subject.active == true &&
+    #             subject.isInGroup("users")) {
+    #                 return polkit.Result.YES;
+    #         }
+    #     });
+    #   '';
+    # };
   };
 }

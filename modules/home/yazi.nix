@@ -16,7 +16,60 @@
       mediainfo = pkgs.yaziPlugins.mediainfo;
     };
 
+    vfs = {
+      services = {
+        truenas = {
+          type = "sftp";
+          host = "truenas";
+          user = "root";
+          port = 22;
+        };
+      };
+    };
+
+    keymap = {
+      mgr.prepend_keymap = [
+        {
+          run = "cd sftp://truenas";
+          on = [
+            "g"
+            "t"
+          ];
+          desc = "Go to TrueNAS";
+        }
+        {
+          on = [ "!" ];
+          for = "unix";
+          run = "shell \"$SHELL\" --block";
+          desc = "Open $SHELL here";
+        }
+      ];
+    };
+
     settings = {
+
+      open = {
+        prepend_rules = [
+          {
+            mime = "image/*";
+            use = [
+              "open"
+              "set-wallpaper"
+            ];
+          }
+        ];
+      };
+
+      # set wallpeperr in noctalia shell
+      opener = {
+        set-wallpaper = [
+          {
+            run = "noctalia msg wallpaper-set %s1";
+            for = "linux";
+            desc = "Set as wallpaper";
+          }
+        ];
+      };
 
       plugin = {
         prepend_preloaders = [

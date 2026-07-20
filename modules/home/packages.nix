@@ -44,7 +44,6 @@
     discord
     wl-clipboard
     chatbox
-    unrar
     unetbootin
     just
     # Gnome apps for test

@@ -20,6 +20,8 @@ let
     git
     ripgrep
     unzip
+    unrar
+    p7zip
     elinks
     killall
     inetutils

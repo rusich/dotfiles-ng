@@ -64,9 +64,10 @@ local spec = {
     vim.cmd 'cabbrev bd lua require("mini.bufremove").delete()'
     vim.cmd 'cabbrev bD lua require("mini.bufremove").delete(0, true) '
 
+    -- NOTE: Trying yazi.nvim instead
     -- files
-    require('mini.files').setup {}
-    set('n', '\\', '<cmd>lua MiniFiles.open()<cr>', { desc = 'Navigate files' })
+    -- require('mini.files').setup {}
+    -- set('n', '\\', '<cmd>lua MiniFiles.open()<cr>', { desc = 'Navigate files' })
 
     -- Extra pickers, textobjects, etc
     require('mini.extra').setup()

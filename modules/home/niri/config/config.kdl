@@ -353,6 +353,13 @@ window-rule {
     draw-border-with-background false
 }
 
+window-rule {
+    match app-id="kitty" title="^filechooser$"
+    open-floating true
+    default-column-width { proportion 0.5; }
+    default-window-height { proportion 0.8; }
+}
+
 // window-rule {
 //     match is-active=false
 //     opacity 0.99

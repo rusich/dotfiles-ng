@@ -1,9 +1,8 @@
 {
-  config,
   pkgs,
+  lib,
   ...
-}:
-{
+}: {
   # Включаем управление XDG User Directories (но с кастомными путями)
   xdg.userDirs = {
     enable = true;
@@ -19,30 +18,9 @@
     setSessionVariables = true;
   };
 
-  # Dolphin force recreate bookmarks from user-dirs
-  home.activation.removeConfigFile = config.lib.dag.entryAfter [ "writeBoundary" ] ''
-    rm -f "$HOME/.local/share/user-places.xbel"
-  '';
-
   xdg.portal = {
-    enable = false;
-    config = {
-      common = {
-        default = [ "gtk" ];
-      };
-      hyprland = {
-        default = [
-          "hyprland"
-          "gtk"
-        ];
-        "org.freedesktop.impl.portal.ScreenCast" = [
-          "gnome"
-        ];
-      };
-    };
-    extraPortals = [
-      # pkgs.xdg-desktop-portal-hyprland
-      pkgs.xdg-desktop-portal-gtk
-    ];
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config.common.default = [ "gtk" ];
   };
 }

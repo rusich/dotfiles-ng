@@ -1,4 +1,5 @@
-{config, ...}: {
+{ config, pkgs, ... }: {
+
   home.file = {
     # common
     ".config/mimeapps.list".source =

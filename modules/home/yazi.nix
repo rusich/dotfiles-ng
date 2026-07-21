@@ -7,6 +7,16 @@
     trash-cli
   ];
 
+  home.file.".local/share/applications/yazi.desktop".text = ''
+    [Desktop Entry]
+    Type=Application
+    Name=Yazi
+    Exec=kitty -e yazi %F
+    Icon=yazi
+    Categories=Utility;FileManager;
+    MimeType=inode/directory;
+  '';
+
   # Termfilechooser config
   home.file.".config/xdg-desktop-portal-termfilechooser/config".text = ''
     [filechooser]
@@ -78,6 +88,12 @@
 
     keymap = {
       mgr.prepend_keymap = [
+        # force paste with replace
+        {
+          on = "P";
+          run = "paste --force";
+          desc = "Paste yanked files (overwrite if the destination exists)";
+        }
         # split-tabs
         {
           on = "\\";

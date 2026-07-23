@@ -8,7 +8,7 @@
 
   programs.opencode = {
     enable = true;
-    package = pkgs.opencode;
+    package = pkgs.unstable.opencode;
     agents = {
       code-reviewer = ''
         # Code Reviewer Agent

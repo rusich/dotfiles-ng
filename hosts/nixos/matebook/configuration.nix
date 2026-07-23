@@ -15,6 +15,7 @@
   # TODO: it is temporary fix for niri destkop session
   # is broken in NixOS 26.05 (not shown in GDM greeter)
   my.nixosModules.gnome.enable = true;
+  my.nixosModules.gamedev.enable = true;
 
   # Old Hardware-Specifice settings replaced by NixOS-Hardware module
   # hardware.cpu.intel.updateMicrocode = true;

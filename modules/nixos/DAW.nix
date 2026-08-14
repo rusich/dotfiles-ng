@@ -70,6 +70,7 @@ in
       calf
       lsp-plugins
       x42-plugins
+      a2jmidid
     ];
 
     services.pulseaudio.enable = false;
@@ -96,7 +97,7 @@ in
               ];
               "default.clock.rate" = 48000;
               "default.clock.quantum" = 512;
-              "default.clock.min-quantum" = 64;
+              "default.clock.min-quantum" = 32;
               "default.clock.max-quantum" = 2048;
             };
           };
@@ -105,7 +106,7 @@ in
           "10-latency" = {
             "jack.properties" = {
               # "node.latency" = "128/48000";
-              "node.latency" = "64/48000"; # NOTE: Testing
+              "node.latency" = "32/48000"; # NOTE: Testing
             };
           };
         };

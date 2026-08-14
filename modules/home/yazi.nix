@@ -42,9 +42,9 @@
 
     vfs = {
       services = {
-        truenas = {
+        homelab = {
           type = "sftp";
-          host = "truenas";
+          host = "homelab";
           user = "root";
           port = 22;
         };
@@ -54,7 +54,7 @@
     plugins = with pkgs; {
       split-tabs = yaziPlugins.split-tabs;
       clipboard = yaziPlugins.clipboard;
-      smart-paste = yaziPlugins.smart-paste;
+      # smart-paste = yaziPlugins.smart-paste;
       smart-enter = yaziPlugins.smart-enter;
       mediainfo = yaziPlugins.mediainfo;
       omni-trash = unstable.yaziPlugins.omni-trash;
@@ -133,12 +133,12 @@
           run = [ "plugin clipboard -- --action=paste" ];
           desc = "Paste yanked system clipboard files";
         }
-        # smart-paste
-        {
-          on = "p";
-          run = "plugin smart-paste";
-          desc = "Paste into the hovered directory or CWD";
-        }
+        # # smart-paste
+        # {
+        #   on = "p";
+        #   run = "plugin smart-paste";
+        #   desc = "Paste into the hovered directory or CWD";
+        # }
         # smart-enter
         {
           on = "l";
@@ -328,12 +328,12 @@
           desc = "Mount Local Device";
         }
         {
-          run = "cd sftp://truenas";
+          run = "cd sftp://homelab";
           on = [
             "g"
-            "t"
+            "H"
           ];
-          desc = "Go to TrueNAS";
+          desc = "Go to HomeLAB";
         }
         {
           on = [ "!" ];

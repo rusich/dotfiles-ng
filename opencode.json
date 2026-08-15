@@ -1,0 +1,21 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "lsp": {
+    "nixd": {
+      "command": ["nixd"],
+      "extensions": [".nix"],
+      "initialization": {
+        "nixd": {
+          "options": {
+            "nixos": {
+              "expr": "(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.default.options"
+            },
+            "home-manager": {
+              "expr": "(builtins.getFlake (builtins.toString ./.)).legacyPackages.x86_64-linux.homeConfigurations.default.options"
+            }
+          }
+        }
+      }
+    }
+  }
+}

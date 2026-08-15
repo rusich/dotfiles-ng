@@ -1,4 +1,5 @@
 {
+  pkgs,
   config,
   lib,
   ...
@@ -12,6 +13,10 @@ in
 
   };
   config = lib.mkIf cfg.enable {
+
+    environment.systemPackages = with pkgs; [
+      nvtopPackages.amd
+    ];
 
     hardware.amdgpu.initrd.enable = true;
     hardware.cpu.amd.updateMicrocode = true;

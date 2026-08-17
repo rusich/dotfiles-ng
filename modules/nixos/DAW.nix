@@ -59,7 +59,7 @@ in
       tonelib-metal
       tonelib-gfx
       # custom.tonelib-gfx
-      custom.tonelib-grand-magus
+      # custom.tonelib-grand-magus
       neural-amp-modeler-lv2
       # TODO: review plugins listed below
       jalv

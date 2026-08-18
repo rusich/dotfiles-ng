@@ -21,13 +21,21 @@ local spec = {
   lazy = false, -- постоянный коннект к хабу: события, autoread, permission-диффы
 
   init = function()
-    -- Пароль basic auth хаба — из KeePassXC (Secret Service) в рантайме.
-    -- Плагин сам читает OPENCODE_SERVER_PASSWORD/OPENCODE_SERVER_USERNAME из env.
+    -- Пароль и имя пользователя basic auth хаба — из KeePassXC (Secret Service)
+    -- в рантайме. Плагин сам читает OPENCODE_SERVER_PASSWORD/OPENCODE_SERVER_USERNAME из env.
     if not vim.env.OPENCODE_SERVER_PASSWORD then
       local pass =
         vim.fn.system({ 'secret-tool', 'lookup', 'short', 'OPENCODE_SERVER_PASSWORD' }):gsub('%s+$', '')
       if pass ~= '' then
         vim.env.OPENCODE_SERVER_PASSWORD = pass
+      end
+    end
+
+    if not vim.env.OPENCODE_SERVER_USERNAME then
+      local user =
+        vim.fn.system({ 'secret-tool', 'lookup', 'short', 'OPENCODE_SERVER_USERNAME' }):gsub('%s+$', '')
+      if user ~= '' then
+        vim.env.OPENCODE_SERVER_USERNAME = user
       end
     end
 

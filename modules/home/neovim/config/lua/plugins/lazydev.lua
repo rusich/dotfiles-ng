@@ -2,13 +2,16 @@ return {
   {
     'folke/lazydev.nvim',
     ft = 'lua', -- only load on lua files
-    opts = {
-      library = {
-        -- See the configuration section for more details
-        -- Load luvit types when the `vim.uv` word is found
+    opts = function()
+      local library = {
         { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
-      },
-    },
+      }
+      -- add all lazy plugins so their `---@type` annotations resolve
+      for name in pairs(require('lazy.core.config').spec.plugins) do
+        library[#library + 1] = name
+      end
+      return { library = library }
+    end,
   },
   { -- optional blink completion source for require statements and module annotations
     'saghen/blink.cmp',

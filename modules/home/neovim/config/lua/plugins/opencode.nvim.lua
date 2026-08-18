@@ -24,16 +24,14 @@ local spec = {
     -- Пароль и имя пользователя basic auth хаба — из KeePassXC (Secret Service)
     -- в рантайме. Плагин сам читает OPENCODE_SERVER_PASSWORD/OPENCODE_SERVER_USERNAME из env.
     if not vim.env.OPENCODE_SERVER_PASSWORD then
-      local pass =
-        vim.fn.system({ 'secret-tool', 'lookup', 'short', 'OPENCODE_SERVER_PASSWORD' }):gsub('%s+$', '')
+      local pass = vim.fn.system({ 'secret-tool', 'lookup', 'short', 'OPENCODE_SERVER_PASSWORD' }):gsub('%s+$', '')
       if pass ~= '' then
         vim.env.OPENCODE_SERVER_PASSWORD = pass
       end
     end
 
     if not vim.env.OPENCODE_SERVER_USERNAME then
-      local user =
-        vim.fn.system({ 'secret-tool', 'lookup', 'short', 'OPENCODE_SERVER_USERNAME' }):gsub('%s+$', '')
+      local user = vim.fn.system({ 'secret-tool', 'lookup', 'short', 'OPENCODE_SERVER_USERNAME' }):gsub('%s+$', '')
       if user ~= '' then
         vim.env.OPENCODE_SERVER_USERNAME = user
       end
@@ -56,7 +54,7 @@ local spec = {
     {
       '<C-a>',
       function()
-        require('opencode').ask('@this: ')
+        require('opencode').ask '@this: '
       end,
       mode = { 'n', 'x' },
       desc = 'Ask OpenCode…',
@@ -72,7 +70,7 @@ local spec = {
     {
       'go',
       function()
-        return require('opencode').operator('@this ')
+        return require('opencode').operator '@this '
       end,
       mode = { 'n', 'x' },
       expr = true,
@@ -81,7 +79,7 @@ local spec = {
     {
       'goo',
       function()
-        return require('opencode').operator('@this ') .. '_'
+        return require('opencode').operator '@this ' .. '_'
       end,
       expr = true,
       desc = 'Append line to OpenCode',
@@ -89,14 +87,14 @@ local spec = {
     {
       '<S-C-u>',
       function()
-        require('opencode').command('session.half.page.up')
+        require('opencode').command 'session.half.page.up'
       end,
       desc = 'Scroll OpenCode up',
     },
     {
       '<S-C-d>',
       function()
-        require('opencode').command('session.half.page.down')
+        require('opencode').command 'session.half.page.down'
       end,
       desc = 'Scroll OpenCode down',
     },

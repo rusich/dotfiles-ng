@@ -14,12 +14,7 @@ in
   };
   config = lib.mkIf cfg.enable {
 
-    environment.systemPackages = with pkgs; [
-      nvtopPackages.amd
-    ];
-
     hardware.amdgpu.initrd.enable = true;
-    hardware.cpu.amd.updateMicrocode = true;
     services.xserver.videoDrivers = [ "amdgpu" ];
 
     # Overclocking support
@@ -28,5 +23,18 @@ in
     # Default is 0xfffd7fff as it is less likely to cause flicker issues. Setting it to 0xffffffff enables all features,
     # but also can be unstable. See the kernel documentation for more information.
     hardware.amdgpu.overdrive.ppfeaturemask = "0xffffffff";
+
+    # ROCm
+
+    # Enable ROCm compute support
+    hardware.amdgpu.opencl.enable = true;
+    nixpkgs.config.rocmSupport = true;
+
+    # Install verification utilities
+    environment.systemPackages = with pkgs; [
+      rocmPackages.rocminfo
+      clinfo
+      nvtopPackages.amd
+    ];
   };
 }

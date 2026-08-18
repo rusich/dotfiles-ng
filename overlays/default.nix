@@ -37,10 +37,6 @@ let
             prev.python313Packages.legacy-cgi
           ];
         });
-
-        # TODO: Remove if not needed
-        # nixd-nightly
-        # nixd-nightly = inputs.nixd.packages.${prev.system}.default;
       };
     };
 

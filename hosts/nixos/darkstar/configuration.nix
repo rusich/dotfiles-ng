@@ -26,7 +26,7 @@
 
   # Host-specific packages
   environment.systemPackages = with pkgs; [
-    lmstudio
+    unstable.lmstudio
     wlr-randr
     xrandr
     anydesk
@@ -144,9 +144,14 @@
       [ "${automount_opts},username=root,domain=WORKGROUP,uid=1000,gid=100" ];
   };
 
-  # DCS-world server
-  networking.firewall.allowedTCPPorts = [ 10308 ];
-  networking.firewall.allowedUDPPorts = [ 10308 ];
+  networking.firewall.allowedTCPPorts = [
+    10308 # DCS-world server
+    4096 # opencode web
+  ];
+
+  networking.firewall.allowedUDPPorts = [
+    10308 # DCS-world server
+  ];
 
   # Move this to common config?
   system.stateVersion = "25.05";

@@ -14,6 +14,78 @@ local tui_opts = {
   win = { position = 'right', enter = false },
 }
 
+--- opencode отдаёт `metadata.diff` = trimDiff(createTwoFilesPatch(...)), где
+--- trimDiff срезает общий минимальный отступ у строк ` ` / `-` / `+`. Такой
+--- патч не накладывается `diffpatch`'ем на реальный файл (контекст не совпадает
+--- по отступам), и вкладка диффа показывает две одинаковые панели. Функция
+--- восстанавливает срезанный отступ, сопоставив контекстные строки патча с
+--- содержимым файла, и возвращает валидный unified diff.
+local function untrim_diff(diff, filepath)
+  local fp = vim.fn.fnamemodify(filepath, ':p')
+  if vim.fn.filereadable(fp) ~= 1 and vim.env.HOME and vim.env.HOME ~= '' then
+    fp = vim.fs.normalize(vim.fs.joinpath(vim.env.HOME, filepath))
+  end
+  if vim.fn.filereadable(fp) ~= 1 then
+    return diff
+  end
+
+  local file_lines = vim.fn.readfile(fp)
+  local lines = vim.split(diff, '\n')
+
+  local delta
+  local prefix_ws
+  local i = 1
+  while i <= #lines and not delta do
+    local start = lines[i]:match('^@@ %-(%d+)')
+    if start then
+      local old_idx = tonumber(start)
+      i = i + 1
+      while i <= #lines and not lines[i]:match('^@@') do
+        local ln = lines[i]
+        local p = ln:sub(1, 1)
+        if p == ' ' or p == '-' then
+          local fl = file_lines[old_idx]
+          if fl then
+            local _, e = fl:find('^%s*')
+            local file_indent = e or 0
+            local _, ce = ln:sub(2):find('^%s*')
+            local diff_indent = ce or 0
+            local d = file_indent - diff_indent
+            if d > 0 then
+              delta = d
+              prefix_ws = fl:sub(1, d)
+              break
+            end
+          end
+          old_idx = old_idx + 1
+        elseif p == '+' or ln == '' or p == '\\' then
+          -- no old advance
+        else
+          old_idx = old_idx + 1
+        end
+        i = i + 1
+      end
+    else
+      i = i + 1
+    end
+  end
+
+  if not delta or delta == 0 then
+    return diff
+  end
+
+  local out = {}
+  for _, line in ipairs(lines) do
+    local p = line:sub(1, 1)
+    if (p == ' ' or p == '-' or p == '+') and not line:match('^%-%-%-') and not line:match('^%+%+%+') then
+      out[#out + 1] = p .. prefix_ws .. line:sub(2)
+    else
+      out[#out + 1] = line
+    end
+  end
+  return table.concat(out, '\n')
+end
+
 ---@type LazyPluginSpec
 local spec = {
   'nickjvandyke/opencode.nvim',
@@ -48,6 +120,38 @@ local spec = {
         end,
       },
     }
+  end,
+
+  -- FIX: opencode 1.18 скоупит SSE-поток `/event` (и прочие запросы) по
+  -- каталогу. Без этого запросы плагина наследуют ambient-каталог хаба
+  -- (/home/rusich, где запущен `opencode serve`), и события
+  -- permission.asked / file.edited для проекта (cwd neovim, напр.
+  -- ~/.dotfiles) не доходят — в итоге нет ни vimdiff-подтверждения правок,
+  -- ни авто-перечитывания буфера. Добавляем `directory=` ко всем запросам.
+  -- См. https://github.com/nickjvandyke/opencode.nvim/issues/239
+  config = function()
+    local server = require('opencode.server')
+    local orig_curl = server.curl
+    server.curl = function(self, path, method, body, on_success, on_error, opts)
+      local sep = path:find('?', 1, true) and '&' or '?'
+      path = path .. sep .. 'directory=' .. vim.uri_encode(vim.fn.getcwd())
+      return orig_curl(self, path, method, body, on_success, on_error, opts)
+    end
+
+    -- FIX: чиним trimDiff-дифф (см. untrim_diff выше), иначе `diffpatch`
+    -- показывает две одинаковые панели. Оборачиваем оригинальный обработчик,
+    -- не трогая его логику (keymaps `da`/`dr`/`dp`/`do`, Promise, reply).
+    local edits = require('opencode.events.permissions.edits')
+    local orig_diff = edits.diff
+    edits.diff = function(event)
+      if event.type == 'permission.asked' and event.properties.permission == 'edit' then
+        local meta = event.properties.metadata or {}
+        if meta.diff ~= '' and meta.filepath then
+          meta.diff = untrim_diff(meta.diff, meta.filepath)
+        end
+      end
+      return orig_diff(event)
+    end
   end,
 
   keys = {

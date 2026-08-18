@@ -44,6 +44,11 @@ in
   programs.opencode = {
     enable = true;
     package = pkgs.unstable.opencode;
+    settings = {
+      permission = {
+        edit = "ask";
+      };
+    };
     # agents = {
     # };
   };

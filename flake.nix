@@ -1,7 +1,6 @@
 {
   description = "NixOS, nix-darwin and home-manager config in one place!";
 
-  # extra Caches
   nixConfig = {
     extra-substituters = [ "https://noctalia.cachix.org" ];
     extra-trusted-public-keys = [

@@ -1,8 +1,19 @@
 local ns = vim.api.nvim_create_namespace('my_line_blame')
 local timer = assert(vim.uv.new_timer())
 local augroup = vim.api.nvim_create_augroup('my_line_blame', { clear = true })
-local enabled = true
+local enabled = false
 local id
+
+local my_name_cache = {}
+
+local function my_name()
+  local cwd = vim.fn.getcwd()
+  if my_name_cache[cwd] == nil then
+    local out = vim.fn.system { 'git', 'config', 'user.name' }
+    my_name_cache[cwd] = vim.v.shell_error == 0 and out:gsub('%s+$', '') or ''
+  end
+  return my_name_cache[cwd]
+end
 
 local function clear()
   if id then
@@ -30,27 +41,37 @@ local function update()
   end
 
   local out = vim.fn.system { 'git', 'blame', '-L', line .. ',' .. line, '--date=short', '--line-porcelain', '--', file }
+
+  local text
   if vim.v.shell_error ~= 0 or out == '' then
-    clear()
-    return
-  end
+    if vim.fn.getline(line):match '^%s*$' then
+      text = ' Not Committed Yet'
+    else
+      clear()
+      return
+    end
+  else
+    local sha = out:match '^(%x+)'
+    local author = (out:match '\nauthor ([^\n]+)\n' or ''):gsub('%s+$', '')
+    local ts = out:match '\nauthor%-time (%d+)\n'
+    local summary = (out:match '\nsummary ([^\n]+)\n' or ''):gsub('%s+$', '')
+    if author == '' then
+      clear()
+      return
+    end
 
-  local sha = out:match '^(%x+)'
-  local author = (out:match '\nauthor (.+)\n' or ''):gsub('%s+$', '')
-  local ts = out:match '\nauthor%-time (%d+)\n'
-  local summary = (out:match '\nsummary (.+)\n' or ''):gsub('%s+$', '')
-  if author == '' then
-    clear()
-    return
+    if sha and sha:match '^0+$' then
+      text = ' Not Committed Yet'
+    else
+      local date = ts and os.date('%Y-%m-%d', tonumber(ts)) or ''
+      local display = author ~= '' and author == my_name() and 'You' or author
+      text = (' %s • %s • %s'):format(display, date, summary)
+    end
   end
-
-  local date = ts and os.date('%Y-%m-%d', tonumber(ts)) or ''
 
   clear()
   id = vim.api.nvim_buf_set_extmark(buf, ns, line - 1, 0, {
-    virt_text = {
-      { (' │ %s %s, %s · %s'):format(sha:sub(1, 7), author, date, summary), 'LineBlame' },
-    },
+    virt_text = { { text, 'DiagnosticInfo' } },
     virt_text_pos = 'eol',
     right_gravity = false,
     hl_mode = 'combine',
@@ -58,7 +79,7 @@ local function update()
 end
 
 local function schedule()
-  timer:start(250, 0, function()
+  timer:start(500, 0, function()
     vim.schedule(update)
   end)
 end
@@ -72,8 +93,6 @@ vim.api.nvim_create_autocmd({ 'BufLeave', 'VimLeave' }, {
   group = augroup,
   callback = clear,
 })
-
-vim.api.nvim_set_hl(0, 'LineBlame', { link = 'Comment' })
 
 vim.keymap.set('n', '<leader>uB', function()
   enabled = not enabled

@@ -6,9 +6,6 @@ local spec = {
   priority = 1000,
   lazy = false,
   opts = {
-    toggle = {
-      which_key = true, -- integrate with which-key to show enabled/disabled icons and colors
-    },
     picker = {
       enabled = true,
       -- set ivy to default

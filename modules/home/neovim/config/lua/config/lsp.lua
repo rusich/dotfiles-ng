@@ -1,7 +1,6 @@
 -- Enable LSP servers that not handled by Mason
 -- Custom lsp servers setup (in ~/.config/nvim/after/lsp/)
 vim.lsp.enable 'nixd'
-vim.lsp.enable 'gdscript'
 
 vim.diagnostic.config {
   virtual_lines = {

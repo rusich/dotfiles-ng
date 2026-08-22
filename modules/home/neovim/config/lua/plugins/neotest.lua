@@ -76,9 +76,6 @@ local spec = {
       "<cmd>lua require('neotest').jump.prev({status = 'failed'})<cr>",
       desc = 'Jump Previous FAILED TEST',
     },
-    { prefix .. 'e', '<Plug>PlenaryTestFile', desc = 'PlenaryTestFile' },
-    { prefix .. 'v', '<cmd>TestVisit<cr>', desc = 'Visit' },
-    { prefix .. 'x', '<cmd>TestSuite<cr>', desc = 'Suite' },
   },
 }
 

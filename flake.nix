@@ -1,13 +1,6 @@
 {
   description = "NixOS, nix-darwin and home-manager config in one place!";
 
-  nixConfig = {
-    extra-substituters = [ "https://noctalia.cachix.org" ];
-    extra-trusted-public-keys = [
-      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
-    ];
-  };
-
   inputs = rec {
     nixpkgs-stable.url = "nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
@@ -43,13 +36,6 @@
     firefox-addons = {
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Noctalia shell
-    noctalia = {
-      url = "github:noctalia-dev/noctalia";
-      # omit following nixpkgs to use prebuild noctalia binaries
-      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Use noctalia theme in steam. Overlay must be set in ./overlays/default.nix
@@ -90,7 +76,6 @@
       ];
     in
     rec {
-      # noctalia cache
       nixosConfigurations =
         nixpkgs.lib.genAttrs nixosHosts (
           host:

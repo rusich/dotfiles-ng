@@ -28,13 +28,6 @@ widget_spacing = 10
 
 [[bar.default.capsule_group]]
 fill = "surface_variant"
-id = "g1"
-members = [ "clock", "media" ]
-opacity = 1.0
-padding = 6.0
-
-[[bar.default.capsule_group]]
-fill = "surface_variant"
 id = "g2"
 members = [ "clock", "weather" ]
 opacity = 1.0
@@ -105,7 +98,8 @@ polkit_agent = true
 [shell.panel]
 control_center_placement = "floating"
 open_near_click_control_center = true
-session_placement = "centered"
+session_placement = "floating"
+session_position = "center"
 transparency_mode = "soft"
 
 [shell.screen_corners]
@@ -124,7 +118,7 @@ builtin_ids = [
     "niri",
     "qt",
 ]
-community_ids = [ "pywalfox", "rofi", "steam", "telegram", "yazi" ]
+community_ids = [ "opencode", "pywalfox", "telegram", "steam", "rofi", "yazi" ]
 
 [wallpaper]
 directory = "/home/rusich/Nextcloud/Pictures/Wallpapers/"

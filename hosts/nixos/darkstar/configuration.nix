@@ -122,15 +122,22 @@
     ];
   };
 
-  fileSystems."/mnt/truenas_public" = {
-    device = "//192.168.5.3/public";
+  # --- Homelab SMB (guest-шара public, rw) ---
+  fileSystems."/mnt/homelab_public" = {
+    device = "//192.168.5.2/public";
     fsType = "cifs";
-    options =
-      let
-        # this line prevents hanging on network split
-        automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
-      in
-      [ "${automount_opts},credentials=/etc/smb-secrets,uid=1000,gid=100" ];
+    options = [
+      # автомонтирование по обращению; nofail — не блокировать загрузку без сервера
+      "x-systemd.automount,noauto,nofail"
+      "x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s"
+      # безопасность на медиа-шаре (noexec убрать, если нужен запуск скриптов)
+      "nosuid,nodev"
+      # "noexec" # расскомментировать, чтобы отключить запуск с шары
+      # маппинг: uid 1000 (rusich) + группа 3000 (media); rw для владельца/группы
+      "noperm,uid=1000,gid=100,file_mode=0660,dir_mode=2770"
+      # SMB3.1.1 (сервер: min SMB2_02, max SMB3_11)
+      "vers=3.1.1"
+    ];
   };
 
   fileSystems."/mnt/keenetic_opkg" = {

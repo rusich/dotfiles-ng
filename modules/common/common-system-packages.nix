@@ -40,6 +40,7 @@ let
     home-manager
     duf
     ncdu
+    pv
     # To explore:
     # glances
     # termshark

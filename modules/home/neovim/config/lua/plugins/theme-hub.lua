@@ -1,5 +1,6 @@
 return {
   lazy = false,
+  enabled = vim.g.theme_engine == 'theme-hub',
   'erl-koenig/theme-hub.nvim',
   dependencies = {
     'nvim-lua/plenary.nvim',

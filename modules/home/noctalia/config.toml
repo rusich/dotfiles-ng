@@ -118,7 +118,7 @@ builtin_ids = [
     "niri",
     "qt",
 ]
-community_ids = [ "opencode", "pywalfox", "telegram", "steam", "rofi", "yazi" ]
+community_ids = [ "opencode", "pywalfox", "telegram", "steam", "rofi", "yazi", "neovim" ]
 
 [wallpaper]
 directory = "/home/rusich/Nextcloud/Pictures/Wallpapers/"

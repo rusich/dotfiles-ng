@@ -161,6 +161,7 @@ in
       nfs-utils
       file-roller
       firefox
+      chromium
       # misc
       xkill
     ];

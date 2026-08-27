@@ -48,6 +48,20 @@ in
       permission = {
         edit = "ask";
       };
+      # Railway MCP: подключается через Railway CLI (railway mcp) и использует
+      # авторизацию `railway login`. CLI установлен через npm в ~/.local/bin
+      # (nixpkgs-версия 5.30.4 < требуемых 5.44.0). Когда nixpkgs обновится до
+      # >= 5.44.0 — заменить на pkgs.railway и путь "railway".
+      mcp = {
+        railway = {
+          type = "local";
+          command = [
+            "/home/rusich/.local/bin/railway"
+            "mcp"
+          ];
+          enabled = true;
+        };
+      };
     };
     # agents = {
     # };

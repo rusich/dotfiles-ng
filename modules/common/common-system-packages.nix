@@ -47,7 +47,6 @@ let
     # ipcalc
     # lsof
     # procs
-    # lazydocker
     # unp
     # asciinema + agg
   ];

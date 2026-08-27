@@ -5,7 +5,7 @@ vim.g.maplocalleader = ','
 vim.g.theme_engine = vim.g.theme_engine or 'matugen'
 
 -- Transparent background: true = bg=none (настоящая прозрачность), false = сдвиг фона (bg_shift)
-vim.g.theme_transparent = false
+vim.g.theme_transparent = true
 
 require 'config.lazy-bootstrap'
 require 'config.options'

@@ -27,6 +27,7 @@ in
       # cartridges # GTK4 + Libadwaita game launcher
       #retroarch-full
       ryubing
+      android-tools # need for qLoader
     ];
 
     programs.steam = {

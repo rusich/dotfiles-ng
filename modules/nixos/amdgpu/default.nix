@@ -28,11 +28,11 @@ in
 
     # Enable ROCm compute support
     hardware.amdgpu.opencl.enable = true;
-    nixpkgs.config.rocmSupport = true;
+    # nixpkgs.config.rocmSupport = true;
 
     # Install verification utilities
     environment.systemPackages = with pkgs; [
-      rocmPackages.rocminfo
+      # rocmPackages.rocminfo
       clinfo
       nvtopPackages.amd
     ];

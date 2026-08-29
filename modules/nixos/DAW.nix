@@ -54,8 +54,8 @@ in
       alsa-lib-with-plugins
       hydrogen # drums app
       drumgizmo # drums plugin
-      tonelib-jam
       tuxguitar # for export from .gp to .gp3 ↖
+      tonelib-jam
       tonelib-metal
       tonelib-gfx
       # custom.tonelib-gfx

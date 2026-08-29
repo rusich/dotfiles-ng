@@ -145,6 +145,12 @@
           run = "plugin smart-enter";
           desc = "Enter the child directory, or open the file";
         }
+        # open with xdg-open
+        {
+          on = "<C-o>";
+          run = "shell \"xdg-open %h\"";
+          desc = "Open hovered file with xdg-open";
+        }
         # omni-trash
         {
           on = "R";

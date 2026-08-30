@@ -29,6 +29,7 @@ let
     nix-index
     nix-inspect # TODO: move to nix module
     mtr
+    gping
     # is needed?
     nix-output-monitor # beautify nix output
     nvd

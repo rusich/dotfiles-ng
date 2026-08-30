@@ -131,11 +131,37 @@ local spec = {
   -- См. https://github.com/nickjvandyke/opencode.nvim/issues/239
   config = function()
     local server = require('opencode.server')
+
+    -- FIX (scope): opencode 1.18+ скоупит `/event` строго по directory. Запросы
+    -- плагина наследуют ambient-каталог хаба (/home/rusich), но правки могут
+    -- идти в сессиях и каталога cwd nvim (напр. ~/.dotfiles), и наоборот.
+    -- Поэтому добавляем `directory=` ко всем запросам (чтобы get_path/get_sessions
+    -- были про cwd), но SSE подписываем на ДВА потока: амбиент и cwd — иначе
+    -- permission.asked / file.edited из «чужого» каталога не доходят, и дифф
+    -- не открывается.
     local orig_curl = server.curl
     server.curl = function(self, path, method, body, on_success, on_error, opts)
       local sep = path:find('?', 1, true) and '&' or '?'
       path = path .. sep .. 'directory=' .. vim.uri_encode(vim.fn.getcwd())
       return orig_curl(self, path, method, body, on_success, on_error, opts)
+    end
+    server.sse_subscribe = function(self, on_success, on_error)
+      local job_ambient = orig_curl(self, '/event', 'GET', nil, on_success, on_error, { persistent = true })
+      local job_cwd = self:curl('/event', 'GET', nil, on_success, on_error, { persistent = true })
+      self.subscription_jobs = { job_ambient, job_cwd }
+      self.subscription_job_id = job_ambient
+      return job_ambient
+    end
+    local orig_disconnect = server.disconnect
+    server.disconnect = function(self)
+      if self.subscription_jobs then
+        for _, job in ipairs(self.subscription_jobs) do
+          vim.fn.jobstop(job)
+        end
+        self.subscription_jobs = nil
+        self.subscription_job_id = nil
+      end
+      return orig_disconnect(self)
     end
 
     -- FIX: чиним trimDiff-дифф (см. untrim_diff выше), иначе `diffpatch`

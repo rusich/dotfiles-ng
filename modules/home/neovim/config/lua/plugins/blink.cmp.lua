@@ -20,7 +20,11 @@ local spec = {
 
     sources = {
       default = { 'snippets', 'lsp', 'path', 'buffer' },
+      per_filetype = {
+        opencode_ask = { 'lsp', 'buffer' },
+      },
       providers = {
+        lsp = { fallbacks = {} },
         snippets = {
           opts = {
             friendly_snippets = true, -- default

@@ -47,6 +47,10 @@ in
     settings = {
       permission = {
         edit = "ask";
+        external_directory = {
+          "*" = "ask";
+          "/tmp/**" = "allow";
+        };
       };
       # Railway MCP: подключается через Railway CLI (railway mcp) и использует
       # авторизацию `railway login`. CLI установлен через npm в ~/.local/bin
@@ -59,7 +63,7 @@ in
             "/home/rusich/.local/bin/railway"
             "mcp"
           ];
-          enabled = true;
+          enabled = false;
         };
       };
     };

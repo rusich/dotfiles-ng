@@ -113,6 +113,10 @@ local spec = {
       symbol = '│',
     }
 
+    -- OPENCODE STATUSLINE START
+    -- Статус opencode для статуслайна: иконка + цвет по состоянию.
+    -- Статус прокидывается из opencode.nvim.lua в `vim.g.opencode_status`
+    -- (обёртки update/reset ловят disconnect, т.к. reset не эмитит событие).
     -- STATUSL_INE START
     local statusline = require 'mini.statusline'
 
@@ -174,6 +178,30 @@ local spec = {
             end
 
             return ' ' .. table.concat(current_clients, '|')
+          end
+
+          local section_opencode = function()
+            if MiniStatusline.is_truncated(75) then
+              return ''
+            end
+
+            local icons = {
+              idle = '󰚩',
+              busy = '󱜙',
+              error = '󱚡',
+              disconnected = '󱚧',
+            }
+            local hls = {
+              idle = 'SL_OpencodeIdle',
+              busy = 'SL_OpencodeBusy',
+              error = 'SL_OpencodeError',
+              disconnected = 'SL_OpencodeOff',
+            }
+
+            local status = vim.g.opencode_status or 'disconnected'
+            local icon = icons[status] or icons.disconnected
+            local hl = hls[status] or hls.disconnected
+            return icon, hl
           end
 
           local section_fileformat = function()
@@ -242,6 +270,10 @@ local spec = {
           vim.api.nvim_set_hl(0, 'SL_DiffChange', { fg = colors.orange })
           vim.api.nvim_set_hl(0, 'SL_DiffDelete', { fg = colors.red })
           vim.api.nvim_set_hl(0, 'SL_Codeium', { fg = colors.magenta })
+          vim.api.nvim_set_hl(0, 'SL_OpencodeIdle', { fg = colors.green })
+          vim.api.nvim_set_hl(0, 'SL_OpencodeBusy', { fg = colors.orange })
+          vim.api.nvim_set_hl(0, 'SL_OpencodeError', { fg = colors.red })
+          vim.api.nvim_set_hl(0, 'SL_OpencodeOff', { fg = colors.inactive_fg })
           vim.api.nvim_set_hl(0, 'SL_Encoding', { fg = colors.yellow })
           vim.api.nvim_set_hl(0, 'SL_fileinfo', { fg = colors.fg, bold = true })
 
@@ -254,6 +286,7 @@ local spec = {
           local search = MiniStatusline.section_searchcount { trunc_width = 75 }
 
           local mode, mode_hl = section_mode { trunc_width = 120 }
+          local opencode_icon, opencode_hl = section_opencode()
           return MiniStatusline.combine_groups {
             { hl = mode_hl, strings = { mode } },
             { hl = 'SL_Git', strings = { git, '%#StatusLineNC#', section_diff(), '%#StatusLineNC#', diagnostics, '%*' } },
@@ -264,6 +297,7 @@ local spec = {
             { hl = 'SL_LspInfo', strings = { section_lsp() } },
             -- { hl = 'SL_LspInfo', strings = { lsp } },
             { hl = 'SL_Codeium', strings = { '{…}' .. vim.api.nvim_call_function('codeium#GetStatusString', {}) } },
+            { hl = opencode_hl, strings = { opencode_icon } },
             -- { hl = 'MiniStatuslineFileinfo', strings = { fileinfo } },
             { hl = 'SL_Encoding', strings = { string.upper(vim.o.fileencoding) } },
             { hl = 'StatusLineNC', strings = { section_fileformat() } },

@@ -1,43 +1,44 @@
 { config, pkgs, ... }:
 let
-  # Общая логика: пароль и имя пользователя хаба извлекаются из KeePassXC
-  # (Secret Service) в рантайме через secret-tool. Ждём разблокировки базы
-  # (retry-цикл), т.к. сервис может стартовать раньше KeePassXC.
-  fetchHubCreds = ''
-    PASS=""
-    USERNAME=""
-    for _ in $(seq 1 60); do
-      [ -n "$PASS" ] || PASS="$(${pkgs.libsecret}/bin/secret-tool lookup short OPENCODE_SERVER_PASSWORD 2>/dev/null)"
-      [ -n "$USERNAME" ] || USERNAME="$(${pkgs.libsecret}/bin/secret-tool lookup short OPENCODE_SERVER_USERNAME 2>/dev/null)"
-      [ -n "$PASS" ] && [ -n "$USERNAME" ] && break
-      sleep 2
-    done
-    if [ -z "$PASS" ]; then
-      echo "opencode: OPENCODE_SERVER_PASSWORD unavailable via secret-tool" >&2
-      exit 1
-    fi
-    export OPENCODE_SERVER_PASSWORD="$PASS"
-    export OPENCODE_SERVER_USERNAME="''${USERNAME:-opencode}"
-  '';
-
-  # Служба-хаб: headless сервер, отдаёт тот же HTTP-API и веб-UI, но не открывает браузер.
+  # Служба-хаб: headless сервер для веб-UI (телефон через traefik).
+  # Порт задан в конфиге (programs.opencode.settings.server.port = 4096), а НЕ
+  # флагом `--port`: так opencode.nvim и `oc` (ищут процессы по `opencode.*--port`
+  # через pgrep) не видят хаб и не путают его с инстансами проектов.
   opencode-web = pkgs.writeShellScript "opencode-web" ''
-    ${fetchHubCreds}
-    exec ${config.programs.opencode.package}/bin/opencode serve --port 4096 --hostname 0.0.0.0
+    exec ${config.programs.opencode.package}/bin/opencode serve --hostname 0.0.0.0
   '';
 
-  # oc: TUI-клиент, подключающийся к хабу с авторизацией из KeePassXC.
-  # Проект = текущий каталог (поддержка нескольких проектов на одном хабе).
+  # oc: вход в opencode для текущего проекта. Каждый проект — свой инстанс на
+  # случайном свободном порту (чистая README-модель opencode.nvim). Логика:
+  #   1) ищем запущенный opencode-сервер этого каталога — как это делает сам
+  #      плагин: pgrep `opencode.*--port` → lsof → GET /path → сравнить directory;
+  #   2) нашли  — attach к нему (сессии общие: nvim-плагин, snacks-TUI и
+  #      отдельные окна одного проекта работают вместе);
+  #   3) нет    — поднимаем свой инстанс: `opencode --port 0 <project>`.
   oc = pkgs.writeShellScriptBin "oc" ''
-    ${fetchHubCreds}
-    exec ${config.programs.opencode.package}/bin/opencode attach http://localhost:4096 --dir "$PWD" "$@"
+    TARGET="$PWD"
+    PORT=""
+    for pid in $(pgrep -f '[o]pencode.*--port' 2>/dev/null); do
+      for p in $(lsof -a -P -n -iTCP -sTCP:LISTEN -p "$pid" -F n 2>/dev/null | sed -n 's/^n.*:\([0-9][0-9]*\)$/\1/p' | sort -u); do
+        dir=$(curl -s --max-time 2 "http://localhost:$p/path" 2>/dev/null | sed -n 's/.*"directory":"\([^"]*\)".*/\1/p')
+        if [ -n "$dir" ] && { [ "$TARGET" = "$dir" ] || [ ''${TARGET#$dir/} != "$TARGET" ] || [ ''${dir#$TARGET/} != "$dir" ]; }; then
+          PORT="$p"
+          break 2
+        fi
+      done
+    done
+    if [ -n "$PORT" ]; then
+      exec ${config.programs.opencode.package}/bin/opencode attach "http://localhost:$PORT" --dir "$TARGET" "$@"
+    else
+      exec ${config.programs.opencode.package}/bin/opencode --port 0 "$TARGET" "$@"
+    fi
   '';
 in
 {
   home.packages = with pkgs; [
     lsof
     curl
-    procps # for pgrep dependency
+    procps # для pgrep (opencode.nvim и `oc` ищут сервер через pgrep/lsof)
     oc
   ];
 
@@ -45,6 +46,11 @@ in
     enable = true;
     package = pkgs.unstable.opencode;
     settings = {
+      # Порт хаба для веб-UI (traefik → 4096). На инстансы проектов не влияет:
+      # те запускаются с явным `--port 0` (случайный свободный порт).
+      server = {
+        port = 4096;
+      };
       permission = {
         edit = "ask";
         external_directory = {
@@ -67,8 +73,6 @@ in
         };
       };
     };
-    # agents = {
-    # };
   };
 
   # Конфиги и скиллы из дотфайлов → стандартные места в домашней директории.
@@ -78,11 +82,11 @@ in
       config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/opencode/skills";
   };
 
-  # Постоянный хаб: к нему подключаются TUI (opencode attach), веб-UI
-  # (телефон через traefik) и neovim-плагин. Сессии хранятся на сервере.
+  # Постоянный хаб для веб-UI: к нему ходит traefik (телефон). Сессии nvim/TUI
+  # живут на инстансах проектов (см. oc) и с вебом не общие.
   systemd.user.services.opencode-web = {
     Unit = {
-      Description = "opencode server (hub for TUI/web/neovim clients)";
+      Description = "opencode server (web UI for phone via traefik)";
       After = [ "graphical-session.target" ];
     };
     Service = {

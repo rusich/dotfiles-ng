@@ -1,8 +1,11 @@
 -- 🤖 Neovim + OpenCode: конфигурация по README + минимальный фикс диффов.
 -- https://github.com/nickjvandyke/opencode.nvim
 --
--- TUI (`<C-.>`) запускает `opencode --port` (инстанс на случайном свободном
--- порту в каталоге проекта), плагин сам его находит (pgrep/lsof + cwd).
+-- TUI (`<C-.>`) и фолбэк `server.start` используют `oc` (см.
+-- modules/home/opencode.nix): тот находит уже запущенный сервер проекта и
+-- приаттачивается (общие сессии), а если его нет — поднимает
+-- `opencode --port 0 <каталог>` (случайный свободный порт, каталог пинится).
+-- Плагин находит этот инстанс сам (pgrep/lsof + cwd).
 --
 -- Единственное отличие от ванили: `untrim_diff` — opencode отдаёт
 -- `metadata.diff` через свою trimDiff (срезает общий min-отступ контентных
@@ -71,7 +74,7 @@ local function untrim_diff(diff, filepath)
   return table.concat(lines, '\n')
 end
 
-local opencode_cmd = 'opencode --port'
+local opencode_cmd = 'oc'
 ---@type snacks.terminal.Opts
 local snacks_terminal_opts = {
   win = {

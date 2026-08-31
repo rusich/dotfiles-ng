@@ -114,6 +114,32 @@ return {
       return orig_diff(event)
     end
 
+    -- Статус для статуслайна (mini.nvim читает `vim.g.opencode_status`).
+    -- Оборачиваем update/reset модуля статуса плагина: reset вызывается при
+    -- дисконнекте и не эмитит событие, поэтому без обёртки состояние не
+    -- сменилось бы на 'disconnected'.
+    local ev_status = require('opencode.events.status')
+    local orig_status_update = ev_status.update
+    ev_status.update = function(event, url)
+      orig_status_update(event, url)
+      local state
+      if event.type == 'server.connected' then
+        state = 'idle'
+      elseif event.type == 'session.status' then
+        state = event.properties.status.type
+      else
+        state = 'disconnected'
+      end
+      vim.g.opencode_status = state
+      vim.cmd 'redrawstatus'
+    end
+    local orig_status_reset = ev_status.reset
+    ev_status.reset = function()
+      orig_status_reset()
+      vim.g.opencode_status = 'disconnected'
+      vim.cmd 'redrawstatus'
+    end
+
     -- Recommended/example keymaps (README)
     vim.keymap.set({ 'n', 'x' }, '<C-a>', function()
       require('opencode').ask '@this: '
@@ -127,12 +153,20 @@ return {
     vim.keymap.set({ 'n' }, 'goo', function()
       return require('opencode').operator('@this ') .. '_'
     end, { desc = 'Append line to OpenCode', expr = true })
-    vim.keymap.set({ 'n' }, '<S-C-u>', function()
-      require('opencode').command 'session.half.page.up'
-    end, { desc = 'Scroll OpenCode up' })
-    vim.keymap.set({ 'n' }, '<S-C-d>', function()
-      require('opencode').command 'session.half.page.down'
-    end, { desc = 'Scroll OpenCode down' })
+    -- Скролл TUI opencode теми же клавишами, что и в самом TUI (ctrl+alt+u/d =
+    -- messages_half_page_up/down), чтобы поведение совпадало и в TUI, и из nvim.
+    local function scroll_opencode(up)
+      local win = require('snacks.terminal').get(opencode_cmd, { create = false })
+      if win and win:valid() then
+        require('opencode').command(up and 'session.half.page.up' or 'session.half.page.down')
+      end
+    end
+    vim.keymap.set({ 'n' }, '<C-A-u>', function()
+      scroll_opencode(true)
+    end, { desc = 'Scroll OpenCode up (half page)' })
+    vim.keymap.set({ 'n' }, '<C-A-d>', function()
+      scroll_opencode(false)
+    end, { desc = 'Scroll OpenCode down (half page)' })
 
     -- Toggle TUI (README, snacks.terminal).
     vim.keymap.set({ 'n', 't' }, '<C-.>', function()

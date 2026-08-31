@@ -31,16 +31,16 @@ local function untrim_diff(diff, filepath)
 
   local delta, i = nil, 1
   while i <= #lines and not delta do
-    local s = lines[i]:match('^@@ %-(%d+)')
+    local s = lines[i]:match '^@@ %-(%d+)'
     if s then
       local old_idx = tonumber(s)
       i = i + 1
-      while i <= #lines and not delta and not lines[i]:match('^@@') do
+      while i <= #lines and not delta and not lines[i]:match '^@@' do
         local p = lines[i]:sub(1, 1)
         if p == ' ' or p == '-' then
           local l = fl[old_idx]
-          local d_indent = (lines[i]:sub(2):match('^(%s*)') or ''):len()
-          local f_indent = l and (l:match('^(%s*)') or ''):len() or 0
+          local d_indent = (lines[i]:sub(2):match '^(%s*)' or ''):len()
+          local f_indent = l and (l:match '^(%s*)' or ''):len() or 0
           if f_indent > d_indent then
             delta = f_indent - d_indent
           end
@@ -64,9 +64,9 @@ local function untrim_diff(diff, filepath)
   local pad = string.rep(' ', delta)
   for j, ln in ipairs(lines) do
     local p = ln:sub(1, 1)
-    if (p == ' ' or p == '-' or p == '+') and not ln:match('^%-%-%-') and not ln:match('^%+%+%+') then
+    if (p == ' ' or p == '-' or p == '+') and not ln:match '^%-%-%-' and not ln:match '^%+%+%+' then
       local content = ln:sub(2)
-      if content:find('%S') then
+      if content:find '%S' then
         lines[j] = p .. pad .. content
       end
     end
@@ -98,11 +98,22 @@ return {
           require('snacks.terminal').open(opencode_cmd, snacks_terminal_opts)
         end,
       },
+      select = {
+        -- Переопределяем только пресеты с «разговорным» ответом — это текст,
+        -- который читают целиком в диалоге (diagnostics/explain/review).
+        -- Остальные (fix/implement/test/document/optimize) меняют код, их
+        -- промпт — лишь инструкция, поэтому переводить не нужно.
+        prompts = {
+          diagnostics = 'Объясни @diagnostics',
+          explain = 'Объясни @this и его контекст',
+          review = 'Проверь @this на корректность и читаемость',
+        },
+      },
     }
 
     -- FIX (минимальный): восстановить срезанный trimDiff отступ перед штатным
     -- `diffpatch`, чтобы панели не были «идентичными».
-    local edits = require('opencode.events.permissions.edits')
+    local edits = require 'opencode.events.permissions.edits'
     local orig_diff = edits.diff
     edits.diff = function(event)
       if event.type == 'permission.asked' and event.properties.permission == 'edit' then
@@ -118,7 +129,7 @@ return {
     -- Оборачиваем update/reset модуля статуса плагина: reset вызывается при
     -- дисконнекте и не эмитит событие, поэтому без обёртки состояние не
     -- сменилось бы на 'disconnected'.
-    local ev_status = require('opencode.events.status')
+    local ev_status = require 'opencode.events.status'
     local orig_status_update = ev_status.update
     ev_status.update = function(event, url)
       orig_status_update(event, url)
@@ -151,7 +162,7 @@ return {
       return require('opencode').operator '@this '
     end, { desc = 'Append range to OpenCode', expr = true })
     vim.keymap.set({ 'n' }, 'goo', function()
-      return require('opencode').operator('@this ') .. '_'
+      return require('opencode').operator '@this ' .. '_'
     end, { desc = 'Append line to OpenCode', expr = true })
     -- Скролл TUI opencode теми же клавишами, что и в самом TUI (ctrl+alt+u/d =
     -- messages_half_page_up/down), чтобы поведение совпадало и в TUI, и из nvim.

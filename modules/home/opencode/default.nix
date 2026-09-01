@@ -1,10 +1,32 @@
 { config, pkgs, ... }:
 let
-  # Служба-хаб: headless сервер для веб-UI (телефон через traefik).
-  # Порт задан в конфиге (programs.opencode.settings.server.port = 4096), а НЕ
-  # флагом `--port`: так opencode.nvim и `oc` (ищут процессы по `opencode.*--port`
-  # через pgrep) не видят хаб и не путают его с инстансами проектов.
+  # Общая логика: пароль и имя пользователя хаба извлекаются из KeePassXC
+  # (Secret Service) в рантайме через secret-tool. Ждём разблокировки базы
+  # (retry-цикл), т.к. сервис может стартовать раньше KeePassXC.
+  fetchHubCreds = ''
+    PASS=""
+    USERNAME=""
+    for _ in $(seq 1 60); do
+      [ -n "$PASS" ] || PASS="$(${pkgs.libsecret}/bin/secret-tool lookup short OPENCODE_SERVER_PASSWORD 2>/dev/null)"
+      [ -n "$USERNAME" ] || USERNAME="$(${pkgs.libsecret}/bin/secret-tool lookup short OPENCODE_SERVER_USERNAME 2>/dev/null)"
+      [ -n "$PASS" ] && [ -n "$USERNAME" ] && break
+      sleep 2
+    done
+    if [ -z "$PASS" ]; then
+      echo "opencode: OPENCODE_SERVER_PASSWORD unavailable via secret-tool" >&2
+      exit 1
+    fi
+    export OPENCODE_SERVER_PASSWORD="$PASS"
+    export OPENCODE_SERVER_USERNAME="''${USERNAME:-opencode}"
+  '';
+
+  # Служба-хаб: headless сервер для веб-UI (телефон через traefik), защищён
+  # basic auth (см. fetchHubCreds). Порт задан в конфиге
+  # (programs.opencode.settings.server.port = 4096), а НЕ флагом `--port`: так
+  # opencode.nvim и `oc` (ищут процессы по `opencode.*--port` через pgrep) не
+  # видят хаб и не путают его с инстансами проектов.
   opencode-web = pkgs.writeShellScript "opencode-web" ''
+    ${fetchHubCreds}
     exec ${config.programs.opencode.package}/bin/opencode serve --hostname 0.0.0.0
   '';
 

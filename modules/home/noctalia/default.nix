@@ -1,9 +1,10 @@
 {
   pkgs,
   config,
+  lib,
   ...
 }:
-{
+lib.mkIf pkgs.stdenv.isLinux {
   home.packages = with pkgs; [
     unstable.noctalia
     adw-gtk3

@@ -18,7 +18,7 @@
     setSessionVariables = true;
   };
 
-  xdg.portal = {
+  xdg.portal = lib.mkIf pkgs.stdenv.isLinux {
     enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     config.common.default = [ "gtk" ];

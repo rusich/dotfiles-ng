@@ -1,5 +1,5 @@
-{ pkgs, ... }:
-{
+{ pkgs, lib, ... }:
+lib.mkIf pkgs.stdenv.isLinux {
   services.udiskie = {
     enable = true;
     settings = {

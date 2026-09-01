@@ -3,8 +3,9 @@
   home.packages = with pkgs; [
     ffmpeg # for mediainfo
     mediainfo # for mediainfo
-    xdg-desktop-portal-termfilechooser # use yazi as a file chooser
     trash-cli
+  ] ++ lib.optionals pkgs.stdenv.isLinux [
+    xdg-desktop-portal-termfilechooser # use yazi as a file chooser
   ];
 
   home.file.".local/share/applications/yazi.desktop".text = ''
@@ -18,20 +19,23 @@
   '';
 
   # Termfilechooser config
-  home.file.".config/xdg-desktop-portal-termfilechooser/config".text = ''
-    [filechooser]
-    cmd=${pkgs.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
-    default_dir=$HOME
-    create_help_file=1
-    env=TERMCMD='kitty --title filechooser'
-    env=PATH="$PATH:/run/current-system/sw/bin"
-    open_mode = suggested
-    save_mode = last
-  '';
+  home.file.".config/xdg-desktop-portal-termfilechooser/config" = lib.mkIf pkgs.stdenv.isLinux {
+    text = ''
+      [filechooser]
+      cmd=${pkgs.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
+      default_dir=$HOME
+      create_help_file=1
+      env=TERMCMD='kitty --title filechooser'
+      env=PATH="$PATH:/run/current-system/sw/bin"
+      open_mode = suggested
+      save_mode = last
+    '';
+  };
 
   # Подключаем termfilechooser как FileChooser портал
-  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-termfilechooser ];
-  xdg.portal.config.common."org.freedesktop.impl.portal.FileChooser" = lib.mkForce "termfilechooser";
+  xdg.portal.extraPortals = lib.mkIf pkgs.stdenv.isLinux [ pkgs.xdg-desktop-portal-termfilechooser ];
+  xdg.portal.config.common."org.freedesktop.impl.portal.FileChooser" =
+    lib.mkIf pkgs.stdenv.isLinux (lib.mkForce "termfilechooser");
 
   programs.yazi = {
     enable = true;
@@ -63,7 +67,7 @@
         package = unstable.yaziPlugins.easyjump;
         setup = true;
       };
-      gvfs = {
+      gvfs = lib.mkIf pkgs.stdenv.isLinux {
         package = yaziPlugins.gvfs;
         setup = true;
       };

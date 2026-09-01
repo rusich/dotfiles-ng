@@ -1,9 +1,10 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }:
-{
+lib.mkIf pkgs.stdenv.isLinux {
   # required packages
   home.packages = with pkgs; [
     xwayland-satellite

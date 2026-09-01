@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, hostname, lib, ... }:
 let
   # Общая логика: пароль и имя пользователя хаба извлекаются из KeePassXC
   # (Secret Service) в рантайме через secret-tool. Ждём разблокировки базы
@@ -105,8 +105,9 @@ in
   };
 
   # Постоянный хаб для веб-UI: к нему ходит traefik (телефон). Сессии nvim/TUI
-  # живут на инстансах проектов (см. oc) и с вебом не общие.
-  systemd.user.services.opencode-web = {
+  # живут на инстансах проектов (см. oc) и с вебом не общие. Включается только
+  # на darkstar (hostname прокидывается из flake.nix через extraSpecialArgs).
+  systemd.user.services.opencode-web = lib.mkIf (hostname == "darkstar") {
     Unit = {
       Description = "opencode server (web UI for phone via traefik)";
       After = [ "graphical-session.target" ];

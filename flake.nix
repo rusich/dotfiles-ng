@@ -68,12 +68,31 @@
       nixosHosts = builtins.attrNames (builtins.readDir ./hosts/nixos);
       darwinHosts = builtins.attrNames (builtins.readDir ./hosts/darwin);
 
-      # Supported systems
-      forEachSystem = nixpkgs.lib.genAttrs [
-        "x86_64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
+      # home-manager per host: общий набор модулей (./modules/home) для всех
+      # систем; различаются только pkgs (system) и hostname (per-host).
+      # Ключи вида `rusich@<host>` — штатная конвенция home-manager: при
+      # `home-manager switch --flake .` CLI сам находит `user@<hostname>`.
+      mkHome = system: host: inputs.home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = myOverlays;
+        };
+        modules = [
+          commonModule
+          ./modules/common
+          ./modules/home
+          # inputs.stylix.homeModules.stylix
+        ];
+        extraSpecialArgs = {
+          inherit inputs outputs self;
+          userConfig = userConfig;
+          hostname = host;
+        };
+      };
+      namedHomes = system: hosts:
+        nixpkgs.lib.mapAttrs'
+          (host: cfg: nixpkgs.lib.nameValuePair "${userConfig.username}@${host}" cfg)
+          (nixpkgs.lib.genAttrs hosts (mkHome system));
     in
     rec {
       nixosConfigurations =
@@ -98,29 +117,15 @@
           default = nixosConfigurations.darkstar; # nixd stub
         };
 
-      # home-manager
-      legacyPackages = forEachSystem (system: {
-        homeConfigurations = {
-          ${userConfig.username} = inputs.home-manager.lib.homeManagerConfiguration {
-            pkgs = import nixpkgs {
-              inherit system;
-              # stdenv.hostPlatform.system
-              overlays = myOverlays;
-            };
-            modules = [
-              commonModule
-              ./modules/common
-              ./modules/home
-              # inputs.stylix.homeModules.stylix
-            ];
-            extraSpecialArgs = {
-              inherit inputs outputs self;
-              userConfig = userConfig;
-            };
-          };
-          default = legacyPackages.${system}.homeConfigurations.${userConfig.username}; # nixd stub
+      # home-manager: per-host конфигурации. Ключ `default` — только для nixd
+      # и явного `.#default`; авто-детект CLI (`home-manager switch --flake .`)
+      # использует `user@<hostname>`, поэтому неизвестный хост честно падает.
+      homeConfigurations =
+        (namedHomes "x86_64-linux" nixosHosts)
+        // (namedHomes "aarch64-darwin" darwinHosts)
+        // {
+          default = homeConfigurations."${userConfig.username}@darkstar"; # nixd stub
         };
-      });
 
       darwinConfigurations =
         nixpkgs.lib.genAttrs darwinHosts (

@@ -23,7 +23,7 @@ return {
 
     frontmatter = {
       enabled = function(fname)
-        return fname:match '^%.zk/templates/' == nil -- and fname:match("daily/") == nil
+        return fname:match '^templates/' == nil -- and fname:match("daily/") == nil
       end,
       sort = { 'title', 'created', 'updated', 'aliases', 'tags' },
       func = function(note)
@@ -68,29 +68,36 @@ return {
       },
     },
     picker = {
-      name = 'snacks.pick',
+      name = 'snacks.picker',
     },
-    -- fix snacks.pick missed <c-x> mapping
+    -- Obsidian hardcodes `layout.preset = "default"` in its snacks `select`,
+    -- что перекрывает глобальный Ivy-лейаут из snacks.nvim. Патчим итоговый
+    -- pick_opts, чтобы obsidian использовал предпочтительный лейаут (Ivy).
     callbacks = {
       post_setup = function(_)
-        -- Add a key mapping in snacks.picker input to create note from query
-        vim.api.nvim_create_autocmd('FileType', {
-          pattern = 'snacks_picker_input',
-          callback = function()
-            vim.keymap.set('i', '<C-x>', function()
-              local picker = require('snacks.picker').get()
-              if picker then
-                local query = picker[1].finder.filter.pattern
-                -- print(query)
-                vim.cmd 'close'
-                vim.schedule(function()
-                  require('obsidian.api').new(query)
-                end)
-              end
-            end, { buffer = true, desc = 'Obsidian new note from query' })
-          end,
-        })
+        local snacks_picker = require 'obsidian.picker.snacks'
+        local orig_select = snacks_picker.select
+        local snacks_pick = require('snacks.picker').pick
+
+        snacks_picker.select = function(values, opts, on_choice)
+          local orig_pick = require('snacks.picker').pick
+          require('snacks.picker').pick = function(pick_opts, ...)
+            if type(pick_opts) == 'table' and pick_opts.layout then
+              pick_opts.layout.preset = nil
+            end
+            return orig_pick(pick_opts, ...)
+          end
+          local ok, res = pcall(orig_select, values, opts, on_choice)
+          require('snacks.picker').pick = orig_pick
+          if not ok then
+            error(res)
+          end
+          return res
+        end
       end,
+    },
+    templates = {
+      folder = 'templates',
     },
     ui = {
       enable = false,

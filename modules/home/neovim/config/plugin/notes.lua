@@ -960,15 +960,9 @@ function M.setup(user_config)
   -- Plugins mappings
   -- Основные маппинги для Obsidian
 
-  -- Новая заметка
-  vim.keymap.set('n', '<leader>nn', function()
-    vim.ui.input({ prompt = 'New note name' }, function(str)
-      if str and #str > 0 then
-        require('obsidian.api').new(str)
-      end
-    end)
-  end, {
-    desc = 'New note',
+  -- Новая заметка из шаблона
+  vim.keymap.set('n', '<leader>nn', '<cmd>Obsidian new_from_template<cr>', {
+    desc = 'New note from template',
   })
   vim.keymap.set('n', '<leader>nf', '<cmd>Obsidian quick_switch<cr>', {
     desc = 'Find(or create) note',

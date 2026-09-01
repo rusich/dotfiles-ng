@@ -79,12 +79,36 @@ local spec = {
         signs = { add = '┃', change = '┃', delete = '‣' },
       },
       mappings = {
-        goto_first = '[C',
-        goto_prev = '[c',
-        goto_next = ']c',
-        goto_last = ']C',
+        goto_first = '',
+        goto_prev = '',
+        goto_next = '',
+        goto_last = '',
       },
     }
+    -- Hybrid navigation: native ]c/[c in diff buffers, mini.diff hunks otherwise
+    local function diff_goto(direction, native)
+      return function()
+        if vim.wo.diff then
+          local count = vim.v.count
+          vim.cmd('normal! ' .. (count > 0 and count .. native or native))
+          return
+        end
+        local diff = require 'mini.diff'
+        if not diff.get_buf_data(0) then return end
+        local notify = vim.notify
+        vim.notify = function(msg, level, opts)
+          if type(msg) == 'string' and msg:match '^%(mini%.diff%)' then return end
+          return notify(msg, level, opts)
+        end
+        local ok, err = pcall(diff.goto_hunk, direction, { n_times = vim.v.count1 })
+        vim.notify = notify
+        if not ok then error(err) end
+      end
+    end
+    set('n', ']c', diff_goto('next', ']c'), { desc = 'Next hunk' })
+    set('n', '[c', diff_goto('prev', '[c'), { desc = 'Previous hunk' })
+    set('n', ']C', diff_goto('last', ']C'), { desc = 'Last hunk' })
+    set('n', '[C', diff_goto('first', '[C'), { desc = 'First hunk' })
     -- TODO: read manual
     vim.keymap.set('n', '<leader>gv', function()
       require('mini.diff').toggle_overlay(0)

@@ -78,6 +78,12 @@ local spec = {
       view = {
         signs = { add = '┃', change = '┃', delete = '‣' },
       },
+      mappings = {
+        goto_first = '[C',
+        goto_prev = '[c',
+        goto_next = ']c',
+        goto_last = ']C',
+      },
     }
     -- TODO: read manual
     vim.keymap.set('n', '<leader>gv', function()

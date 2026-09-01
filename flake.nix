@@ -21,6 +21,9 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
+    # home-manager: manages dotfiles and user packages. Pinned to the release
+    # branch matching the nixpkgs-stable channel; its nixpkgs input follows the
+    # same `nixpkgs` as everything else to avoid dependency duplication.
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -72,27 +75,30 @@
       # систем; различаются только pkgs (system) и hostname (per-host).
       # Ключи вида `rusich@<host>` — штатная конвенция home-manager: при
       # `home-manager switch --flake .` CLI сам находит `user@<hostname>`.
-      mkHome = system: host: inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = myOverlays;
+      mkHome =
+        system: host:
+        inputs.home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = myOverlays;
+          };
+          modules = [
+            commonModule
+            ./modules/common
+            ./modules/home
+            # inputs.stylix.homeModules.stylix
+          ];
+          extraSpecialArgs = {
+            inherit inputs outputs self;
+            userConfig = userConfig;
+            hostname = host;
+          };
         };
-        modules = [
-          commonModule
-          ./modules/common
-          ./modules/home
-          # inputs.stylix.homeModules.stylix
-        ];
-        extraSpecialArgs = {
-          inherit inputs outputs self;
-          userConfig = userConfig;
-          hostname = host;
-        };
-      };
-      namedHomes = system: hosts:
-        nixpkgs.lib.mapAttrs'
-          (host: cfg: nixpkgs.lib.nameValuePair "${userConfig.username}@${host}" cfg)
-          (nixpkgs.lib.genAttrs hosts (mkHome system));
+      namedHomes =
+        system: hosts:
+        nixpkgs.lib.mapAttrs' (host: cfg: nixpkgs.lib.nameValuePair "${userConfig.username}@${host}" cfg) (
+          nixpkgs.lib.genAttrs hosts (mkHome system)
+        );
     in
     rec {
       nixosConfigurations =

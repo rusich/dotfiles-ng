@@ -1,4 +1,10 @@
-{ config, pkgs, hostname, lib, ... }:
+{
+  config,
+  pkgs,
+  hostname,
+  lib,
+  ...
+}:
 let
   # Общая логика: пароль и имя пользователя хаба извлекаются из KeePassXC
   # (Secret Service) в рантайме через secret-tool. Ждём разблокировки базы
@@ -70,6 +76,26 @@ in
     settings = {
       # Порт хаба для веб-UI (traefik → 4096). На инстансы проектов не влияет:
       # те запускаются с явным `--port 0` (случайный свободный порт).
+      provider = {
+        ollama = {
+          npm = "@ai-sdk/openai-compatible";
+          options = {
+            baseURL = "http://127.0.0.1:11434/v1";
+          };
+
+          models = {
+            "qwen3.8:27b" = {
+              name = "Qwen 3.8 27B (local)";
+              tools = true;
+              options = {
+                num_ctx = 131072;
+              };
+            };
+
+          };
+
+        };
+      };
       server = {
         port = 4096;
       };

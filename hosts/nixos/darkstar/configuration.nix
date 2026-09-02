@@ -20,6 +20,7 @@
   my.nixosModules.embedded-dev.enable = true;
   my.nixosModules.wireshark.enable = true;
   my.nixosModules.podman.enable = true;
+  my.nixosModules.ollama.enable = true;
 
   console = {
     font = "ter-v24b";

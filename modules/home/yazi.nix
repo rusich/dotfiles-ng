@@ -1,12 +1,15 @@
 { pkgs, lib, ... }:
 {
-  home.packages = with pkgs; [
-    ffmpeg # for mediainfo
-    mediainfo # for mediainfo
-    trash-cli
-  ] ++ lib.optionals pkgs.stdenv.isLinux [
-    xdg-desktop-portal-termfilechooser # use yazi as a file chooser
-  ];
+  home.packages =
+    with pkgs;
+    [
+      ffmpeg # for mediainfo
+      mediainfo # for mediainfo
+      trash-cli
+    ]
+    ++ lib.optionals pkgs.stdenv.isLinux [
+      xdg-desktop-portal-termfilechooser # use yazi as a file chooser
+    ];
 
   home.file.".local/share/applications/yazi.desktop".text = ''
     [Desktop Entry]
@@ -34,8 +37,9 @@
 
   # Подключаем termfilechooser как FileChooser портал
   xdg.portal.extraPortals = lib.mkIf pkgs.stdenv.isLinux [ pkgs.xdg-desktop-portal-termfilechooser ];
-  xdg.portal.config.common."org.freedesktop.impl.portal.FileChooser" =
-    lib.mkIf pkgs.stdenv.isLinux (lib.mkForce "termfilechooser");
+  xdg.portal.config.common."org.freedesktop.impl.portal.FileChooser" = lib.mkIf pkgs.stdenv.isLinux (
+    lib.mkForce "termfilechooser"
+  );
 
   programs.yazi = {
     enable = true;
@@ -163,7 +167,10 @@
         }
         # easyjump
         {
-          on = "i";
+          on = [
+            "g"
+            "w"
+          ];
           run = "plugin easyjump";
           desk = "easyjump";
         }

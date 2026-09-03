@@ -87,9 +87,10 @@ in
             "qwen3.8:27b" = {
               name = "Qwen 3.8 27B (local)";
               tools = true;
-              options = {
-                num_ctx = 131072;
-              };
+            };
+            "qwen3-coder:30b" = {
+              name = "Qwen 3 Coder 30B (local)";
+              tools = true;
             };
 
           };

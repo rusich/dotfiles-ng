@@ -25,6 +25,12 @@
       user = "ollama";
       group = "users";
       home = "/home/ollama"; # явно указываем
+      environmentVariables = {
+        # OLLAMA_CONTEXT_LENGTH = "65536";
+        OLLAMA_CONTEXT_LENGTH = "131072";
+        # OLLAMA_CONTEXT_LENGTH = "262144";
+        OLLAMA_FLASH_ATTENTION = "1";
+      };
     };
 
     systemd.services.ollama.serviceConfig = {

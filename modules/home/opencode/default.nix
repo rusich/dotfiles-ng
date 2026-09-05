@@ -87,10 +87,18 @@ in
             "qwen3.8:27b" = {
               name = "Qwen 3.8 27B (local)";
               tools = true;
+              limit = {
+                context = 65536;
+                output = 32768;
+              };
             };
             "qwen3-coder:30b" = {
               name = "Qwen 3 Coder 30B (local)";
               tools = true;
+              limit = {
+                context = 65536;
+                output = 32768;
+              };
             };
 
           };

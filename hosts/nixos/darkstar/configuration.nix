@@ -28,7 +28,6 @@
 
   # Host-specific packages
   environment.systemPackages = with pkgs; [
-    unstable.lmstudio
     wlr-randr
     xrandr
     anydesk

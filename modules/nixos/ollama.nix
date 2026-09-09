@@ -6,7 +6,7 @@
 }:
 
 {
-  options.my.nixosModules.ollama.enable = lib.mkEnableOption "ollama service with open-webui";
+  options.my.nixosModules.ollama.enable = lib.mkEnableOption "ollama service";
 
   config = lib.mkIf config.my.nixosModules.ollama.enable {
     users.users.ollama = {
@@ -37,7 +37,7 @@
       ProtectHome = lib.mkForce false;
     };
 
-    services.open-webui.enable = true;
+    # services.open-webui.enable = true;
 
     # Если нужно установить права для группы users (рекурсивно g+rwx и setgid)
     system.activationScripts.setupOllamaDir = {

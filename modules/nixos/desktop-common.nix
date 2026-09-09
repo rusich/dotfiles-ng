@@ -73,12 +73,6 @@ in
     # Enable touchpad support (enabled default in most desktopManager).
     services.libinput.enable = true;
 
-    programs.nix-ld = {
-      enable = true; # what's the heck it's this...
-      libraries = with pkgs; [
-        icu
-      ];
-    };
     programs.fish.enable = true;
     programs.firefox.enable = true;
 

@@ -37,6 +37,13 @@ in
     loader.systemd-boot.configurationLimit = 10;
   };
 
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      icu
+    ];
+  };
+
   # Networking
   networking.networkmanager.enable = true;
   networking.hostName = hostname;

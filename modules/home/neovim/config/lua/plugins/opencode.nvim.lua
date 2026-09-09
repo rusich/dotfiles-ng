@@ -151,13 +151,13 @@ return {
       vim.cmd 'redrawstatus'
     end
 
-    -- Recommended/example keymaps (README)
-    vim.keymap.set({ 'n', 'x' }, '<C-a>', function()
+    -- Recommended/example keymaps (README) — под AI-префикс <leader>a (см. легенду в mini.nvim)
+    vim.keymap.set({ 'n', 'x' }, '<leader>aa', function()
       require('opencode').ask '@this: '
-    end, { desc = 'Ask OpenCode…' })
-    vim.keymap.set({ 'n', 'x' }, '<C-x>', function()
+    end, { desc = 'AI: Ask OpenCode' })
+    vim.keymap.set({ 'n', 'x' }, '<leader>as', function()
       require('opencode').select()
-    end, { desc = 'Select OpenCode…' })
+    end, { desc = 'AI: Select for OpenCode' })
     vim.keymap.set({ 'n', 'x' }, 'go', function()
       return require('opencode').operator '@this '
     end, { desc = 'Append range to OpenCode', expr = true })

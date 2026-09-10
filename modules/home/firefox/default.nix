@@ -50,7 +50,6 @@
           keepassxc-browser
           simple-translate
           floccus
-          firefox-color
           pywalfox
         ];
       };

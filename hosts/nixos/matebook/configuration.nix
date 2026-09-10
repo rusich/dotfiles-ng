@@ -21,6 +21,17 @@
   # Old Hardware-Specifice settings replaced by NixOS-Hardware module
   # hardware.cpu.intel.updateMicrocode = true;
 
+  # 8GB RAM laptop: compressed swap avoids hitting the slow disk swap
+  # (zram gets higher swap priority than the LUKS partition automatically)
+  zramSwap = {
+    enable = true;
+    memoryPercent = 50;
+  };
+
+  # Thin chassis + "performance" power profile -> thermal throttling
+  # causes the visible stutter; thermald keeps the CPU within safe limits
+  services.thermald.enable = true;
+
   # Host-specific configuration
   console = {
     font = "ter-v32b";

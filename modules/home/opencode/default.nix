@@ -128,7 +128,9 @@ in
           ];
           enabled = false;
         };
+
       };
+      plugin = [ "superpowers@git+https://github.com/obra/superpowers.git" ];
     };
   };
 

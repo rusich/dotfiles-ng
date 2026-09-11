@@ -20,7 +20,5 @@ let
 in
 {
 
-  programs.bash.shellAliases = myAliases;
   programs.fish.shellAliases = myAliases;
-  programs.zsh.shellAliases = myAliases;
 }

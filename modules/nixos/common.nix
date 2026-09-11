@@ -17,6 +17,10 @@ let
 in
 {
 
+  # Fish as the default shell for all users (built-in NixOS mechanism)
+  users.defaultUserShell = pkgs.fish;
+  programs.fish.enable = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.${userConfig.username} = {
     isNormalUser = true;
@@ -97,9 +101,7 @@ in
     defaultEditor = true;
   };
 
-  programs.bash.shellAliases = vimAliases;
   programs.fish.shellAliases = vimAliases;
-  programs.zsh.shellAliases = vimAliases;
 
   environment.systemPackages =
     with pkgs;

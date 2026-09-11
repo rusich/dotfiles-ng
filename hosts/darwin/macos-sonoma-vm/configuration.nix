@@ -16,7 +16,7 @@
     # home-manager
     cowsay
     firefox
-  ] ++ config.commonSystemPackages;
+  ] ++ config.my.nixosAndDarwinPackages;
 
   # programs.nix-search-tv.enableTelevisionIntegration = true;
 
@@ -81,6 +81,9 @@
 
   # Enable alternative shell support in nix-darwin.
   programs.fish.enable = true;
+
+  # Fish as the login shell (nix-darwin has no users.defaultUserShell)
+  users.users.${userConfig.username}.shell = pkgs.fish;
 
   # Set Git commit hash for darwin-version.
   # system.configurationRevision = self.rev or self.dirtyRev or null;

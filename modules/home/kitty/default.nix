@@ -1,4 +1,4 @@
-{config, ...}: {
+{ config, ... }: {
   home.file = {
     ".config/kitty".source =
       config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/kitty/config";
@@ -12,7 +12,8 @@
     };
   };
 
-  # Удаляем стандартный nvim.desktop и создаем свой
+  # Создаём .desktop-запись для запуска Neovim в kitty (GUI-редактор без терминала)
+  # Стандартный nvim.desktop перезаписывается, иначе nvim открывался бы в эмуляторе по умолчанию
   xdg.dataFile."applications/nvim.desktop".text = ''
     [Desktop Entry]
     Name=Neovim (Kitty)

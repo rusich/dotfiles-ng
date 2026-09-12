@@ -43,11 +43,7 @@
       inherit (inputs.nixpkgs) lib;
 
       # Define user configuration
-      primaryUser = {
-        fullName = "Ruslan Sergin";
-        username = "rusich";
-        email = "ruslan.sergin@gmail.com";
-      };
+      primaryUser = import ./home/users/rusich/user.nix;
 
       # Import overlays
       overlays = import ./overlays { inherit inputs; };

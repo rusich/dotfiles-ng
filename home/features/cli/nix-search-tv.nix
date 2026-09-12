@@ -1,14 +1,24 @@
-{ pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
+  cfg = config.features.cli.nix-search-tv;
   ns = pkgs.writeShellScriptBin "ns" (builtins.readFile "${pkgs.nix-search-tv.src}/nixpkgs.sh");
 in
 {
-  home.packages = with pkgs; [
-    ns
-    fzf
-  ];
+  options.features.cli.nix-search-tv.enable = lib.mkEnableOption "nix-search-tv";
 
-  programs.nix-search-tv = {
-    enable = true;
+  config = lib.mkIf cfg.enable {
+    home.packages = with pkgs; [
+      ns
+      fzf
+    ];
+
+    programs.nix-search-tv = {
+      enable = true;
+    };
   };
 }

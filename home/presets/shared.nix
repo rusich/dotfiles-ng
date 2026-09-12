@@ -5,4 +5,12 @@
     neovim.enable = true;
     omnisharp.enable = true;
   };
+
+  features.cli = {
+    yazi.enable = true;
+    television.enable = true;
+    tmux.enable = true;
+    nix-search-tv.enable = true;
+    translate_shell.enable = true;
+  };
 }

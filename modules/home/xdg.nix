@@ -2,7 +2,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   # Включаем управление XDG User Directories (но с кастомными путями)
   xdg.userDirs = {
     enable = true;

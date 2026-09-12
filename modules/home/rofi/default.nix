@@ -1,6 +1,5 @@
-{config, ...}: {
+{ config, ... }: {
   home.file = {
-    ".config/rofi".source =
-      config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/rofi/config";
+    ".config/rofi".source = config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/rofi/config";
   };
 }

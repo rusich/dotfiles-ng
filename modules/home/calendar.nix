@@ -9,10 +9,13 @@
 
   # Gnome online accounts must be enabled in NixOS configuration
   # ../../modules/nixos/desktopCommon/gnome-online-accounts.nix
-  home.packages = with pkgs; [
-  ] ++ lib.optionals pkgs.stdenv.isLinux [
-    gnome-calendar
-  ];
+  home.packages =
+    with pkgs;
+    [
+    ]
+    ++ lib.optionals pkgs.stdenv.isLinux [
+      gnome-calendar
+    ];
 
   programs.khal = {
     enable = true;

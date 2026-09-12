@@ -7,16 +7,19 @@
 {
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
-  environment.systemPackages = with pkgs; [
-    alacritty
-    mkalias
-    tmux
-    nix-search-tv
-    btop
-    # home-manager
-    cowsay
-    firefox
-  ] ++ config.my.nixosAndDarwinPackages;
+  environment.systemPackages =
+    with pkgs;
+    [
+      alacritty
+      mkalias
+      tmux
+      nix-search-tv
+      btop
+      # home-manager
+      cowsay
+      firefox
+    ]
+    ++ config.my.nixosAndDarwinPackages;
 
   # programs.nix-search-tv.enableTelevisionIntegration = true;
 
@@ -25,7 +28,7 @@
       env = pkgs.buildEnv {
         name = "system-applications";
         paths = config.environment.systemPackages;
-        pathsToLink = ["/Applications"];
+        pathsToLink = [ "/Applications" ];
       };
     in
     pkgs.lib.mkForce ''

@@ -37,92 +37,108 @@
     millennium.url = "github:SteamClientHomebrew/Millennium?dir=packages/nix";
   };
 
-  outputs = inputs: let
-    inherit (inputs.nixpkgs) lib;
+  outputs =
+    inputs:
+    let
+      inherit (inputs.nixpkgs) lib;
 
-    # Define user configuration
-    primaryUser = {
-      fullName = "Ruslan Sergin";
-      username = "rusich";
-      email = "ruslan.sergin@gmail.com";
-    };
-
-    # Import overlays
-    overlays = import ./overlays {inherit inputs;};
-
-    # Common module for NixOS, nix-darwin and home-manager
-    overlayModule = {
-      nixpkgs.overlays = overlays;
-      # nixpkgs.config.allowUnfree = true;
-    };
-
-    # Get host directories
-    nixosHosts = builtins.attrNames (builtins.readDir ./hosts/nixos);
-    darwinHosts = builtins.attrNames (builtins.readDir ./hosts/darwin);
-
-    # Module arguments shared by all systems
-    args = host: {
-      inherit inputs primaryUser;
-      hostname = host;
-    };
-
-    mkNixos = host:
-      lib.nixosSystem {
-        specialArgs = args host;
-        modules = [
-          overlayModule
-          ./modules/common
-          ./modules/nixos
-          ./hosts/nixos/${host}/configuration.nix
-          # inputs.stylix.nixosModules.stylix
-        ];
+      # Define user configuration
+      primaryUser = {
+        fullName = "Ruslan Sergin";
+        username = "rusich";
+        email = "ruslan.sergin@gmail.com";
       };
 
-    mkDarwin = host:
-      inputs.nix-darwin.lib.darwinSystem {
-        specialArgs = args host;
-        modules = [
-          overlayModule
-          ./modules/common
-          ./modules/darwin
-          ./hosts/darwin/${host}/configuration.nix
-        ];
+      # Import overlays
+      overlays = import ./overlays { inherit inputs; };
+
+      # Common module for NixOS, nix-darwin and home-manager
+      overlayModule = {
+        nixpkgs.overlays = overlays;
+        # nixpkgs.config.allowUnfree = true;
       };
 
-    # home-manager per host: общий набор модулей (./modules/home) для всех
-    # систем; различаются только pkgs (system) и hostname (per-host).
-    # Ключи вида `rusich@<host>` — штатная конвенция home-manager: при
-    # `home-manager switch --flake .` CLI сам находит `user@<hostname>`.
-    mkHome = system: host:
-      inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = import inputs.nixpkgs {
-          inherit system;
-          overlays = overlays;
+      # Get host directories
+      nixosHosts = builtins.attrNames (builtins.readDir ./hosts/nixos);
+      darwinHosts = builtins.attrNames (builtins.readDir ./hosts/darwin);
+
+      # Module arguments shared by all systems
+      args = host: {
+        inherit inputs primaryUser;
+        hostname = host;
+      };
+
+      mkNixos =
+        host:
+        lib.nixosSystem {
+          specialArgs = args host;
+          modules = [
+            overlayModule
+            ./modules/common
+            ./modules/nixos
+            ./hosts/nixos/${host}/configuration.nix
+            # inputs.stylix.nixosModules.stylix
+          ];
         };
-        modules = [
-          overlayModule
-          ./modules/common
-          ./modules/home
-          # inputs.stylix.homeModules.stylix
-        ];
-        extraSpecialArgs = args host;
+
+      mkDarwin =
+        host:
+        inputs.nix-darwin.lib.darwinSystem {
+          specialArgs = args host;
+          modules = [
+            overlayModule
+            ./modules/common
+            ./modules/darwin
+            ./hosts/darwin/${host}/configuration.nix
+          ];
+        };
+
+      # home-manager per host: общий набор модулей (./modules/home) для всех
+      # систем; различаются только pkgs (system) и hostname (per-host).
+      # Ключи вида `rusich@<host>` — штатная конвенция home-manager: при
+      # `home-manager switch --flake .` CLI сам находит `user@<hostname>`.
+      mkHome =
+        system: host:
+        inputs.home-manager.lib.homeManagerConfiguration {
+          pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = overlays;
+          };
+          modules = [
+            overlayModule
+            ./modules/common
+            ./modules/home
+            # inputs.stylix.homeModules.stylix
+          ];
+          extraSpecialArgs = args host;
+        };
+
+      namedHomes =
+        system: hosts:
+        lib.mapAttrs' (host: cfg: lib.nameValuePair "${primaryUser.username}@${host}" cfg) (
+          lib.genAttrs hosts (mkHome system)
+        );
+
+      # Ключ `default` — только для nixd и явного `.#default`; авто-детект CLI
+      # (`home-manager switch --flake .`) использует `user@<hostname>`, поэтому
+      # неизвестный хост честно падает.
+      nixosAll = lib.genAttrs nixosHosts mkNixos;
+      darwinAll = lib.genAttrs darwinHosts mkDarwin;
+      homeAll = (namedHomes "x86_64-linux" nixosHosts) // (namedHomes "aarch64-darwin" darwinHosts);
+    in
+    {
+      formatter = {
+        x86_64-linux = inputs.nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;
+        aarch64-darwin = inputs.nixpkgs.legacyPackages.aarch64-darwin.nixfmt-tree;
       };
-
-    namedHomes = system: hosts:
-      lib.mapAttrs' (host: cfg: lib.nameValuePair "${primaryUser.username}@${host}" cfg)
-      (lib.genAttrs hosts (mkHome system));
-
-    # Ключ `default` — только для nixd и явного `.#default`; авто-детект CLI
-    # (`home-manager switch --flake .`) использует `user@<hostname>`, поэтому
-    # неизвестный хост честно падает.
-    nixosAll = lib.genAttrs nixosHosts mkNixos;
-    darwinAll = lib.genAttrs darwinHosts mkDarwin;
-    homeAll =
-      (namedHomes "x86_64-linux" nixosHosts)
-      // (namedHomes "aarch64-darwin" darwinHosts);
-  in {
-    nixosConfigurations = nixosAll // {default = nixosAll.darkstar;};
-    darwinConfigurations = darwinAll // {default = darwinAll.macos-sonoma-vm;};
-    homeConfigurations = homeAll // {default = homeAll."${primaryUser.username}@darkstar";};
-  };
+      nixosConfigurations = nixosAll // {
+        default = nixosAll.darkstar;
+      };
+      darwinConfigurations = darwinAll // {
+        default = darwinAll.macos-sonoma-vm;
+      };
+      homeConfigurations = homeAll // {
+        default = homeAll."${primaryUser.username}@darkstar";
+      };
+    };
 }

@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  primaryUser,
   ...
 }:
 let
@@ -12,6 +13,13 @@ in
     my.nixosModules.virt.hypervisor.enable = lib.mkEnableOption "KVM Hypervisor Configuration";
   };
   config = lib.mkIf cfg.enable {
+    # KVM/libvirt access for the primary user.
+    users.users.${primaryUser.username}.extraGroups = [
+      "libvirtd"
+      "kvm"
+      "qemu"
+    ];
+
     environment.systemPackages = with pkgs; [
       quickemu
       spice

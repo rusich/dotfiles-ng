@@ -22,18 +22,12 @@ in
   programs.fish.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
+  # wheel grants sudo; every other group is added by the feature modules that
+  # actually need it (desktop-common, virt_hypervisor, gaming, DAW, ...).
   users.users.${primaryUser.username} = {
     isNormalUser = true;
     description = primaryUser.fullName;
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-      "libvirtd"
-      "kvm"
-      "input"
-      "adbusers"
-      "qemu"
-    ];
+    extraGroups = [ "wheel" ];
   };
 
   # Bootloader how many configurations to show

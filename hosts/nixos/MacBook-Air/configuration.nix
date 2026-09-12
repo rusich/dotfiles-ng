@@ -31,16 +31,9 @@
   services.thermald.enable = true;
 
   # Users configuration
+  # `rusich` is created by modules/nixos/common.nix (from primaryUser).
   users = {
     users = {
-      rusich = {
-        isNormalUser = true;
-        description = "Ruslan Sergin";
-        extraGroups = [
-          "wheel"
-          "networkmanager"
-        ];
-      };
       bunny = {
         isNormalUser = true;
         description = "Sakhaya Sergina";

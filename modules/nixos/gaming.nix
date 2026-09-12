@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  primaryUser,
   ...
 }:
 let
@@ -12,6 +13,12 @@ in
     my.nixosModules.gaming.enable = lib.mkEnableOption "gaming software";
   };
   config = lib.mkIf cfg.enable {
+    # adb (android-tools) and raw input-device access for the primary user.
+    users.users.${primaryUser.username}.extraGroups = [
+      "adbusers"
+      "input"
+    ];
+
     environment.systemPackages = with pkgs; [
       opencomposite
       wayvr

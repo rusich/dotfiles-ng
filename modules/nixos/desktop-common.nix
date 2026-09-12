@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  primaryUser,
   ...
 }:
 let
@@ -12,6 +13,8 @@ in
     my.nixosModules.desktop-common.enable = lib.mkEnableOption "unified configuration for desktop computer, like: GUI Software, bluetooth, sound, etc";
   };
   config = lib.mkIf cfg.enable {
+    # Network control for the primary user.
+    users.users.${primaryUser.username}.extraGroups = [ "networkmanager" ];
 
     # Enable some useful desktop modules
     my.nixosModules.GDM.enable = true;

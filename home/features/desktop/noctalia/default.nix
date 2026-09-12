@@ -15,6 +15,7 @@ lib.mkIf pkgs.stdenv.isLinux {
   ];
 
   home.file = {
+    # out-of-store: noctalia may persist its settings here.
     ".config/noctalia/config.toml".source =
       config.lib.file.mkOutOfStoreSymlink config.homeModulesPath
       + "/features/desktop/noctalia/config.toml";

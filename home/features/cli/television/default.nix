@@ -1,8 +1,7 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 {
 
-  xdg.configFile."television".source =
-    config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/features/cli/television/config";
+  xdg.configFile."television".source = ./config;
 
   home.packages = with pkgs; [
     tldr

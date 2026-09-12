@@ -21,6 +21,7 @@
     graphviz # `dot` for rustaceanvim
   ];
 
+  # out-of-store: noctalia/matugen writes generated theme files into this dir.
   xdg.configFile."nvim".source =
     config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/features/editors/neovim/config";
 }

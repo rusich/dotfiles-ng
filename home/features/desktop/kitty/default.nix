@@ -1,5 +1,6 @@
 { config, ... }: {
   home.file = {
+    # out-of-store: noctalia writes generated themes into this dir.
     ".config/kitty".source =
       config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/features/desktop/kitty/config";
   };

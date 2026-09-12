@@ -137,6 +137,7 @@ in
   # Конфиги и скиллы из дотфайлов → стандартные места в домашней директории.
   # Скиллы мапятся в общую папку агентов (её видит и opencode, и другие агенты).
   home.file = {
+    # out-of-store: skills are edited live; will be moved per-project later.
     ".agents/skills".source =
       config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/features/opencode/skills";
   };

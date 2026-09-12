@@ -15,6 +15,7 @@
   #
   # # Map the niri config files to standard location
   home.file = {
+    # out-of-store: KeePassXC rewrites its config when settings change.
     ".config/keepassxc/keepassxc.ini".source =
       config.lib.file.mkOutOfStoreSymlink config.homeModulesPath
       + "/features/gui/keepassxc/keepassxc.ini";

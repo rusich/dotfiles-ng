@@ -1,0 +1,3 @@
+# Preset for macOS machines.
+{
+}

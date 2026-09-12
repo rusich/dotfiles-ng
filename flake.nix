@@ -89,12 +89,17 @@
           ];
         };
 
-      # home-manager per host: общий набор модулей (./home) для всех
-      # систем; различаются только pkgs (system) и hostname (per-host).
-      # Ключи вида `rusich@<host>` — штатная конвенция home-manager: при
-      # `home-manager switch --flake .` CLI сам находит `user@<hostname>`.
+      # home-manager: пользователи и машины обнаруживаются по файлам
+      # home/users/<user>/<host>.nix. Различаются только pkgs (system) и
+      # hostname (per-host). Ключи `user@<host>` — штатная конвенция
+      # home-manager: при `home-manager switch --flake .` CLI сам находит
+      # `user@<hostname>`.
+      homeUsers = builtins.attrNames (builtins.readDir ./home/users);
+      homeFile = user: host: ./home/users/${user}/${host}.nix;
+      hasHome = user: host: builtins.pathExists (homeFile user host);
+
       mkHome =
-        system: host:
+        system: user: host:
         inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = import inputs.nixpkgs {
             inherit system;
@@ -103,16 +108,25 @@
           modules = [
             overlayModule
             ./modules/common
-            ./home
+            (homeFile user host)
             # inputs.stylix.homeModules.stylix
           ];
-          extraSpecialArgs = args host;
+          extraSpecialArgs = {
+            inherit inputs;
+            hostname = host;
+            primaryUser = import ./home/users/${user}/user.nix;
+          };
         };
 
       namedHomes =
         system: hosts:
-        lib.mapAttrs' (host: cfg: lib.nameValuePair "${primaryUser.username}@${host}" cfg) (
-          lib.genAttrs hosts (mkHome system)
+        lib.listToAttrs (
+          lib.concatMap (
+            user:
+            map (host: lib.nameValuePair "${user}@${host}" (mkHome system user host)) (
+              builtins.filter (hasHome user) hosts
+            )
+          ) homeUsers
         );
 
       # Ключ `default` — только для nixd и явного `.#default`; авто-детект CLI

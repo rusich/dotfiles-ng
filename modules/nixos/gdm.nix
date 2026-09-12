@@ -46,10 +46,11 @@ in
               dir="''${dir%/}"
               # Даем группе gdm право на выполнение (x) только для КОРНЕВОЙ папки
               ${pkgs.acl}/bin/setfacl -m group:gdm:x "$dir"
-              # Даем группе gdm права на чтение и выполнение для .face файла
-              # Альтернативные файлы аватарок
-              for face_file in "/home/$USER/.face.icon" "/home/$USER/.icon"; do
-                if [ -e "$face_file" ]; then
+              # Даем группе gdm права на чтение и выполнение для .face файлов.
+              # Симлинки (например, в /nix/store) пропускаем: setfacl по цели
+              # на read-only store упал бы, а store-файлы и так world-readable.
+              for face_file in "$dir/.face" "$dir/.face.icon" "$dir/.icon"; do
+                if [ -e "$face_file" ] && [ ! -L "$face_file" ]; then
                   ${pkgs.acl}/bin/setfacl -m group:gdm:rx "$face_file"
                 fi
               done
@@ -75,9 +76,9 @@ in
             echo "[$(date)] Setting GDM ACL for $USER on logout" | logger -t gdm-acl
             # Даем GDM доступ к домашней папке
             ${pkgs.acl}/bin/setfacl -m group:gdm:x "$HOME"
-            # И к файлам аватарок
+            # И к файлам аватарок (симлинки в store пропускаем, см. выше)
             for face_file in "$HOME/.face" "$HOME/.face.icon" "$HOME/.icon"; do
-              if [ -e "$face_file" ]; then
+              if [ -e "$face_file" ] && [ ! -L "$face_file" ]; then
                 ${pkgs.acl}/bin/setfacl -m group:gdm:rx "$face_file"
               fi
             done

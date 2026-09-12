@@ -1,0 +1,22 @@
+{ config, pkgs, ... }:
+{
+
+  xdg.configFile."television".source =
+    config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/features/cli/television/config";
+
+  home.packages = with pkgs; [
+    tldr
+  ];
+  services.tldr-update.enable = true;
+
+  programs.television = {
+    enable = true;
+    enableFishIntegration = true;
+    enableBashIntegration = true;
+    enableZshIntegration = true;
+  };
+
+  programs.nix-search-tv = {
+    enableTelevisionIntegration = false;
+  };
+}

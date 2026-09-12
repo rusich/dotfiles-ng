@@ -1,0 +1,9 @@
+{ config, pkgs, ... }: {
+
+  home.file = {
+    # common
+    ".config/mimeapps.list".source =
+      config.lib.file.mkOutOfStoreSymlink config.homeModulesPath
+      + "/features/desktop/mimeapps/mimeapps.list";
+  };
+}

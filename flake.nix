@@ -89,7 +89,7 @@
           ];
         };
 
-      # home-manager per host: общий набор модулей (./modules/home) для всех
+      # home-manager per host: общий набор модулей (./home) для всех
       # систем; различаются только pkgs (system) и hostname (per-host).
       # Ключи вида `rusich@<host>` — штатная конвенция home-manager: при
       # `home-manager switch --flake .` CLI сам находит `user@<hostname>`.
@@ -103,7 +103,7 @@
           modules = [
             overlayModule
             ./modules/common
-            ./modules/home
+            ./home
             # inputs.stylix.homeModules.stylix
           ];
           extraSpecialArgs = args host;

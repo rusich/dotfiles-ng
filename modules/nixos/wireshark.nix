@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  userConfig,
+  primaryUser,
   pkgs,
   ...
 }:
@@ -19,7 +19,7 @@ in
       wireshark
     ];
 
-    users.users.${userConfig.username} = {
+    users.users.${primaryUser.username} = {
       isNormalUser = true;
       extraGroups = [
         "wireshark"

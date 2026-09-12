@@ -5,7 +5,7 @@
   hostname,
   lib,
   config,
-  userConfig,
+  primaryUser,
   ...
 }:
 let
@@ -22,9 +22,9 @@ in
   programs.fish.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.${userConfig.username} = {
+  users.users.${primaryUser.username} = {
     isNormalUser = true;
-    description = userConfig.fullName;
+    description = primaryUser.fullName;
     extraGroups = [
       "networkmanager"
       "wheel"

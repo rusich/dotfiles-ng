@@ -1,7 +1,7 @@
 {
   pkgs,
   config,
-  userConfig,
+  primaryUser,
   ...
 }:
 {
@@ -56,7 +56,7 @@
     NSGlobalDomain.AppleInterfaceStyle = "Dark";
     NSGlobalDomain.KeyRepeat = 2;
   };
-  system.primaryUser = userConfig.username;
+  system.primaryUser = primaryUser.username;
   homebrew = {
     enable = true;
     # CLI apps
@@ -83,7 +83,7 @@
   programs.fish.enable = true;
 
   # Fish as the login shell (nix-darwin has no users.defaultUserShell)
-  users.users.${userConfig.username}.shell = pkgs.fish;
+  users.users.${primaryUser.username}.shell = pkgs.fish;
 
   # Set Git commit hash for darwin-version.
   # system.configurationRevision = self.rev or self.dirtyRev or null;

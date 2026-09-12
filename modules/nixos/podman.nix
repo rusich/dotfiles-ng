@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  userConfig,
+  primaryUser,
   ...
 }:
 let
@@ -41,6 +41,6 @@ in
     # Сокет podman создаётся с группой "podman" (SocketGroup), симлинк
     # /run/docker.sock не поддерживает другую группу, поэтому пользователя
     # добавляем именно в "podman", а не "docker"
-    users.users.${userConfig.username}.extraGroups = [ "podman" ];
+    users.users.${primaryUser.username}.extraGroups = [ "podman" ];
   };
 }

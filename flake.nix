@@ -1,6 +1,11 @@
 {
   description = "NixOS, nix-darwin and home-manager config in one place!";
 
+  # NOTE: release version is duplicated below because flake inputs require
+  # literal URL strings (expressions are not allowed). Keep these three in sync:
+  #   - nixpkgs-stable       nixos-<release>
+  #   - nix-darwin           nix-darwin-<release>
+  #   - home-manager         release-<release>
   inputs = rec {
     nixpkgs-stable.url = "nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
@@ -10,14 +15,6 @@
       url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # nixd.url = "github:nix-community/nixd";
-
-    # using noctalia thiming now
-    # stylix = {
-    #   url = "github:nix-community/stylix/release-26.05";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
@@ -31,11 +28,6 @@
 
     musnix.url = "github:musnix/musnix";
 
-    # nix-yazi-plugins = {
-    #   url = "github:lordkekz/nix-yazi-plugins?ref=yazi-v0.2.5";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-
     firefox-addons = {
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -43,115 +35,94 @@
 
     # Use noctalia theme in steam. Overlay must be set in ./overlays/default.nix
     millennium.url = "github:SteamClientHomebrew/Millennium?dir=packages/nix";
-
   };
 
-  outputs =
-    { self, nixpkgs, ... }@inputs:
-    let
-      inherit (self) outputs;
+  outputs = inputs: let
+    inherit (inputs.nixpkgs) lib;
 
-      # Define user configuration
-      userConfig = {
-        fullName = "Ruslan Sergin";
-        username = "rusich";
-        email = "ruslan.sergin@gmail.com";
-      };
-
-      # Import overlays
-      myOverlays = import ./overlays { inherit inputs; };
-
-      # Common module for NixOS, nix-darwin and home-manager
-      commonModule = {
-        nixpkgs.overlays = myOverlays;
-        # nixpkgs.config.allowUnfree = true;
-      };
-
-      # Get host directories
-      nixosHosts = builtins.attrNames (builtins.readDir ./hosts/nixos);
-      darwinHosts = builtins.attrNames (builtins.readDir ./hosts/darwin);
-
-      # home-manager per host: общий набор модулей (./modules/home) для всех
-      # систем; различаются только pkgs (system) и hostname (per-host).
-      # Ключи вида `rusich@<host>` — штатная конвенция home-manager: при
-      # `home-manager switch --flake .` CLI сам находит `user@<hostname>`.
-      mkHome =
-        system: host:
-        inputs.home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs {
-            inherit system;
-            overlays = myOverlays;
-          };
-          modules = [
-            commonModule
-            ./modules/common
-            ./modules/home
-            # inputs.stylix.homeModules.stylix
-          ];
-          extraSpecialArgs = {
-            inherit inputs outputs self;
-            userConfig = userConfig;
-            hostname = host;
-          };
-        };
-      namedHomes =
-        system: hosts:
-        nixpkgs.lib.mapAttrs' (host: cfg: nixpkgs.lib.nameValuePair "${userConfig.username}@${host}" cfg) (
-          nixpkgs.lib.genAttrs hosts (mkHome system)
-        );
-    in
-    rec {
-      nixosConfigurations =
-        nixpkgs.lib.genAttrs nixosHosts (
-          host:
-          nixpkgs.lib.nixosSystem {
-            specialArgs = {
-              inherit inputs outputs;
-              userConfig = userConfig;
-              hostname = host;
-            };
-            modules = [
-              commonModule
-              ./modules/common
-              ./modules/nixos
-              ./hosts/nixos/${host}/configuration.nix
-              # inputs.stylix.nixosModules.stylix
-            ];
-          }
-        )
-        // {
-          default = nixosConfigurations.darkstar; # nixd stub
-        };
-
-      # home-manager: per-host конфигурации. Ключ `default` — только для nixd
-      # и явного `.#default`; авто-детект CLI (`home-manager switch --flake .`)
-      # использует `user@<hostname>`, поэтому неизвестный хост честно падает.
-      homeConfigurations =
-        (namedHomes "x86_64-linux" nixosHosts)
-        // (namedHomes "aarch64-darwin" darwinHosts)
-        // {
-          default = homeConfigurations."${userConfig.username}@darkstar"; # nixd stub
-        };
-
-      darwinConfigurations =
-        nixpkgs.lib.genAttrs darwinHosts (
-          host:
-          inputs.nix-darwin.lib.darwinSystem {
-            specialArgs = {
-              inherit inputs outputs;
-              userConfig = userConfig;
-              hostname = host;
-            };
-            modules = [
-              commonModule
-              ./modules/common
-              ./modules/darwin
-              ./hosts/darwin/${host}/configuration.nix
-            ];
-          }
-        )
-        // {
-          default = darwinConfigurations.macos-sonoma-vm; # nixd stub
-        };
+    # Define user configuration
+    primaryUser = {
+      fullName = "Ruslan Sergin";
+      username = "rusich";
+      email = "ruslan.sergin@gmail.com";
     };
+
+    # Import overlays
+    overlays = import ./overlays {inherit inputs;};
+
+    # Common module for NixOS, nix-darwin and home-manager
+    overlayModule = {
+      nixpkgs.overlays = overlays;
+      # nixpkgs.config.allowUnfree = true;
+    };
+
+    # Get host directories
+    nixosHosts = builtins.attrNames (builtins.readDir ./hosts/nixos);
+    darwinHosts = builtins.attrNames (builtins.readDir ./hosts/darwin);
+
+    # Module arguments shared by all systems
+    args = host: {
+      inherit inputs primaryUser;
+      hostname = host;
+    };
+
+    mkNixos = host:
+      lib.nixosSystem {
+        specialArgs = args host;
+        modules = [
+          overlayModule
+          ./modules/common
+          ./modules/nixos
+          ./hosts/nixos/${host}/configuration.nix
+          # inputs.stylix.nixosModules.stylix
+        ];
+      };
+
+    mkDarwin = host:
+      inputs.nix-darwin.lib.darwinSystem {
+        specialArgs = args host;
+        modules = [
+          overlayModule
+          ./modules/common
+          ./modules/darwin
+          ./hosts/darwin/${host}/configuration.nix
+        ];
+      };
+
+    # home-manager per host: общий набор модулей (./modules/home) для всех
+    # систем; различаются только pkgs (system) и hostname (per-host).
+    # Ключи вида `rusich@<host>` — штатная конвенция home-manager: при
+    # `home-manager switch --flake .` CLI сам находит `user@<hostname>`.
+    mkHome = system: host:
+      inputs.home-manager.lib.homeManagerConfiguration {
+        pkgs = import inputs.nixpkgs {
+          inherit system;
+          overlays = overlays;
+        };
+        modules = [
+          overlayModule
+          ./modules/common
+          ./modules/home
+          # inputs.stylix.homeModules.stylix
+        ];
+        extraSpecialArgs = args host;
+      };
+
+    namedHomes = system: hosts:
+      lib.mapAttrs' (host: cfg: lib.nameValuePair "${primaryUser.username}@${host}" cfg)
+      (lib.genAttrs hosts (mkHome system));
+
+    # Ключ `default` — только для nixd и явного `.#default`; авто-детект CLI
+    # (`home-manager switch --flake .`) использует `user@<hostname>`, поэтому
+    # неизвестный хост честно падает.
+    nixosAll = lib.genAttrs nixosHosts mkNixos;
+    darwinAll = lib.genAttrs darwinHosts mkDarwin;
+    homeAll =
+      (namedHomes "x86_64-linux" nixosHosts)
+      // (namedHomes "aarch64-darwin" darwinHosts);
+  in {
+    nixosConfigurations = nixosAll // {default = nixosAll.darkstar;};
+    darwinConfigurations = darwinAll // {default = darwinAll.macos-sonoma-vm;};
+    homeConfigurations = homeAll // {default = homeAll."${primaryUser.username}@darkstar";};
+  };
 }

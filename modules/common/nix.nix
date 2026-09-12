@@ -2,7 +2,7 @@
   inputs,
   pkgs,
   lib,
-  userConfig,
+  primaryUser,
   ...
 }:
 {
@@ -19,7 +19,7 @@
     # settings.auto-optimise-store = true; # every build
     settings = {
       trusted-users = [
-        "${userConfig.username}"
+        "${primaryUser.username}"
         "@wheel"
       ];
       experimental-features = [

@@ -2,7 +2,7 @@
   pkgs,
   config,
   lib,
-  userConfig,
+  primaryUser,
   ...
 }:
 let
@@ -32,7 +32,7 @@ in
       "L+ /opt/rocm - - - - ${pkgs.rocmPackages.clr}"
     ];
     # Убедитесь, что пользователь в группе video/render
-    users.users.${userConfig.username}.extraGroups = [
+    users.users.${primaryUser.username}.extraGroups = [
       "video"
       "render"
     ];

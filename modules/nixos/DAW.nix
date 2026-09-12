@@ -1,5 +1,5 @@
 {
-  userConfig,
+  primaryUser,
   pkgs,
   inputs,
   config,
@@ -30,7 +30,7 @@ in
     musnix.kernel.realtime = false;
 
     # Required groups
-    users.users.${userConfig.username} = {
+    users.users.${primaryUser.username} = {
       extraGroups = [
         "jackaudio"
         "audio"

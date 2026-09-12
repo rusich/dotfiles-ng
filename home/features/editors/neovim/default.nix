@@ -1,27 +1,34 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
+let
+  cfg = config.features.editors.neovim;
+in
 {
+  options.features.editors.neovim.enable = lib.mkEnableOption "neovim";
 
-  home.packages = with pkgs; [
-    tree-sitter # for latext TS
-    # need for display math formulas via Snacks.nvim
-    ghostscript_headless
-    texlive.combined.scheme-full
-    # for mermaid grapth support via Snacks.nvim
-    mermaid-cli
-    sqlite # for vim-dadbod
-    # LSP linters etc
-    nixfmt
-    nixd
-    # custom.nixd-nightly
-    gnumake
-    graphviz # `dot` for rustaceanvim
-  ];
+  config = lib.mkIf cfg.enable {
+    home.packages = with pkgs; [
+      tree-sitter # for latext TS
+      # need for display math formulas via Snacks.nvim
+      ghostscript_headless
+      texlive.combined.scheme-full
+      # for mermaid grapth support via Snacks.nvim
+      mermaid-cli
+      sqlite # for vim-dadbod
+      # LSP linters etc
+      nixfmt
+      nixd
+      # custom.nixd-nightly
+      gnumake
+      graphviz # `dot` for rustaceanvim
+    ];
 
-  # out-of-store: noctalia/matugen writes generated theme files into this dir.
-  xdg.configFile."nvim".source =
-    config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/features/editors/neovim/config";
+    # out-of-store: noctalia/matugen writes generated theme files into this dir.
+    xdg.configFile."nvim".source =
+      config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/features/editors/neovim/config";
+  };
 }

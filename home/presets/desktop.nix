@@ -1,3 +1,6 @@
-# Preset for desktop machines: feature toggles are enabled here.
+# Preset for Linux desktop machines.
 {
+  imports = [ ./shared.nix ];
+
+  # Linux-only desktop features (niri, noctalia, rofi, udiskie, ...) go here.
 }

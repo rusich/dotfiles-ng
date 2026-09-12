@@ -22,6 +22,7 @@
     ./bat.nix
     ./aliases.nix
     ./zoxide.nix
+    ./editorconfig.nix
     ../features
   ];
 

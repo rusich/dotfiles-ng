@@ -13,6 +13,8 @@ in
     nixos.profiles.desktop.enable = lib.mkEnableOption "unified configuration for desktop computer, like: GUI Software, bluetooth, sound, etc";
   };
   config = lib.mkIf cfg.enable {
+    networking.networkmanager.enable = true;
+
     # Network control for the primary user.
     users.users.${primaryUser.username}.extraGroups = [ "networkmanager" ];
 

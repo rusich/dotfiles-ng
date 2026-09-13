@@ -5,7 +5,6 @@
   hostname,
   lib,
   config,
-  primaryUser,
   ...
 }:
 let
@@ -17,18 +16,7 @@ let
 in
 {
 
-  # Fish as the default shell for all users (built-in NixOS mechanism)
-  users.defaultUserShell = pkgs.fish;
   programs.fish.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  # wheel grants sudo; every other group is added by the feature modules that
-  # actually need it (desktop-common, virt_hypervisor, gaming, DAW, ...).
-  users.users.${primaryUser.username} = {
-    isNormalUser = true;
-    description = primaryUser.fullName;
-    extraGroups = [ "wheel" ];
-  };
 
   # Bootloader how many configurations to show
   boot = {
@@ -43,7 +31,6 @@ in
   };
 
   # Networking
-  networking.networkmanager.enable = true;
   networking.hostName = hostname;
   environment.etc.smb-secrets.text = ''
     username=guest

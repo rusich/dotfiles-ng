@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, primaryUser, ... }:
 {
   home.packages = [ pkgs.gh ];
   programs.lazygit.enable = true;
@@ -7,8 +7,8 @@
     enable = true;
     settings = {
       user = {
-        name = "Ruslan Sergin";
-        email = "ruslan.sergin@gmail.com";
+        name = primaryUser.fullName;
+        email = primaryUser.email;
       };
       init.defaultBranch = "main";
       alias = {

@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.desktop.noctalia;
+  cfg = config.user.desktop.noctalia;
 in
 {
-  options.features.desktop.noctalia.enable = lib.mkEnableOption "noctalia shell and theming";
+  options.user.desktop.noctalia.enable = lib.mkEnableOption "noctalia shell and theming";
 
   config = lib.mkIf (cfg.enable && pkgs.stdenv.isLinux) {
     home.packages = with pkgs; [

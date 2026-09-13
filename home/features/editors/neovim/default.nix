@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.editors.neovim;
+  cfg = config.user.editors.neovim;
 in
 {
-  options.features.editors.neovim.enable = lib.mkEnableOption "neovim";
+  options.user.editors.neovim.enable = lib.mkEnableOption "neovim";
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [

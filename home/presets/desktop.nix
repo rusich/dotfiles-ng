@@ -2,7 +2,7 @@
 {
   imports = [ ./shared.nix ];
 
-  features.desktop = {
+  user.desktop = {
     niri.enable = true;
     noctalia.enable = true;
     rofi.enable = true;

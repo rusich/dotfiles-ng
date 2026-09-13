@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.gui.packages;
+  cfg = config.user.gui.packages;
 in
 {
-  options.features.gui.packages.enable = lib.mkEnableOption "common cross-platform GUI applications";
+  options.user.gui.packages.enable = lib.mkEnableOption "common cross-platform GUI applications";
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [

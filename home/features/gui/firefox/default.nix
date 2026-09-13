@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.features.gui.firefox;
+  cfg = config.user.gui.firefox;
 in
 {
-  options.features.gui.firefox.enable = lib.mkEnableOption "firefox";
+  options.user.gui.firefox.enable = lib.mkEnableOption "firefox";
 
   config = lib.mkIf cfg.enable {
     programs.firefox = {

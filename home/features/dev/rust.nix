@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.dev.rust;
+  cfg = config.user.dev.rust;
 in
 {
-  options.features.dev.rust.enable = lib.mkEnableOption "rust toolchain (rustup)";
+  options.user.dev.rust.enable = lib.mkEnableOption "rust toolchain (rustup)";
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [

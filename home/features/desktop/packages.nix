@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.desktop.packages;
+  cfg = config.user.desktop.packages;
 in
 {
-  options.features.desktop.packages.enable = lib.mkEnableOption "Linux desktop applications";
+  options.user.desktop.packages.enable = lib.mkEnableOption "Linux desktop applications";
 
   config = lib.mkIf (cfg.enable && pkgs.stdenv.isLinux) {
     programs.alacritty.enable = true;

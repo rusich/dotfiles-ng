@@ -4,10 +4,10 @@
   ...
 }:
 let
-  cfg = config.features.cli.translate_shell;
+  cfg = config.user.cli.translate_shell;
 in
 {
-  options.features.cli.translate_shell.enable = lib.mkEnableOption "translate-shell";
+  options.user.cli.translate_shell.enable = lib.mkEnableOption "translate-shell";
 
   config = lib.mkIf cfg.enable {
     programs.translate-shell = {

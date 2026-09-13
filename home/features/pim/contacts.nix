@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.pim.contacts;
+  cfg = config.user.pim.contacts;
 in
 {
-  options.features.pim.contacts.enable = lib.mkEnableOption "contacts (vdirsyncer + khard)";
+  options.user.pim.contacts.enable = lib.mkEnableOption "contacts (vdirsyncer + khard)";
 
   config = lib.mkIf cfg.enable {
     services.vdirsyncer.enable = true;

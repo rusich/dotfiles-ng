@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.cli.yazi;
+  cfg = config.user.cli.yazi;
 in
 {
-  options.features.cli.yazi.enable = lib.mkEnableOption "yazi file manager";
+  options.user.cli.yazi.enable = lib.mkEnableOption "yazi file manager";
 
   config = lib.mkIf cfg.enable {
     home.packages =

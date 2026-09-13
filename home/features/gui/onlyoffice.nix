@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.gui.onlyoffice;
+  cfg = config.user.gui.onlyoffice;
 in
 {
-  options.features.gui.onlyoffice.enable = lib.mkEnableOption "onlyoffice";
+  options.user.gui.onlyoffice.enable = lib.mkEnableOption "onlyoffice";
 
   config = lib.mkIf (cfg.enable && pkgs.stdenv.isLinux) {
     programs.onlyoffice = {

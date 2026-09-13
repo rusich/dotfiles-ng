@@ -5,5 +5,5 @@
   ];
 
   # Web-UI hub (traefik → phone) runs only on darkstar.
-  features.opencode.server.enable = true;
+  user.opencode.server.enable = true;
 }

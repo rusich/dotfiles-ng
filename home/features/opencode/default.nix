@@ -5,8 +5,8 @@
   ...
 }:
 let
-  cfg = config.features.opencode;
-  cfgServer = config.features.opencode.server;
+  cfg = config.user.opencode;
+  cfgServer = config.user.opencode.server;
   # Общая логика: пароль и имя пользователя хаба извлекаются из KeePassXC
   # (Secret Service) в рантайме через secret-tool. Ждём разблокировки базы
   # (retry-цикл), т.к. сервис может стартовать раньше KeePassXC.
@@ -65,8 +65,8 @@ let
 in
 {
   options = {
-    features.opencode.enable = lib.mkEnableOption "opencode";
-    features.opencode.server.enable = lib.mkEnableOption "opencode web UI hub (systemd user service)";
+    user.opencode.enable = lib.mkEnableOption "opencode";
+    user.opencode.server.enable = lib.mkEnableOption "opencode web UI hub (systemd user service)";
   };
 
   config = lib.mkIf cfg.enable {

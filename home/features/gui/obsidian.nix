@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.gui.obsidian;
+  cfg = config.user.gui.obsidian;
 in
 {
-  options.features.gui.obsidian.enable = lib.mkEnableOption "obsidian";
+  options.user.gui.obsidian.enable = lib.mkEnableOption "obsidian";
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [

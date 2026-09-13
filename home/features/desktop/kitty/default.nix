@@ -4,10 +4,10 @@
   ...
 }:
 let
-  cfg = config.features.desktop.kitty;
+  cfg = config.user.desktop.kitty;
 in
 {
-  options.features.desktop.kitty.enable = lib.mkEnableOption "kitty terminal";
+  options.user.desktop.kitty.enable = lib.mkEnableOption "kitty terminal";
 
   config = lib.mkIf cfg.enable {
     home.file = {

@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.desktop.udiskie;
+  cfg = config.user.desktop.udiskie;
 in
 {
-  options.features.desktop.udiskie.enable = lib.mkEnableOption "udiskie automount tray";
+  options.user.desktop.udiskie.enable = lib.mkEnableOption "udiskie automount tray";
 
   config = lib.mkIf (cfg.enable && pkgs.stdenv.isLinux) {
     services.udiskie = {

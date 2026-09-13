@@ -1,12 +1,12 @@
 # Cross-platform features enabled on all of the user's GUI machines.
 # Imported by desktop.nix and darwin.nix; servers do NOT import this.
 {
-  features.editors = {
+  user.editors = {
     neovim.enable = true;
     omnisharp.enable = true;
   };
 
-  features.cli = {
+  user.cli = {
     yazi.enable = true;
     television.enable = true;
     tmux.enable = true;
@@ -14,7 +14,7 @@
     translate_shell.enable = true;
   };
 
-  features.gui = {
+  user.gui = {
     firefox.enable = true;
     keepassxc.enable = true;
     obsidian.enable = true;
@@ -22,12 +22,12 @@
     packages.enable = true;
   };
 
-  features.pim = {
+  user.pim = {
     calendar.enable = true;
     contacts.enable = true;
   };
 
-  features.dev.rust.enable = true;
+  user.dev.rust.enable = true;
 
-  features.opencode.enable = true;
+  user.opencode.enable = true;
 }

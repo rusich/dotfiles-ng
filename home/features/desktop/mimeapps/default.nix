@@ -4,10 +4,10 @@
   ...
 }:
 let
-  cfg = config.features.desktop.mimeapps;
+  cfg = config.user.desktop.mimeapps;
 in
 {
-  options.features.desktop.mimeapps.enable =
+  options.user.desktop.mimeapps.enable =
     lib.mkEnableOption "mimeapps.list (XDG default applications)";
 
   config = lib.mkIf cfg.enable {

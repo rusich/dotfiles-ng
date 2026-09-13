@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.desktop.niri;
+  cfg = config.user.desktop.niri;
 in
 {
-  options.features.desktop.niri.enable = lib.mkEnableOption "niri compositor";
+  options.user.desktop.niri.enable = lib.mkEnableOption "niri compositor";
 
   config = lib.mkIf (cfg.enable && pkgs.stdenv.isLinux) {
     # required packages

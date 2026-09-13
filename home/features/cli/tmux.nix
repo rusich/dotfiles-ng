@@ -4,10 +4,10 @@
   ...
 }:
 let
-  cfg = config.features.cli.tmux;
+  cfg = config.user.cli.tmux;
 in
 {
-  options.features.cli.tmux.enable = lib.mkEnableOption "tmux";
+  options.user.cli.tmux.enable = lib.mkEnableOption "tmux";
 
   config = lib.mkIf cfg.enable {
     programs.tmux = {

@@ -4,10 +4,10 @@
   ...
 }:
 let
-  cfg = config.features.desktop.rofi;
+  cfg = config.user.desktop.rofi;
 in
 {
-  options.features.desktop.rofi.enable = lib.mkEnableOption "rofi launcher";
+  options.user.desktop.rofi.enable = lib.mkEnableOption "rofi launcher";
 
   config = lib.mkIf cfg.enable {
     home.file = {

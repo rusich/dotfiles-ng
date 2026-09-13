@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.pim.calendar;
+  cfg = config.user.pim.calendar;
 in
 {
-  options.features.pim.calendar.enable = lib.mkEnableOption "calendar (vdirsyncer + khal)";
+  options.user.pim.calendar.enable = lib.mkEnableOption "calendar (vdirsyncer + khal)";
 
   config = lib.mkIf cfg.enable {
     services.vdirsyncer.enable = true;

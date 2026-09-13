@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.features.gui.keepassxc;
+  cfg = config.user.gui.keepassxc;
 in
 {
-  options.features.gui.keepassxc.enable = lib.mkEnableOption "keepassxc";
+  options.user.gui.keepassxc.enable = lib.mkEnableOption "keepassxc";
 
   config = lib.mkIf cfg.enable {
     programs.keepassxc = {

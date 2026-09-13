@@ -2,5 +2,12 @@
 {
   imports = [ ./shared.nix ];
 
-  # Linux-only desktop features (niri, noctalia, rofi, udiskie, ...) go here.
+  features.desktop = {
+    niri.enable = true;
+    noctalia.enable = true;
+    rofi.enable = true;
+    kitty.enable = true;
+    udiskie.enable = true;
+    mimeapps.enable = true;
+  };
 }

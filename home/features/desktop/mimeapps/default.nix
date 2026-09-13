@@ -1,10 +1,21 @@
-{ config, pkgs, ... }: {
+{
+  config,
+  lib,
+  ...
+}:
+let
+  cfg = config.features.desktop.mimeapps;
+in
+{
+  options.features.desktop.mimeapps.enable =
+    lib.mkEnableOption "mimeapps.list (XDG default applications)";
 
-  home.file = {
-    # common
-    # out-of-store: desktop apps rewrite the default-applications list.
-    ".config/mimeapps.list".source =
-      config.lib.file.mkOutOfStoreSymlink config.homeModulesPath
-      + "/features/desktop/mimeapps/mimeapps.list";
+  config = lib.mkIf cfg.enable {
+    home.file = {
+      # out-of-store: desktop apps rewrite the default-applications list.
+      ".config/mimeapps.list".source =
+        config.lib.file.mkOutOfStoreSymlink config.homeModulesPath
+        + "/features/desktop/mimeapps/mimeapps.list";
+    };
   };
 }

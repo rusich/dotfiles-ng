@@ -21,4 +21,9 @@
     onlyoffice.enable = true;
     packages.enable = true;
   };
+
+  features.pim = {
+    calendar.enable = true;
+    contacts.enable = true;
+  };
 }

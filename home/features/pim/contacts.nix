@@ -1,78 +1,85 @@
 {
-  pkgs,
+  config,
   lib,
+  pkgs,
   ...
 }:
+let
+  cfg = config.features.pim.contacts;
+in
 {
-  services.vdirsyncer.enable = true;
-  programs.vdirsyncer.enable = true;
-  programs.khal.enable = true;
-  programs.khard.enable = true;
+  options.features.pim.contacts.enable = lib.mkEnableOption "contacts (vdirsyncer + khard)";
 
-  # Gnome online accounts must be enabled in NixOS configuration
-  # ../../modules/nixos/desktopCommon/gnome-online-accounts.nix
-  home.packages =
-    with pkgs;
-    [
-    ]
-    ++ lib.optionals pkgs.stdenv.isLinux [
-      gnome-contacts
-    ];
+  config = lib.mkIf cfg.enable {
+    services.vdirsyncer.enable = true;
+    programs.vdirsyncer.enable = true;
+    programs.khal.enable = true;
+    programs.khard.enable = true;
 
-  accounts.contact = {
-    basePath = ".contacts";
+    # Gnome online accounts must be enabled in NixOS configuration
+    # ../../modules/nixos/desktopCommon/gnome-online-accounts.nix
+    home.packages =
+      with pkgs;
+      [
+      ]
+      ++ lib.optionals pkgs.stdenv.isLinux [
+        gnome-contacts
+      ];
+
+    accounts.contact = {
+      basePath = ".contacts";
+    };
+
+    accounts.contact.accounts.nextcloud = {
+      local = {
+        encoding = "UTF-8";
+
+      };
+      remote = {
+        type = "carddav";
+        passwordCommand = [
+          "secret-tool"
+          "lookup"
+          "short"
+          "NEXTCLOUD_PASSWORD"
+        ];
+      };
+
+      khard = {
+        enable = true;
+        addressbooks = "default";
+      };
+
+      khal = {
+        # Можно напрямую с контактов подтякивать даты рождения.
+        # Не надо, так как NC уже создает необходимый календарь
+        enable = false;
+        readOnly = true;
+        color = "#ff0000";
+        collections = [
+          "default"
+        ];
+      };
+
+      vdirsyncer = {
+        enable = true;
+        collections = [
+          "default"
+        ];
+
+        urlCommand = [
+          "secret-tool"
+          "lookup"
+          "short"
+          "NEXTCLOUD_URL"
+        ];
+        userNameCommand = [
+          "secret-tool"
+          "lookup"
+          "short"
+          "NEXTCLOUD_USERNAME"
+        ];
+      };
+    };
   };
-
-  accounts.contact.accounts.nextcloud = {
-    local = {
-      encoding = "UTF-8";
-
-    };
-    remote = {
-      type = "carddav";
-      passwordCommand = [
-        "secret-tool"
-        "lookup"
-        "short"
-        "NEXTCLOUD_PASSWORD"
-      ];
-    };
-
-    khard = {
-      enable = true;
-      addressbooks = "default";
-    };
-
-    khal = {
-      # Можно напрямую с контактов подтякивать даты рождения.
-      # Не надо, так как NC уже создает необходимый календарь
-      enable = false;
-      readOnly = true;
-      color = "#ff0000";
-      collections = [
-        "default"
-      ];
-    };
-
-    vdirsyncer = {
-      enable = true;
-      collections = [
-        "default"
-      ];
-
-      urlCommand = [
-        "secret-tool"
-        "lookup"
-        "short"
-        "NEXTCLOUD_URL"
-      ];
-      userNameCommand = [
-        "secret-tool"
-        "lookup"
-        "short"
-        "NEXTCLOUD_USERNAME"
-      ];
-    };
-  };
-
 }

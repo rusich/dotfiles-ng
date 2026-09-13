@@ -1,87 +1,94 @@
 {
-  pkgs,
+  config,
   lib,
+  pkgs,
   ...
 }:
+let
+  cfg = config.features.pim.calendar;
+in
 {
-  services.vdirsyncer.enable = true;
-  programs.vdirsyncer.enable = true;
+  options.features.pim.calendar.enable = lib.mkEnableOption "calendar (vdirsyncer + khal)";
 
-  # Gnome online accounts must be enabled in NixOS configuration
-  # ../../modules/nixos/desktopCommon/gnome-online-accounts.nix
-  home.packages =
-    with pkgs;
-    [
-    ]
-    ++ lib.optionals pkgs.stdenv.isLinux [
-      gnome-calendar
-    ];
+  config = lib.mkIf cfg.enable {
+    services.vdirsyncer.enable = true;
+    programs.vdirsyncer.enable = true;
 
-  programs.khal = {
-    enable = true;
-    locale = {
-      timeformat = "%H:%M";
-      dateformat = "%Y-%m-%d";
-      longdateformat = "%Y-%m-%d";
-      datetimeformat = "%Y-%m-%d %H:%M";
-      longdatetimeformat = "%Y-%m-%d %H:%M";
-    };
-    settings = {
-      default = {
-        default_calendar = "personal";
-        timedelta = "7d";
-        highlight_event_days = true;
-      };
-      view = {
-        agenda_event_format = "{calendar-color}{cancelled}{start-end-time-style} {title}{repeat-symbol}{reset}";
-      };
-    };
-
-  };
-
-  accounts.calendar = {
-    basePath = ".calendars";
-  };
-
-  accounts.calendar.accounts.nextcloud = {
-    remote = {
-      type = "caldav";
-      passwordCommand = [
-        "secret-tool"
-        "lookup"
-        "short"
-        "NEXTCLOUD_PASSWORD"
+    # Gnome online accounts must be enabled in NixOS configuration
+    # ../../modules/nixos/desktopCommon/gnome-online-accounts.nix
+    home.packages =
+      with pkgs;
+      [
+      ]
+      ++ lib.optionals pkgs.stdenv.isLinux [
+        gnome-calendar
       ];
-    };
 
-    khal = {
+    programs.khal = {
       enable = true;
-      type = "discover";
+      locale = {
+        timeformat = "%H:%M";
+        dateformat = "%Y-%m-%d";
+        longdateformat = "%Y-%m-%d";
+        datetimeformat = "%Y-%m-%d %H:%M";
+        longdatetimeformat = "%Y-%m-%d %H:%M";
+      };
+      settings = {
+        default = {
+          default_calendar = "personal";
+          timedelta = "7d";
+          highlight_event_days = true;
+        };
+        view = {
+          agenda_event_format = "{calendar-color}{cancelled}{start-end-time-style} {title}{repeat-symbol}{reset}";
+        };
+      };
+
     };
 
-    vdirsyncer = {
-      enable = true;
-      metadata = [ "color" ];
-      collections = [
-        "personal"
-        "work"
-        "google"
-        "contact_birthdays"
-      ];
+    accounts.calendar = {
+      basePath = ".calendars";
+    };
 
-      urlCommand = [
-        "secret-tool"
-        "lookup"
-        "short"
-        "NEXTCLOUD_URL"
-      ];
-      userNameCommand = [
-        "secret-tool"
-        "lookup"
-        "short"
-        "NEXTCLOUD_USERNAME"
-      ];
+    accounts.calendar.accounts.nextcloud = {
+      remote = {
+        type = "caldav";
+        passwordCommand = [
+          "secret-tool"
+          "lookup"
+          "short"
+          "NEXTCLOUD_PASSWORD"
+        ];
+      };
+
+      khal = {
+        enable = true;
+        type = "discover";
+      };
+
+      vdirsyncer = {
+        enable = true;
+        metadata = [ "color" ];
+        collections = [
+          "personal"
+          "work"
+          "google"
+          "contact_birthdays"
+        ];
+
+        urlCommand = [
+          "secret-tool"
+          "lookup"
+          "short"
+          "NEXTCLOUD_URL"
+        ];
+        userNameCommand = [
+          "secret-tool"
+          "lookup"
+          "short"
+          "NEXTCLOUD_USERNAME"
+        ];
+      };
     };
   };
-
 }

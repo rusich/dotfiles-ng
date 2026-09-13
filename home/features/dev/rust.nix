@@ -1,27 +1,20 @@
-{ pkgs, lib, ... }:
-
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
-  rustDeps = with pkgs; [
-    rustup
-    # rustPlatform.bindgenHook
-    # openssl
-    # pkg-config
-  ];
+  cfg = config.features.dev.rust;
 in
 {
-  home.packages = rustDeps;
+  options.features.dev.rust.enable = lib.mkEnableOption "rust toolchain (rustup)";
 
-  home.sessionPath = [ "$HOME/.cargo/bin" ];
+  config = lib.mkIf cfg.enable {
+    home.packages = with pkgs; [
+      rustup
+    ];
 
-  # home.sessionVariables = {
-  #   PKG_CONFIG_PATH = "${pkgs.openssl}/lib/pkgconfig";
-  #   NIX_LD_LIBRARY_PATH = lib.makeLibraryPath (
-  #     with pkgs;
-  #     [
-  #       openssl
-  #       zlib
-  #       stdenv.cc.cc.lib
-  #     ]
-  #   );
-  # };
+    home.sessionPath = [ "$HOME/.cargo/bin" ];
+  };
 }

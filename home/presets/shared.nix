@@ -26,4 +26,8 @@
     calendar.enable = true;
     contacts.enable = true;
   };
+
+  features.dev.rust.enable = true;
+
+  features.opencode.enable = true;
 }

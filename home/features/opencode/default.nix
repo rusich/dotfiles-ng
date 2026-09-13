@@ -1,11 +1,12 @@
 {
   config,
-  pkgs,
-  hostname,
   lib,
+  pkgs,
   ...
 }:
 let
+  cfg = config.features.opencode;
+  cfgServer = config.features.opencode.server;
   # Общая логика: пароль и имя пользователя хаба извлекаются из KeePassXC
   # (Secret Service) в рантайме через secret-tool. Ждём разблокировки базы
   # (retry-цикл), т.к. сервис может стартовать раньше KeePassXC.
@@ -63,100 +64,107 @@ let
   '';
 in
 {
-  home.packages = with pkgs; [
-    lsof
-    curl
-    procps # для pgrep (opencode.nvim и `oc` ищут сервер через pgrep/lsof)
-    oc
-  ];
-
-  programs.opencode = {
-    enable = true;
-    package = pkgs.unstable.opencode;
-    settings = {
-      # Порт хаба для веб-UI (traefik → 4096). На инстансы проектов не влияет:
-      # те запускаются с явным `--port 0` (случайный свободный порт).
-      provider = {
-        ollama = {
-          npm = "@ai-sdk/openai-compatible";
-          options = {
-            baseURL = "http://127.0.0.1:11434/v1";
-          };
-
-          models = {
-            "qwen3.8:27b" = {
-              name = "Qwen 3.8 27B (local)";
-              tools = true;
-              limit = {
-                context = 65536;
-                output = 32768;
-              };
-            };
-            "qwen3-coder:30b" = {
-              name = "Qwen 3 Coder 30B (local)";
-              tools = true;
-              limit = {
-                context = 65536;
-                output = 32768;
-              };
-            };
-
-          };
-
-        };
-      };
-      server = {
-        port = 4096;
-      };
-      permission = {
-        edit = "ask";
-        external_directory = {
-          "*" = "ask";
-          "/tmp/**" = "allow";
-        };
-      };
-      # Railway MCP: подключается через Railway CLI (railway mcp) и использует
-      # авторизацию `railway login`. CLI установлен через npm в ~/.local/bin
-      # (nixpkgs-версия 5.30.4 < требуемых 5.44.0). Когда nixpkgs обновится до
-      # >= 5.44.0 — заменить на pkgs.railway и путь "railway".
-      mcp = {
-        railway = {
-          type = "local";
-          command = [
-            "/home/rusich/.local/bin/railway"
-            "mcp"
-          ];
-          enabled = false;
-        };
-
-      };
-      plugin = [ "superpowers@git+https://github.com/obra/superpowers.git" ];
-    };
+  options = {
+    features.opencode.enable = lib.mkEnableOption "opencode";
+    features.opencode.server.enable = lib.mkEnableOption "opencode web UI hub (systemd user service)";
   };
 
-  # Конфиги и скиллы из дотфайлов → стандартные места в домашней директории.
-  # Скиллы мапятся в общую папку агентов (её видит и opencode, и другие агенты).
-  home.file = {
-    # out-of-store: skills are edited live; will be moved per-project later.
-    ".agents/skills".source =
-      config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/features/opencode/skills";
-  };
+  config = lib.mkIf cfg.enable {
+    home.packages = with pkgs; [
+      lsof
+      curl
+      procps # для pgrep (opencode.nvim и `oc` ищут сервер через pgrep/lsof)
+      oc
+    ];
 
-  # Постоянный хаб для веб-UI: к нему ходит traefik (телефон). Сессии nvim/TUI
-  # живут на инстансах проектов (см. oc) и с вебом не общие. Включается только
-  # на darkstar (hostname прокидывается из flake.nix через extraSpecialArgs).
-  systemd.user.services.opencode-web = lib.mkIf (hostname == "darkstar") {
-    Unit = {
-      Description = "opencode server (web UI for phone via traefik)";
-      After = [ "graphical-session.target" ];
+    programs.opencode = {
+      enable = true;
+      package = pkgs.unstable.opencode;
+      settings = {
+        # Порт хаба для веб-UI (traefik → 4096). На инстансы проектов не влияет:
+        # те запускаются с явным `--port 0` (случайный свободный порт).
+        provider = {
+          ollama = {
+            npm = "@ai-sdk/openai-compatible";
+            options = {
+              baseURL = "http://127.0.0.1:11434/v1";
+            };
+
+            models = {
+              "qwen3.8:27b" = {
+                name = "Qwen 3.8 27B (local)";
+                tools = true;
+                limit = {
+                  context = 65536;
+                  output = 32768;
+                };
+              };
+              "qwen3-coder:30b" = {
+                name = "Qwen 3 Coder 30B (local)";
+                tools = true;
+                limit = {
+                  context = 65536;
+                  output = 32768;
+                };
+              };
+
+            };
+
+          };
+        };
+        server = {
+          port = 4096;
+        };
+        permission = {
+          edit = "ask";
+          external_directory = {
+            "*" = "ask";
+            "/tmp/**" = "allow";
+          };
+        };
+        # Railway MCP: подключается через Railway CLI (railway mcp) и использует
+        # авторизацию `railway login`. CLI установлен через npm в ~/.local/bin
+        # (nixpkgs-версия 5.30.4 < требуемых 5.44.0). Когда nixpkgs обновится до
+        # >= 5.44.0 — заменить на pkgs.railway и путь "railway".
+        mcp = {
+          railway = {
+            type = "local";
+            command = [
+              "/home/rusich/.local/bin/railway"
+              "mcp"
+            ];
+            enabled = false;
+          };
+
+        };
+        plugin = [ "superpowers@git+https://github.com/obra/superpowers.git" ];
+      };
     };
-    Service = {
-      ExecStart = "${opencode-web}";
-      Restart = "on-failure";
-      RestartSec = 5;
+
+    # Конфиги и скиллы из дотфайлов → стандартные места в домашней директории.
+    # Скиллы мапятся в общую папку агентов (её видит и opencode, и другие агенты).
+    home.file = {
+      # out-of-store: skills are edited live; will be moved per-project later.
+      ".agents/skills".source =
+        config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/features/opencode/skills";
     };
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
+
+    # Постоянный хаб для веб-UI: к нему ходит traefik (телефон). Сессии nvim/TUI
+    # живут на инстансах проектов (см. oc) и с вебом не общие. Включается только
+    # на darkstar (hostname прокидывается из flake.nix через extraSpecialArgs).
+    systemd.user.services.opencode-web = lib.mkIf cfgServer.enable {
+      Unit = {
+        Description = "opencode server (web UI for phone via traefik)";
+        After = [ "graphical-session.target" ];
+      };
+      Service = {
+        ExecStart = "${opencode-web}";
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+      Install = {
+        WantedBy = [ "graphical-session.target" ];
+      };
     };
   };
 }

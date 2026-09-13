@@ -1,9 +1,9 @@
+# Auto-load every CLI feature in this directory.
+{ lib, ... }:
+let
+  entries = builtins.readDir ./.;
+  isModule = name: type: name != "default.nix" && (type == "directory" || lib.hasSuffix ".nix" name);
+in
 {
-  imports = [
-    ./yazi.nix
-    ./television
-    ./tmux.nix
-    ./nix-search-tv.nix
-    ./translate_shell.nix
-  ];
+  imports = lib.mapAttrsToList (name: _: ./. + "/${name}") (lib.filterAttrs isModule entries);
 }

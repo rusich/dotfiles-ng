@@ -1,5 +1,9 @@
+# Auto-load every dev feature in this directory.
+{ lib, ... }:
+let
+  entries = builtins.readDir ./.;
+  isModule = name: type: name != "default.nix" && (type == "directory" || lib.hasSuffix ".nix" name);
+in
 {
-  imports = [
-    ./rust.nix
-  ];
+  imports = lib.mapAttrsToList (name: _: ./. + "/${name}") (lib.filterAttrs isModule entries);
 }

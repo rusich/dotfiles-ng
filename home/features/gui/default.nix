@@ -1,9 +1,9 @@
+# Auto-load every GUI feature in this directory.
+{ lib, ... }:
+let
+  entries = builtins.readDir ./.;
+  isModule = name: type: name != "default.nix" && (type == "directory" || lib.hasSuffix ".nix" name);
+in
 {
-  imports = [
-    ./firefox
-    ./keepassxc
-    ./obsidian.nix
-    ./onlyoffice.nix
-    ./packages.nix
-  ];
+  imports = lib.mapAttrsToList (name: _: ./. + "/${name}") (lib.filterAttrs isModule entries);
 }

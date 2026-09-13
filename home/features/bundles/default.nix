@@ -1,4 +1,4 @@
-# Auto-load every feature group (and meta-feature bundles) in this directory.
+# Auto-load every meta-feature bundle in this directory.
 { lib, ... }:
 let
   entries = builtins.readDir ./.;

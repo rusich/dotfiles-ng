@@ -6,7 +6,8 @@
 #   3. рядом положить hardware-configuration.nix (nixos-generate-config на сервере
 #      или nixos-anywhere --generate-hardware-config, когда добавим disko)
 #   4. создать home/users/rusich/<server>.nix:
-#        { ... }: { imports = [ ./common.nix ../../presets/server.nix ]; }
+#        { ... }: { imports = [ ./home.nix ]; }   # база, без user.bundle.*
+#      (user.bundle.* добавляют GUI/out-of-store фичи — серверу не нужны)
 #   5. с десктопа:
 #        nixos-rebuild switch --flake .#<server> --target-host root@<server>
 #

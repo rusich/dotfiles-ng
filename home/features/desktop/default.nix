@@ -1,11 +1,9 @@
+# Auto-load every desktop feature in this directory.
+{ lib, ... }:
+let
+  entries = builtins.readDir ./.;
+  isModule = name: type: name != "default.nix" && (type == "directory" || lib.hasSuffix ".nix" name);
+in
 {
-  imports = [
-    ./niri
-    ./noctalia
-    ./rofi
-    ./kitty
-    ./udiskie.nix
-    ./mimeapps
-    ./packages.nix
-  ];
+  imports = lib.mapAttrsToList (name: _: ./. + "/${name}") (lib.filterAttrs isModule entries);
 }

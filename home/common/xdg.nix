@@ -1,9 +1,4 @@
 {
-  pkgs,
-  lib,
-  ...
-}:
-{
   # Включаем управление XDG User Directories (но с кастомными путями)
   xdg.userDirs = {
     enable = true;
@@ -17,11 +12,5 @@
     pictures = "$HOME/Nextcloud/Pictures";
     publicShare = "$HOME/Public";
     setSessionVariables = true;
-  };
-
-  xdg.portal = lib.mkIf pkgs.stdenv.isLinux {
-    enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    config.common.default = [ "gtk" ];
   };
 }

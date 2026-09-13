@@ -5,26 +5,15 @@
   config,
   ...
 }:
+let
+  entries = builtins.readDir ./.;
+  isModule = name: type: name != "default.nix" && (type == "directory" || lib.hasSuffix ".nix" name);
+in
 {
   imports = [
-    ./nix.nix
-    ./xdg.nix
-    ./vars.nix
-    ./path.nix
-    ./shell.nix
-    ./packages.nix
-    ./fish.nix
-    ./starship.nix
-    ./direnv.nix
-    ./dircolors.nix
-    ./git.nix
-    ./delta.nix
-    ./bat.nix
-    ./aliases.nix
-    ./zoxide.nix
-    ./editorconfig.nix
     ../features
-  ];
+  ]
+  ++ lib.mapAttrsToList (name: _: ./. + "/${name}") (lib.filterAttrs isModule entries);
 
   options = {
     homePath = lib.mkOption {

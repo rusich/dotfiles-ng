@@ -6,5 +6,6 @@
     ./kitty
     ./udiskie.nix
     ./mimeapps
+    ./packages.nix
   ];
 }

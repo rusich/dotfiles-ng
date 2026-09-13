@@ -9,5 +9,6 @@
     kitty.enable = true;
     udiskie.enable = true;
     mimeapps.enable = true;
+    packages.enable = true;
   };
 }

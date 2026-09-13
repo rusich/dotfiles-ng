@@ -19,5 +19,6 @@
     keepassxc.enable = true;
     obsidian.enable = true;
     onlyoffice.enable = true;
+    packages.enable = true;
   };
 }

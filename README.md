@@ -6,32 +6,50 @@
 
 ```
 .
-├── flake.nix          # Основной flake файл
+├── flake.nix          # inputs + outputs (тонкий, логика сборки тут же)
 ├── flake.lock         # Зависимости flakes
-├── hosts/             # Конфигурации хостов
-│   ├── nixos/         # Конфигурации NixOS
-│   │   ├── darkstar/  # Конфигурация для хоста darkstar
-│   │   ├── matebook/  # Конфигурация для хоста matebook
-│   │   └── nixos-vm/  # Конфигурация для виртуальной машины
-│   └── darwin/        # Конфигурации Darwin (macOS)
-├── modules/           # Общие модули
+├── hosts/             # Конфигурации хостов (авто-обнаруживаются по папкам)
+│   ├── nixos/         # NixOS: darkstar, matebook, MacBook-Air
+│   └── darwin/        # nix-darwin (macOS): macos-sonoma-vm
+├── home/              # home-manager слой
+│   ├── common/        # Безусловная база для всех (shell, git, xdg, CLI)
+│   ├── features/      # Опциональные фичи (options.features.*.enable)
+│   │   ├── editors/ cli/ desktop/ gui/ pim/ dev/ opencode/
+│   ├── presets/       # Наборы фич по классу машины
+│   │   ├── shared.nix # Кроссплатформенные фичи (desktop + darwin)
+│   │   ├── desktop.nix# Linux-десктоп (импортит shared)
+│   │   ├── darwin.nix # macOS (импортит shared)
+│   │   └── server.nix # Минимальный сервер (без shared)
+│   └── users/         # Пользователи: home/users/<user>/{user,common,<host>}.nix
+├── modules/           # Переиспользуемые системные модули
+│   ├── common/        # Общее для NixOS, darwin и home-manager
+│   ├── nixos/         # NixOS-модули (авто-импорт: my.nixosModules.*)
+│   └── darwin/        # nix-darwin модули
 ├── overlays/          # Кастомные overlays
 └── pkgs/              # Кастомные пакеты
 ```
+
+## Как это устроено
+
+- **Хосты** обнаруживаются по папкам `hosts/nixos/<host>` и `hosts/darwin/<host>`.
+- **Пользователи и их машины** — по файлам `home/users/<user>/<host>.nix`;
+  ключ `user@host` появляется в `homeConfigurations` автоматически.
+- **Фичи** включаются через `features.<group>.<name>.enable = true` в
+  `home/presets/*` или в `home/users/<user>/<host>.nix`.
+- **Десктопы/macOS** используют standalone home-manager; **серверы** (в будущем) —
+  home-manager как NixOS-модуль (тот же файл `home/users/<user>/<host>.nix`).
 
 ## Первоначальная настройка на новой системе NixOS
 
 ### 1. Включение экспериментальных функций flakes
 
-Перед использованием этой конфигурации необходимо включить экспериментальные функции flakes в Nix. Добавьте следующие строки в `/etc/nixos/configuration.nix`:
-
 ```nix
 {
-    nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 }
 ```
 
-Или добавьте флаги в командной строке при запуске nix команд:
+Или через переменную окружения:
 
 ```bash
 export NIX_CONFIG="experimental-features = nix-command flakes"
@@ -44,92 +62,61 @@ git clone https://github.com/rusich/dotfiles-ng.git ~/.dotfiles
 cd ~/.dotfiles
 ```
 
-### 3. Установка конфигурации для конкретного хоста
-
-#### Для хоста `darkstar`:
+### 3. Установка конфигурации
 
 ```bash
-sudo nixos-rebuild switch --flake ~/.dotfiles#darkstar
+# NixOS
+sudo nixos-rebuild switch --flake .#darkstar
+
+# home-manager (standalone, авто-детект user@hostname)
+home-manager switch --flake .
+# или явно:
+home-manager switch --flake .#rusich@darkstar
+
+# macOS (nix-darwin)
+darwin-rebuild switch --flake .#macos-sonoma-vm
 ```
 
-
-### 4. Обновление конфигурации
-
-Для обновления всех входов (inputs) flakes:
+### 4. Обновление
 
 ```bash
-nix flake update
+nix flake update                 # обновить inputs
+sudo nixos-rebuild switch --flake .#<host>
+home-manager switch --flake .    # применить home-изменения
 ```
 
-Для применения обновлений:
-
-```bash
-sudo nixos-rebuild switch --flake ~/.dotfiles#<hostname>
-```
-
-### 5. Управление поколениями (generations)
-
-Просмотр доступных поколений:
+### 5. Управление поколениями
 
 ```bash
 sudo nix-env --list-generations --profile /nix/var/nix/profiles/system
-```
-
-Откат к предыдущему поколению:
-
-```bash
 sudo nixos-rebuild switch --rollback
 ```
 
-### 6. Домашняя конфигурация (home-manager)
+## Форматирование
 
-Для применения домашней конфигурации:
+Канонический форматтер — `nixfmt` (RFC-стиль), заведён как `formatter` во флейке:
 
 ```bash
-home-manager switch --flake ~/.dotfiles#rusich
+nix fmt          # отформатировать все .nix файлы
 ```
 
-## Особенности конфигурации
+Редактор (nixd) настроен форматировать им при сохранении.
 
-### Входы (inputs)
+## Входы (inputs)
 
-Конфигурация использует следующие основные входы:
-- `nixpkgs` (25.11 stable)
-- `nixpkgs-unstable` (нестабильная ветка)
-- `home-manager` (25.11)
-- `nix-darwin` (для macOS)
-- `stylix` (темизация)
-- Дополнительные пакеты и утилиты
+- `nixpkgs-stable` — `nixos-26.05` (он же `nixpkgs`)
+- `nixpkgs-unstable` — `nixos-unstable`
+- `home-manager` — `release-26.05`
+- `nix-darwin` — `nix-darwin-26.05`
+- `nixos-hardware`, `musnix`, `firefox-addons`, `millennium`
 
-### Overlays
-
-Кастомные overlays находятся в директории `overlays/` и включают:
-- Обновления для специфичных пакетов
-- Кастомные сборки
-- Патчи для существующих пакетов
+Версия релиза указана в трёх input-ах; flake-схема требует строковых
+литералов в `url`, поэтому вынести её в переменную нельзя — менять синхронно.
 
 ## Устранение неполадок
 
-### Проблемы с кэшем
-
-Если возникают проблемы с кэшем, можно очистить его:
-
 ```bash
-nix-collect-garbage -d
-```
-
-### Проблемы с зависимостями
-
-Для проверки зависимостей:
-
-```bash
-nix flake check
-```
-
-### Проблемы с сборкой
-
-Для отладки сборки:
-
-```bash
-sudo nixos-rebuild switch --flake ~/.dotfiles#<hostname> --show-trace
+nix-collect-garbage -d                                      # кэш
+nix flake check                                             # зависимости
+sudo nixos-rebuild switch --flake .#<host> --show-trace     # отладка сборки
 ```

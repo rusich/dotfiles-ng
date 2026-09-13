@@ -9,18 +9,18 @@
   ];
 
   # Using modules
-  my.nixosModules.amdgpu.enable = true;
-  my.nixosModules.desktop-common.enable = true;
-  my.nixosModules.gaming.enable = true;
-  my.nixosModules.DAW.enable = true;
-  my.nixosModules.gamedev.enable = true;
-  my.nixosModules.virt.hypervisor.enable = true;
-  my.nixosModules.virt.client.enable = true;
-  my.nixosModules.gnome.enable = true;
-  my.nixosModules.embedded-dev.enable = true;
-  my.nixosModules.wireshark.enable = true;
-  my.nixosModules.podman.enable = true;
-  my.nixosModules.ollama.enable = true;
+  nixos.hardware.amdgpu.enable = true;
+  nixos.profiles.desktop.enable = true;
+  nixos.profiles.gaming.enable = true;
+  nixos.profiles.daw.enable = true;
+  nixos.profiles.gamedev.enable = true;
+  nixos.virtualisation.hypervisor.enable = true;
+  nixos.virtualisation.client.enable = true;
+  nixos.profiles.gnome.enable = true;
+  nixos.profiles.embedded.enable = true;
+  nixos.services.wireshark.enable = true;
+  nixos.services.podman.enable = true;
+  nixos.services.ollama.enable = true;
 
   console = {
     font = "ter-v24b";

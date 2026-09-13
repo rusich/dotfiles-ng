@@ -6,9 +6,9 @@
 }:
 
 {
-  options.my.nixosModules.ollama.enable = lib.mkEnableOption "ollama service";
+  options.nixos.services.ollama.enable = lib.mkEnableOption "ollama service";
 
-  config = lib.mkIf config.my.nixosModules.ollama.enable {
+  config = lib.mkIf config.nixos.services.ollama.enable {
     users.users.ollama = {
       isSystemUser = true;
       extraGroups = [

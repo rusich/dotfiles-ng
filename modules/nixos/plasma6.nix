@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.plasma6;
+  cfg = config.nixos.profiles.plasma6;
 in
 {
   options = {
-    my.nixosModules.plasma6.enable = lib.mkEnableOption "Plasma 6 Desktop Environment";
+    nixos.profiles.plasma6.enable = lib.mkEnableOption "Plasma 6 Desktop Environment";
   };
   config = lib.mkIf cfg.enable {
     services.desktopManager.plasma6.enable = true;

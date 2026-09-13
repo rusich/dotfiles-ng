@@ -6,11 +6,11 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.gaming;
+  cfg = config.nixos.profiles.gaming;
 in
 {
   options = {
-    my.nixosModules.gaming.enable = lib.mkEnableOption "gaming software";
+    nixos.profiles.gaming.enable = lib.mkEnableOption "gaming software";
   };
   config = lib.mkIf cfg.enable {
     # adb (android-tools) and raw input-device access for the primary user.

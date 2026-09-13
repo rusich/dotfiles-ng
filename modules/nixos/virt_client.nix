@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.virt.client;
+  cfg = config.nixos.virtualisation.client;
 in
 {
   options = {
-    my.nixosModules.virt.client.enable = lib.mkEnableOption "virtualization clients";
+    nixos.virtualisation.client.enable = lib.mkEnableOption "virtualization clients";
   };
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [

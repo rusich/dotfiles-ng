@@ -56,7 +56,7 @@ in
 {
   # Определяем опцию, которая будет содержать список пакетов
   options = {
-    my.nixosAndDarwinPackages = lib.mkOption {
+    packages.common = lib.mkOption {
       type = lib.types.listOf lib.types.package;
       default = nixosAndDarwinPackages;
       readOnly = true;

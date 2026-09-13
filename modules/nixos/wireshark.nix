@@ -6,11 +6,11 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.wireshark;
+  cfg = config.nixos.services.wireshark;
 in
 {
   options = {
-    my.nixosModules.wireshark.enable = lib.mkEnableOption "Wireshark and add users to wireshark group";
+    nixos.services.wireshark.enable = lib.mkEnableOption "Wireshark and add users to wireshark group";
   };
   config = lib.mkIf cfg.enable {
     programs.wireshark.enable = true;

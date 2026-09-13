@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.embedded-dev;
+  cfg = config.nixos.profiles.embedded;
 in
 {
   options = {
-    my.nixosModules.embedded-dev.enable = lib.mkEnableOption "Enable Embedded development options";
+    nixos.profiles.embedded.enable = lib.mkEnableOption "Enable Embedded development options";
   };
   config = lib.mkIf cfg.enable {
 

@@ -6,11 +6,11 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.hashcat;
+  cfg = config.nixos.profiles.hashcat;
 in
 {
   options = {
-    my.nixosModules.hashcat.enable = lib.mkEnableOption "packages and settings related to Hashcat";
+    nixos.profiles.hashcat.enable = lib.mkEnableOption "packages and settings related to Hashcat";
   };
   config = lib.mkIf cfg.enable {
     # В конфигурации NixOS (/etc/nixos/configuration.nix)

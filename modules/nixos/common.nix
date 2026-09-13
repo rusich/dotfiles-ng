@@ -111,6 +111,6 @@ in
       lshw
       iotop
     ]
-    ++ config.my.nixosAndDarwinPackages;
+    ++ config.packages.common;
 
 }

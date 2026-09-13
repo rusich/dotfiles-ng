@@ -6,18 +6,18 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.desktop-common;
+  cfg = config.nixos.profiles.desktop;
 in
 {
   options = {
-    my.nixosModules.desktop-common.enable = lib.mkEnableOption "unified configuration for desktop computer, like: GUI Software, bluetooth, sound, etc";
+    nixos.profiles.desktop.enable = lib.mkEnableOption "unified configuration for desktop computer, like: GUI Software, bluetooth, sound, etc";
   };
   config = lib.mkIf cfg.enable {
     # Network control for the primary user.
     users.users.${primaryUser.username}.extraGroups = [ "networkmanager" ];
 
     # Enable some useful desktop modules
-    my.nixosModules.GDM.enable = true;
+    nixos.profiles.gdm.enable = true;
 
     # Appimage support
     programs.appimage.enable = true;

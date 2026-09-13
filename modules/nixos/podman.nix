@@ -6,11 +6,11 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.podman;
+  cfg = config.nixos.services.podman;
 in
 {
   options = {
-    my.nixosModules.podman.enable = lib.mkEnableOption "Podman with Docker compatibility (docker CLI alias and /run/docker.sock)";
+    nixos.services.podman.enable = lib.mkEnableOption "Podman with Docker compatibility (docker CLI alias and /run/docker.sock)";
   };
 
   config = lib.mkIf cfg.enable {

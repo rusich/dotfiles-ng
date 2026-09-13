@@ -19,7 +19,7 @@
       cowsay
       firefox
     ]
-    ++ config.my.nixosAndDarwinPackages;
+    ++ config.packages.common;
 
   # programs.nix-search-tv.enableTelevisionIntegration = true;
 

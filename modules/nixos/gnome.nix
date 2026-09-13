@@ -6,11 +6,11 @@
 }:
 with lib;
 let
-  cfg = config.my.nixosModules.gnome;
+  cfg = config.nixos.profiles.gnome;
 in
 {
   options = {
-    my.nixosModules.gnome.enable = lib.mkEnableOption "GNOME Desktop Environment";
+    nixos.profiles.gnome.enable = lib.mkEnableOption "GNOME Desktop Environment";
   };
   config = lib.mkIf cfg.enable {
     services.desktopManager.gnome.enable = true;

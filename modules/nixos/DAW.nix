@@ -7,11 +7,11 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.DAW;
+  cfg = config.nixos.profiles.daw;
 in
 {
   options = {
-    my.nixosModules.DAW.enable = lib.mkEnableOption "packages related to Digital Audio Workstation";
+    nixos.profiles.daw.enable = lib.mkEnableOption "packages related to Digital Audio Workstation";
   };
 
   imports = [

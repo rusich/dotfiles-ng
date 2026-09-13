@@ -6,11 +6,11 @@
 }:
 
 let
-  cfg = config.my.nixosModules.gamedev;
+  cfg = config.nixos.profiles.gamedev;
 in
 {
   options = {
-    my.nixosModules.gamedev.enable = lib.mkEnableOption "packages related to Game Development";
+    nixos.profiles.gamedev.enable = lib.mkEnableOption "packages related to Game Development";
   };
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [

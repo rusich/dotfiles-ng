@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.amdgpu;
+  cfg = config.nixos.hardware.amdgpu;
 in
 {
   options = {
-    my.nixosModules.amdgpu.enable = lib.mkEnableOption "amdgpu driver support and tweaks";
+    nixos.hardware.amdgpu.enable = lib.mkEnableOption "amdgpu driver support and tweaks";
 
   };
   config = lib.mkIf cfg.enable {

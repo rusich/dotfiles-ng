@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.virt.guest;
+  cfg = config.nixos.virtualisation.guest;
 in
 {
   options = {
-    my.nixosModules.virt.guest.enable = lib.mkEnableOption "virtualization suport for guest system";
+    nixos.virtualisation.guest.enable = lib.mkEnableOption "virtualization suport for guest system";
   };
   config = lib.mkIf cfg.enable {
     # ============================================

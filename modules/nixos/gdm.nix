@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.GDM;
+  cfg = config.nixos.profiles.gdm;
 in
 {
   options = {
-    my.nixosModules.GDM.enable = lib.mkEnableOption "Enable GMD display manager with some useful augmentations";
+    nixos.profiles.gdm.enable = lib.mkEnableOption "Enable GMD display manager with some useful augmentations";
   };
 
   config = lib.mkIf cfg.enable {

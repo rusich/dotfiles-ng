@@ -10,13 +10,13 @@
   ];
 
   # Enable custom modules
-  my.nixosModules.desktop-common.enable = true;
+  nixos.profiles.desktop.enable = true;
 
   # TODO: it is temporary fix for niri destkop session
   # is broken in NixOS 26.05 (not shown in GDM greeter)
-  my.nixosModules.gnome.enable = true;
-  my.nixosModules.gamedev.enable = true;
-  my.nixosModules.podman.enable = true;
+  nixos.profiles.gnome.enable = true;
+  nixos.profiles.gamedev.enable = true;
+  nixos.services.podman.enable = true;
 
   # Old Hardware-Specifice settings replaced by NixOS-Hardware module
   # hardware.cpu.intel.updateMicrocode = true;

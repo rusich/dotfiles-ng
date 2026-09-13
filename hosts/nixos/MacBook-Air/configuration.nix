@@ -12,8 +12,8 @@
   ];
 
   # Enable custom modules
-  my.nixosModules.desktop-common.enable = true;
-  my.nixosModules.gnome.enable = true;
+  nixos.profiles.desktop.enable = true;
+  nixos.profiles.gnome.enable = true;
 
   powerManagement = {
     enable = true;

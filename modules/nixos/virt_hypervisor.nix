@@ -6,11 +6,11 @@
   ...
 }:
 let
-  cfg = config.my.nixosModules.virt.hypervisor;
+  cfg = config.nixos.virtualisation.hypervisor;
 in
 {
   options = {
-    my.nixosModules.virt.hypervisor.enable = lib.mkEnableOption "KVM Hypervisor Configuration";
+    nixos.virtualisation.hypervisor.enable = lib.mkEnableOption "KVM Hypervisor Configuration";
   };
   config = lib.mkIf cfg.enable {
     # KVM/libvirt access for the primary user.

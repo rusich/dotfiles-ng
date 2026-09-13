@@ -13,4 +13,11 @@
     nix-search-tv.enable = true;
     translate_shell.enable = true;
   };
+
+  features.gui = {
+    firefox.enable = true;
+    keepassxc.enable = true;
+    obsidian.enable = true;
+    onlyoffice.enable = true;
+  };
 }

@@ -13,17 +13,13 @@
 │   └── darwin/        # nix-darwin (macOS): macos-sonoma-vm
 ├── home/              # home-manager слой
 │   ├── common/        # Безусловная база для всех (shell, git, xdg, CLI)
-│   ├── features/      # Опциональные фичи (options.features.*.enable)
+│   ├── features/      # Опциональные фичи (options.user.*.enable)
 │   │   ├── editors/ cli/ desktop/ gui/ pim/ dev/ opencode/
-│   ├── presets/       # Наборы фич по классу машины
-│   │   ├── shared.nix # Кроссплатформенные фичи (desktop + darwin)
-│   │   ├── desktop.nix# Linux-десктоп (импортит shared)
-│   │   ├── darwin.nix # macOS (импортит shared)
-│   │   └── server.nix # Минимальный сервер (без shared)
-│   └── users/         # Пользователи: home/users/<user>/{user,common,<host>}.nix
+│   │   └── bundles/   # meta-фичи: graphical, linux-desktop
+│   └── users/         # Пользователи: home/users/<user>/{user,home,<host>}.nix
 ├── modules/           # Переиспользуемые системные модули
 │   ├── common/        # Общее для NixOS, darwin и home-manager
-│   ├── nixos/         # NixOS-модули (авто-импорт: my.nixosModules.*)
+│   ├── nixos/         # NixOS-модули
 │   └── darwin/        # nix-darwin модули
 ├── templates/         # Шаблоны (server/…)
 ├── overlays/          # Кастомные overlays
@@ -35,8 +31,9 @@
 - **Хосты** обнаруживаются по папкам `hosts/nixos/<host>` и `hosts/darwin/<host>`.
 - **Пользователи и их машины** — по файлам `home/users/<user>/<host>.nix`;
   ключ `user@host` появляется в `homeConfigurations` автоматически.
-- **Фичи** включаются через `features.<group>.<name>.enable = true` в
-  `home/presets/*` или в `home/users/<user>/<host>.nix`.
+- **Фичи** включаются через `user.<group>.<name>.enable = true` в
+  `home/users/<user>/<host>.nix` (листья) или одним флагом через
+  `user.bundle.{graphical,linux-desktop}.enable` (наборы-«meta-фичи»).
 - **Десктопы/macOS** используют standalone home-manager; **серверы** (в будущем) —
   home-manager как NixOS-модуль (тот же файл `home/users/<user>/<host>.nix`).
 
@@ -120,10 +117,15 @@ nix fmt          # отформатировать все .nix файлы
 
 1. `home/users/<user>/user.nix` — identity: `username`, `fullName`, `email`
    (при необходимости `sshKeys` для NixOS-хостов).
-2. `home/users/<user>/<host>.nix` — `imports = [ ./common.nix ];`
-   (или `+ ../../presets/desktop.nix`, если нужен Linux-десктоп).
-3. (опционально) `home/users/<user>/common.nix` — выбор фич
-   (`user.cli.*`, `user.gui.*`, `user.pim.*`, ...), общий для всех машин юзера.
+2. `home/users/<user>/home.nix` — `imports = [ ../../common ];` плюс всё, что
+   общее у юзера на всех машинах (аватар, общие `home.file`). Импортится
+   каждым `<host>.nix`, включая серверы, поэтому GUI здесь не место.
+3. `home/users/<user>/<host>.nix` — `imports = [ ./home.nix ];` и выбор фич:
+   ```nix
+   user.bundle.graphical.enable = true;      # GUI-набор
+   user.bundle.linux-desktop.enable = true;  # Linux-десктоп, только на Linux
+   user.desktop.kitty.enable = true;         # или отдельная фича
+   ```
 4. Флейк сам создаст ключ `homeConfigurations."<user>@<host>"`.
    Применение на машине: `home-manager switch --flake .#<user>@<host>`.
    Фичи с `mkOutOfStoreSymlink` (neovim/kitty/niri/rofi/keepassxc/noctalia/opencode)
@@ -142,7 +144,8 @@ nix fmt          # отформатировать все .nix файлы
    `hosts/nixos/<server>/configuration.nix`, рядом положить
    `hardware-configuration.nix`.
 2. Создать `home/users/rusich/<server>.nix`:
-   `{ ... }: { imports = [ ./common.nix ../../presets/server.nix ]; }`.
+   `{ ... }: { imports = [ ./home.nix ]; }` — только база, без
+   `user.bundle.*` (иначе на сервер просочатся GUI/out-of-store фичи).
 3. Оставить в конфиге хоста `nixos.home-manager.integrated.enable = true;` —
    тогда HM развернётся вместе с системой (`home-manager-rusich.service`).
 4. С десктопа: `nixos-rebuild switch --flake .#<server> --target-host root@<server>`.
@@ -153,7 +156,8 @@ nix fmt          # отформатировать все .nix файлы
 - **Система**: `nixos.profiles.*`, `nixos.services.*`, `nixos.hardware.*`,
   `nixos.virtualisation.*`, `nixos.home-manager.integrated.enable`.
 - **Пользователь**: `user.<группа>.<имя>.enable` — группы `editors`, `cli`,
-  `desktop`, `gui`, `pim`, `dev`, `opencode`.
+  `desktop`, `gui`, `pim`, `dev`, `opencode`; наборы —
+  `user.bundle.{graphical,linux-desktop}.enable`.
 
 ## Устранение неполадок
 

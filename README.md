@@ -25,6 +25,7 @@
 │   ├── common/        # Общее для NixOS, darwin и home-manager
 │   ├── nixos/         # NixOS-модули (авто-импорт: my.nixosModules.*)
 │   └── darwin/        # nix-darwin модули
+├── templates/         # Шаблоны (server/…)
 ├── overlays/          # Кастомные overlays
 └── pkgs/              # Кастомные пакеты
 ```
@@ -112,6 +113,47 @@ nix fmt          # отформатировать все .nix файлы
 
 Версия релиза указана в трёх input-ах; flake-схема требует строковых
 литералов в `url`, поэтому вынести её в переменную нельзя — менять синхронно.
+
+## Как добавлять
+
+### Пользователя (home-manager)
+
+1. `home/users/<user>/user.nix` — identity: `username`, `fullName`, `email`
+   (при необходимости `sshKeys` для NixOS-хостов).
+2. `home/users/<user>/<host>.nix` — `imports = [ ./common.nix ];`
+   (или `+ ../../presets/desktop.nix`, если нужен Linux-десктоп).
+3. (опционально) `home/users/<user>/common.nix` — выбор фич
+   (`user.cli.*`, `user.gui.*`, `user.pim.*`, ...), общий для всех машин юзера.
+4. Флейк сам создаст ключ `homeConfigurations."<user>@<host>"`.
+   Применение на машине: `home-manager switch --flake .#<user>@<host>`.
+   Фичи с `mkOutOfStoreSymlink` (neovim/kitty/niri/rofi/keepassxc/noctalia/opencode)
+   требуют локальный клон репозитория у пользователя (`~/.dotfiles`).
+
+### Хост (NixOS)
+
+1. `hosts/nixos/<host>/configuration.nix` + `hardware-configuration.nix`.
+2. Включить профили/сервисы: `nixos.profiles.desktop.enable = true;`,
+   `nixos.services.podman.enable = true;` и т.д.
+3. `sudo nixos-rebuild switch --flake .#<host>`.
+
+### Сервер (минимальный home-manager)
+
+1. Скопировать `templates/server/configuration.nix` в
+   `hosts/nixos/<server>/configuration.nix`, рядом положить
+   `hardware-configuration.nix`.
+2. Создать `home/users/rusich/<server>.nix`:
+   `{ ... }: { imports = [ ./common.nix ../../presets/server.nix ]; }`.
+3. Оставить в конфиге хоста `nixos.home-manager.integrated.enable = true;` —
+   тогда HM развернётся вместе с системой (`home-manager-rusich.service`).
+4. С десктопа: `nixos-rebuild switch --flake .#<server> --target-host root@<server>`.
+   SSH-ключи `rusich`/`root` уже заданы в `home/users/rusich/user.nix`.
+
+### Опции: где что искать
+
+- **Система**: `nixos.profiles.*`, `nixos.services.*`, `nixos.hardware.*`,
+  `nixos.virtualisation.*`, `nixos.home-manager.integrated.enable`.
+- **Пользователь**: `user.<группа>.<имя>.enable` — группы `editors`, `cli`,
+  `desktop`, `gui`, `pim`, `dev`, `opencode`.
 
 ## Устранение неполадок
 

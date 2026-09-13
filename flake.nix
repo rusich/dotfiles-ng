@@ -72,6 +72,7 @@
             overlayModule
             ./modules/common
             ./modules/nixos
+            inputs.home-manager.nixosModules.home-manager
             ./hosts/nixos/${host}/configuration.nix
             # inputs.stylix.nixosModules.stylix
           ];

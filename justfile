@@ -7,13 +7,16 @@
 # Reinstalling changes the host SSH key: `install` preserves it via
 # --copy-host-keys; if known_hosts still holds a stale key, run
 # `just forget <server>`.
+# If the target cannot fetch the kexec image (e.g. blocked GitHub release
+# assets), pre-download the tarball and pass its path as the third argument:
+#   just install <configuration> <server> /path/to/nixos-kexec.tar.gz
 
 default:
     @just --list
 
 # Install a host from scratch over SSH (nixos-anywhere + disko).
 # WARNING: wipes the target disk; regenerates hosts/nixos/<configuration>/hardware-configuration.nix.
-install configuration server:
+install configuration server kexec="":
     #!/usr/bin/env bash
     set -euo pipefail
 
@@ -47,8 +50,14 @@ install configuration server:
     read -r answer
     if [ "$answer" != "yes" ]; then echo "Отменено."; exit 1; fi
 
+    extra_args=()
+    if [ -n "{{kexec}}" ]; then
+        extra_args+=(--kexec "{{kexec}}")
+    fi
+
     nix run github:nix-community/nixos-anywhere -- \
         --copy-host-keys \
+        "${extra_args[@]}" \
         --flake ".#{{configuration}}" \
         --target-host root@{{server}} \
         --generate-hardware-config nixos-generate-config \

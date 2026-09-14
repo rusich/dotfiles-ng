@@ -1,20 +1,48 @@
 # NixOS / home-manager / nix-darwin task runner.
 # Servers: `just install <configuration> <server>` then `just rebuild ...`.
-# Bootstrap SSH first, e.g.:
+# The <server> is a host/IP WITHOUT a user (root@ is added automatically).
+# Bootstrap SSH first (copy your key so nixos-anywhere needs no password):
 #   ssh-copy-id -o PubkeyAuthentication=no -o PasswordAuthentication=yes \
 #     -o PreferredAuthentications=password root@<server>
-
 default:
     @just --list
 
 # Install a host from scratch over SSH (nixos-anywhere + disko).
 # WARNING: wipes the target disk; regenerates hosts/nixos/<configuration>/hardware-configuration.nix.
 install configuration server:
-    @printf '\033[1;31m'
-    @printf 'WARNING: это ДЕПЛОЙ на сервер %s\n' 'root@{{server}}'
-    @printf 'Конфигурация %s будет установлена С НУЛЯ (nixos-anywhere).\n' '{{configuration}}'
-    @printf '\033[0m'
-    @printf 'Вы уверены? Введите "yes" для продолжения: '; read -r answer; if [ "$answer" != "yes" ]; then echo "Отменено."; exit 1; fi
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    red='\033[1;91m'
+    yellow='\033[1;93m'
+    reset='\033[0m'
+
+    banner() {
+        printf '%b' "$1"
+        printf '  !!!!!!  В Н И М А Н И Е  !!!!!!\n'
+        printf '  УСТАНОВКА (nixos-anywhere) НА СЕРВЕР %s\n' 'root@{{server}}'
+        printf '\n'
+        printf '  ВСЕ ДАННЫЕ НА СЕРВЕРЕ БУДУТ УНИЧТОЖЕНЫ БЕЗВОЗВРАТНО!\n'
+        printf '  Диск будет разбит и отформатирован заново (disko).\n'
+        printf '\n'
+        printf '  Конфигурация: %s\n' '{{configuration}}'
+        printf '%b' "$reset"
+    }
+
+    for _ in 1 2 3 4 5; do
+        banner "$red"
+        sleep 0.3
+        printf '\033[7A'
+        banner "$yellow"
+        sleep 0.3
+        printf '\033[7A'
+    done
+    banner "$red"
+    printf '\n'
+    printf 'Введите "yes" ЦЕЛИКОМ, чтобы уничтожить и переустановить: '
+    read -r answer
+    if [ "$answer" != "yes" ]; then echo "Отменено."; exit 1; fi
+
     nix run github:nix-community/nixos-anywhere -- \
         --flake ".#{{configuration}}" \
         --target-host root@{{server}} \

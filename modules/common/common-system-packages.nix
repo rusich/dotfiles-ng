@@ -33,7 +33,6 @@ let
     # is needed?
     nix-output-monitor # beautify nix output
     nvd
-    nh # nix helper
     nix-du
     unixtools.netstat
     progress

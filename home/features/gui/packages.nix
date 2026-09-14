@@ -18,6 +18,12 @@ in
       showtime
       mpv
       telegram-desktop
+      # fonts and desktop libs previously in the base set
+      nerd-fonts.iosevka
+      nerd-fonts.iosevka-term
+      nerd-fonts.fantasque-sans-mono
+      libsecret
+      libnotify
     ];
 
     services.remmina.enable = true;

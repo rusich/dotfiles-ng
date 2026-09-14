@@ -45,7 +45,10 @@ in
       contacts.enable = true;
     };
 
-    user.dev.rust.enable = true;
+    user.dev = {
+      rust.enable = true;
+      toolbox.enable = true;
+    };
 
     user.opencode.enable = true;
   };

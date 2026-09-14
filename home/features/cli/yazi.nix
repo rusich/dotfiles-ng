@@ -17,8 +17,7 @@ in
     home.packages =
       with pkgs;
       [
-        ffmpeg # for mediainfo
-        mediainfo # for mediainfo
+        mediainfo # used by yazi's mediainfo plugin
         trash-cli
       ]
       ++ lib.optionals (pkgs.stdenv.isLinux && cfg.graphical) [

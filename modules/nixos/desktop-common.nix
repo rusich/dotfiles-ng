@@ -145,6 +145,10 @@ in
     # packaages
 
     environment.systemPackages = with pkgs; [
+      # dev toolchain (desktops only; servers build through the nix sandbox)
+      gcc
+      python3
+      pkg-config
       libreoffice
       kitty
       hunspell

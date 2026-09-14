@@ -102,14 +102,10 @@ in
   environment.systemPackages =
     with pkgs;
     [
-      gcc
-      python3
-      home-manager
-      # misc
+      # diagnostics and tools that stay useful on servers too
       traceroute
       lm_sensors
       cifs-utils
-      # to explore:
       lshw
       iotop
     ]

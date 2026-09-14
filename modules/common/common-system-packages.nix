@@ -6,12 +6,10 @@
 
 let
   nixosAndDarwinPackages = with pkgs; [
-    neovim
     file
     usbutils
     pciutils
     dig
-    pkg-config
     openssl
     curl
     wget

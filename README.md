@@ -178,18 +178,21 @@ nixos-rebuild switch --flake .#<server>
    `nixos.home-manager.integrated.enable = true;` (уже есть в шаблоне).
 4. Установка/обновление с десктопа:
    ```bash
-   just install <server> <host-or-ip>    # nixos-anywhere, СТИРАЕТ диск
+   just install <server> <host-or-ip>   # nixos-anywhere, СТИРАЕТ диск
    just rebuild <server> <host-or-ip>   # nixos-rebuild --target-host
+   just forget <host-or-ip>             # убрать устаревший host key из known_hosts
    ```
    SSH-ключи `rusich`/`root` берутся из `home/users/rusich/user.nix`.
+   `install` идёт с `--copy-host-keys`, поэтому повторная установка сохраняет
+   прежний host key; если `known_hosts` всё же устарел (`REMOTE HOST
+   IDENTIFICATION HAS CHANGED`) — `just forget <host-or-ip>` и повторить.
 
 **Доступ.** Root — только по ключу (`PermitRootLogin = "prohibit-password"`,
 `PasswordAuthentication = false`). Консольный фоллбэк — пароль пользователя
 `rusich` (`initialHashedPassword` из поля `hashedPassword` в
-`home/users/rusich/user.nix`); сейчас там заглушка-лок, впиши хеш из
-`nix shell nixpkgs#mkpasswd -c mkpasswd -m yescrypt`. Потеря ключей: локальная
-консоль (`virsh console`/Cockpit/физический доступ) → вход `rusich` → `sudo`.
-В планах — переход на `sops-nix`.
+`home/users/rusich/user.nix`, сгенерирован `mkpasswd -m yescrypt`). Потеря
+ключей: локальная консоль (`virsh console`/Cockpit/физический доступ) → вход
+`rusich` → `sudo`. В планах — переход на `sops-nix`.
 
 Не запускать на сервере standalone `home-manager switch` — получится две
 конкурирующие генерации. Тот же файл доступен и как

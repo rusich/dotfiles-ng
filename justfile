@@ -4,6 +4,10 @@
 # Bootstrap SSH first (copy your key so nixos-anywhere needs no password):
 #   ssh-copy-id -o PubkeyAuthentication=no -o PasswordAuthentication=yes \
 #     -o PreferredAuthentications=password root@<server>
+# Reinstalling changes the host SSH key: `install` preserves it via
+# --copy-host-keys; if known_hosts still holds a stale key, run
+# `just forget <server>`.
+
 default:
     @just --list
 
@@ -44,14 +48,21 @@ install configuration server:
     if [ "$answer" != "yes" ]; then echo "Отменено."; exit 1; fi
 
     nix run github:nix-community/nixos-anywhere -- \
+        --copy-host-keys \
         --flake ".#{{configuration}}" \
         --target-host root@{{server}} \
         --generate-hardware-config nixos-generate-config \
         ./hosts/nixos/{{configuration}}/hardware-configuration.nix
 
 # Rebuild an already installed host remotely (system + integrated home-manager).
+# accept-new tolerates unknown hosts; a *changed* key still needs `just forget`.
 rebuild configuration server:
-    nixos-rebuild switch --flake ".#{{configuration}}" --target-host root@{{server}}
+    NIX_SSHOPTS="${NIX_SSHOPTS:-} -o StrictHostKeyChecking=accept-new" \
+        nixos-rebuild switch --flake ".#{{configuration}}" --target-host root@{{server}}
+
+# Drop a host from known_hosts (do this after a reinstall changed its host key).
+forget server:
+    ssh-keygen -R "{{server}}"
 
 # Rebuild a local NixOS host: argument targets .#<configuration>, default auto-detects (--flake .).
 switch configuration="":

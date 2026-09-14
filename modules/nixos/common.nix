@@ -18,9 +18,24 @@ in
 
   programs.fish.enable = true;
 
-  # Bootloader how many configurations to show
+  # Bootloader: keep the boot menu bounded. On systemd-boot this also prunes
+  # old generations; on GRUB it keeps the kernels copied into /boot bounded.
   boot = {
-    loader.systemd-boot.configurationLimit = 10;
+    loader.systemd-boot.configurationLimit = 5;
+    loader.grub.configurationLimit = 5;
+  };
+
+  # nh clean replaces the built-in nix-gc on NixOS: it keeps the last N
+  # generations AND everything younger than the period, across system,
+  # per-user and XDG (home-manager) profiles, then runs `nix store gc`.
+  nix.gc.automatic = lib.mkForce false;
+  programs.nh = {
+    enable = true;
+    clean = {
+      enable = true;
+      dates = "daily";
+      extraArgs = "--keep 5 --keep-since 14d";
+    };
   };
 
   programs.nix-ld = {

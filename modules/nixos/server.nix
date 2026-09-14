@@ -39,5 +39,12 @@ in
       speedtest-cli
       net-tools # ifconfig, route (netstat already provided by unixtools.netstat)
     ];
+
+    # Server-only disk savings: no man pages / nixos-help, and no
+    # redistributable firmware (~790 MiB; not-detected.nix sets mkDefault
+    # true, so force it off here). A bare-metal server must override with
+    # hardware.enableRedistributableFirmware = lib.mkForce true.
+    documentation.enable = false;
+    hardware.enableRedistributableFirmware = lib.mkForce false;
   };
 }

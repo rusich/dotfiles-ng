@@ -8,8 +8,10 @@
 .
 ├── flake.nix          # inputs + outputs (тонкий, логика сборки тут же)
 ├── flake.lock         # Зависимости flakes
+├── justfile           # just-рецепты: deploy/rebuild/switch/home/update/fmt/check
 ├── hosts/             # Конфигурации хостов (авто-обнаруживаются по папкам)
-│   ├── nixos/         # NixOS: darkstar, matebook, MacBook-Air
+│   ├── nixos/         # NixOS: darkstar, matebook, MacBook-Air, generic-server
+│   │   └── <host>/    # configuration.nix (+ disko.nix у серверов)
 │   └── darwin/        # nix-darwin (macOS): macos-sonoma-vm
 ├── home/              # home-manager слой
 │   ├── common/        # Безусловная база для всех (shell, git, xdg, CLI)
@@ -34,8 +36,12 @@
 - **Фичи** включаются через `user.<group>.<name>.enable = true` в
   `home/users/<user>/<host>.nix` (листья) или одним флагом через
   `user.bundle.{graphical,linux-desktop}.enable` (наборы-«meta-фичи»).
-- **Десктопы/macOS** используют standalone home-manager; **серверы** (в будущем) —
+- **Десктопы/macOS** используют standalone home-manager; **серверы** —
   home-manager как NixOS-модуль (тот же файл `home/users/<user>/<host>.nix`).
+- **Серверный профиль** `nixos.profiles.server.enable = true` добавляет
+  daily gc/optimise, `systemd-resolved`, key-only SSH и серверные пакеты
+  (остальное уже в `modules/nixos/common.nix`).
+- **Серверы ставятся** через `nixos-anywhere` + disko, см. `justfile`.
 
 ## Первоначальная настройка на новой системе NixOS
 
@@ -107,6 +113,7 @@ nix fmt          # отформатировать все .nix файлы
 - `home-manager` — `release-26.05`
 - `nix-darwin` — `nix-darwin-26.05`
 - `nixos-hardware`, `musnix`, `firefox-addons`, `millennium`
+- `disko` — декларативная разбивка дисков для серверов (`nixos-anywhere`)
 
 Версия релиза указана в трёх input-ах; flake-схема требует строковых
 литералов в `url`, поэтому вынести её в переменную нельзя — менять синхронно.
@@ -158,25 +165,31 @@ nixos-rebuild switch --flake .#<server>
 `useGlobalPkgs = true` — HM берёт `pkgs` из системы (одно дерево зависимостей);
 активация — сервис `home-manager-rusich.service`; откат общий с системой.
 
-1. Скопировать `templates/server/configuration.nix` в
-   `hosts/nixos/<server>/configuration.nix`, рядом — `hardware-configuration.nix`
-   (или `nixos-anywhere --generate-hardware-config`, когда добавим disko).
+1. `mkdir -p hosts/nixos/<server>` и скопировать туда
+   `templates/server/{configuration.nix,disko.nix}`; `hardware-configuration.nix`
+   создаст `just deploy` (`nixos-anywhere --generate-hardware-config`).
 2. Создать `home/users/rusich/<server>.nix`:
    ```nix
    { imports = [ ./home.nix ]; }   # только база, без user.bundle.*
    ```
    Имя файла обязано совпадать с именем папки хоста (приходит как `hostname`);
    без `user.bundle.*` GUI/out-of-store фичи на сервер не попадают.
-3. В конфиге хоста оставить `nixos.home-manager.integrated.enable = true;`.
-4. Деплой с десктопа:
+3. В конфиге хоста включены `nixos.profiles.server.enable = true;` и
+   `nixos.home-manager.integrated.enable = true;` (уже есть в шаблоне).
+4. Установка/обновление с десктопа:
    ```bash
-   nixos-rebuild switch --flake .#<server> --target-host root@<server>
-   # сборка на самом сервере:
-   nixos-rebuild switch --flake .#<server> --target-host root@<server> --build-host root@<server>
-   # откат:
-   nixos-rebuild switch --rollback --target-host root@<server>
+   just deploy <server> <host-or-ip>    # nixos-anywhere, СТИРАЕТ диск
+   just rebuild <server> <host-or-ip>   # nixos-rebuild --target-host
    ```
-   SSH-ключи `rusich`/`root` уже заданы в `home/users/rusich/user.nix`.
+   SSH-ключи `rusich`/`root` берутся из `home/users/rusich/user.nix`.
+
+**Доступ.** Root — только по ключу (`PermitRootLogin = "prohibit-password"`,
+`PasswordAuthentication = false`). Консольный фоллбэк — пароль пользователя
+`rusich` (`initialHashedPassword` из поля `hashedPassword` в
+`home/users/rusich/user.nix`); сейчас там заглушка-лок, впиши хеш из
+`nix shell nixpkgs#mkpasswd -c mkpasswd -m yescrypt`. Потеря ключей: локальная
+консоль (`virsh console`/Cockpit/физический доступ) → вход `rusich` → `sudo`.
+В планах — переход на `sops-nix`.
 
 Не запускать на сервере standalone `home-manager switch` — получится две
 конкурирующие генерации. Тот же файл доступен и как

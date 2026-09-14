@@ -1,34 +1,39 @@
-# Шаблон серверного хоста.
+# Шаблон серверного хоста (disko + nixos-anywhere + integrated home-manager).
 #
 # Как использовать:
 #   1. mkdir -p hosts/nixos/<server>
-#   2. скопировать этот файл в hosts/nixos/<server>/configuration.nix
-#   3. рядом положить hardware-configuration.nix (nixos-generate-config на сервере
-#      или nixos-anywhere --generate-hardware-config, когда добавим disko)
+#   2. скопировать сюда configuration.nix и disko.nix
+#   3. hardware-configuration.nix создаст `just deploy` при первой установке
+#      (nixos-anywhere --generate-hardware-config)
 #   4. создать home/users/rusich/<server>.nix:
 #        { ... }: { imports = [ ./home.nix ]; }   # база, без user.bundle.*
 #      (user.bundle.* добавляют GUI/out-of-store фичи — серверу не нужны)
 #   5. с десктопа:
-#        nixos-rebuild switch --flake .#<server> --target-host root@<server>
+#        just deploy <server> <host-or-ip>    # установка с нуля (СТИРАЕТ диск)
+#        just rebuild <server> <host-or-ip>   # последующие обновления
 #
 # Общее для всех NixOS-хостов (SSH, fish, primary user с ключами, временная зона,
 # локали, nix settings) уже приходит из modules/nixos/{common,users,nix}.nix —
 # здесь только машинная специфика.
 {
+  modulesPath,
   lib,
-  hostname,
   ...
 }:
 {
   imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
     ./hardware-configuration.nix
+    ./disko.nix
   ];
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  # disko создаёт BIOS-boot (EF02) + ESP; grub ставится в ESP без записи в NVRAM.
+  boot.loader.grub = {
+    efiSupport = true;
+    efiInstallAsRemovable = true;
+  };
 
   networking = {
-    hostName = hostname;
     useDHCP = lib.mkDefault true;
     # networkd + статический адрес (пример):
     # useNetworkd = true;
@@ -38,6 +43,9 @@
     #   networkConfig.DHCP = "no";
     # };
   };
+
+  # Headless-профиль: daily gc/optimise, resolved, key-only SSH, серверные пакеты.
+  nixos.profiles.server.enable = true;
 
   # Деплой home-manager вместе с системой (nixos-rebuild), а не standalone.
   nixos.home-manager.integrated.enable = true;

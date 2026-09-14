@@ -167,7 +167,7 @@ nixos-rebuild switch --flake .#<server>
 
 1. `mkdir -p hosts/nixos/<server>` и скопировать туда
    `templates/server/{configuration.nix,disko.nix}`; `hardware-configuration.nix`
-   создаст `just deploy` (`nixos-anywhere --generate-hardware-config`).
+   создаст `just install` (`nixos-anywhere --generate-hardware-config`).
 2. Создать `home/users/rusich/<server>.nix`:
    ```nix
    { imports = [ ./home.nix ]; }   # только база, без user.bundle.*
@@ -178,7 +178,7 @@ nixos-rebuild switch --flake .#<server>
    `nixos.home-manager.integrated.enable = true;` (уже есть в шаблоне).
 4. Установка/обновление с десктопа:
    ```bash
-   just deploy <server> <host-or-ip>    # nixos-anywhere, СТИРАЕТ диск
+   just install <server> <host-or-ip>    # nixos-anywhere, СТИРАЕТ диск
    just rebuild <server> <host-or-ip>   # nixos-rebuild --target-host
    ```
    SSH-ключи `rusich`/`root` берутся из `home/users/rusich/user.nix`.

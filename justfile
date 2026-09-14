@@ -1,5 +1,5 @@
 # NixOS / home-manager / nix-darwin task runner.
-# Servers: `just deploy <configuration> <server>` then `just rebuild ...`.
+# Servers: `just install <configuration> <server>` then `just rebuild ...`.
 # Bootstrap SSH first, e.g.:
 #   ssh-copy-id -o PubkeyAuthentication=no -o PasswordAuthentication=yes \
 #     -o PreferredAuthentications=password root@<server>
@@ -9,7 +9,7 @@ default:
 
 # Install a host from scratch over SSH (nixos-anywhere + disko).
 # WARNING: wipes the target disk; regenerates hosts/nixos/<configuration>/hardware-configuration.nix.
-deploy configuration server:
+install configuration server:
     @printf '\033[1;31m'
     @printf 'WARNING: это ДЕПЛОЙ на сервер %s\n' 'root@{{server}}'
     @printf 'Конфигурация %s будет установлена С НУЛЯ (nixos-anywhere).\n' '{{configuration}}'
@@ -25,9 +25,13 @@ deploy configuration server:
 rebuild configuration server:
     nixos-rebuild switch --flake ".#{{configuration}}" --target-host root@{{server}}
 
-# Rebuild a local NixOS host.
-switch configuration:
-    sudo nixos-rebuild switch --flake ".#{{configuration}}"
+# Rebuild a local NixOS host: argument targets .#<configuration>, default auto-detects (--flake .).
+switch configuration="":
+    if [ -n "{{configuration}}" ]; then \
+        sudo nixos-rebuild switch --flake ".#{{configuration}}"; \
+    else \
+        sudo nixos-rebuild switch --flake .; \
+    fi
 
 # Apply home-manager for the current user@hostname (standalone).
 home:

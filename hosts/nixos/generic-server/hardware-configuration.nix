@@ -1,5 +1,5 @@
 # Minimal QEMU guest hardware stub. Regenerated on install by
-# `just deploy generic-server <target>` (nixos-anywhere --generate-hardware-config).
+# `just install generic-server <target>` (nixos-anywhere --generate-hardware-config).
 {
   config,
   lib,

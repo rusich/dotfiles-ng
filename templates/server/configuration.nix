@@ -3,13 +3,13 @@
 # Как использовать:
 #   1. mkdir -p hosts/nixos/<server>
 #   2. скопировать сюда configuration.nix и disko.nix
-#   3. hardware-configuration.nix создаст `just deploy` при первой установке
+#   3. hardware-configuration.nix создаст `just install` при первой установке
 #      (nixos-anywhere --generate-hardware-config)
 #   4. создать home/users/rusich/<server>.nix:
 #        { ... }: { imports = [ ./home.nix ]; }   # база, без user.bundle.*
 #      (user.bundle.* добавляют GUI/out-of-store фичи — серверу не нужны)
 #   5. с десктопа:
-#        just deploy <server> <host-or-ip>    # установка с нуля (СТИРАЕТ диск)
+#        just install <server> <host-or-ip>    # установка с нуля (СТИРАЕТ диск)
 #        just rebuild <server> <host-or-ip>   # последующие обновления
 #
 # Общее для всех NixOS-хостов (SSH, fish, primary user с ключами, временная зона,

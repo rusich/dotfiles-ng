@@ -27,6 +27,13 @@ in
     # Faster name resolution with per-link DNS caching.
     services.resolved.enable = true;
 
+    # Keep the nixpkgs source (~485 MiB) out of the server closure:
+    # nixpkgs.flake pins it into /etc/nix/registry.json and nix.nixPath by
+    # default (see modules/common/nix.nix); servers don't need `<nixpkgs>`.
+    nixpkgs.flake.setFlakeRegistry = lib.mkForce false;
+    nixpkgs.flake.setNixPath = lib.mkForce false;
+    nix.nixPath = lib.mkForce [ ];
+
     # Root is reachable with SSH keys only (bootstrap via nixos-anywhere);
     # console fallback is a password on the primary user (see users.nix).
     services.openssh.settings = {

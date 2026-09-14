@@ -42,6 +42,7 @@ let
     duf
     ncdu
     pv
+    just
     # To explore:
     # glances
     # termshark

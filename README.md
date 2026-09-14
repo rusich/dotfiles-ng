@@ -138,18 +138,49 @@ nix fmt          # отформатировать все .nix файлы
    `nixos.services.podman.enable = true;` и т.д.
 3. `sudo nixos-rebuild switch --flake .#<host>`.
 
-### Сервер (минимальный home-manager)
+### Сервер (integrated home-manager)
+
+Сервер — обычный NixOS-хост; home-manager собирается **внутри системы**
+через `nixos-rebuild`, а не отдельной командой `home-manager switch`.
+
+Цепочка сборки:
+
+```
+nixos-rebuild switch --flake .#<server>
+  └─ flake.nix mkNixos           → specialArgs { inputs, primaryUser, hostname }
+      └─ hosts/nixos/<server>/configuration.nix
+          └─ nixos.home-manager.integrated.enable = true
+              └─ modules/nixos/home-manager.nix
+                  └─ import home/users/rusich/<server>.nix   (hostname → имя файла)
+                      └─ ./home.nix → ../../common → readDir base + ../features
+```
+
+`useGlobalPkgs = true` — HM берёт `pkgs` из системы (одно дерево зависимостей);
+активация — сервис `home-manager-rusich.service`; откат общий с системой.
 
 1. Скопировать `templates/server/configuration.nix` в
-   `hosts/nixos/<server>/configuration.nix`, рядом положить
-   `hardware-configuration.nix`.
+   `hosts/nixos/<server>/configuration.nix`, рядом — `hardware-configuration.nix`
+   (или `nixos-anywhere --generate-hardware-config`, когда добавим disko).
 2. Создать `home/users/rusich/<server>.nix`:
-   `{ ... }: { imports = [ ./home.nix ]; }` — только база, без
-   `user.bundle.*` (иначе на сервер просочатся GUI/out-of-store фичи).
-3. Оставить в конфиге хоста `nixos.home-manager.integrated.enable = true;` —
-   тогда HM развернётся вместе с системой (`home-manager-rusich.service`).
-4. С десктопа: `nixos-rebuild switch --flake .#<server> --target-host root@<server>`.
+   ```nix
+   { imports = [ ./home.nix ]; }   # только база, без user.bundle.*
+   ```
+   Имя файла обязано совпадать с именем папки хоста (приходит как `hostname`);
+   без `user.bundle.*` GUI/out-of-store фичи на сервер не попадают.
+3. В конфиге хоста оставить `nixos.home-manager.integrated.enable = true;`.
+4. Деплой с десктопа:
+   ```bash
+   nixos-rebuild switch --flake .#<server> --target-host root@<server>
+   # сборка на самом сервере:
+   nixos-rebuild switch --flake .#<server> --target-host root@<server> --build-host root@<server>
+   # откат:
+   nixos-rebuild switch --rollback --target-host root@<server>
+   ```
    SSH-ключи `rusich`/`root` уже заданы в `home/users/rusich/user.nix`.
+
+Не запускать на сервере standalone `home-manager switch` — получится две
+конкурирующие генерации. Тот же файл доступен и как
+`homeConfigurations."rusich@<server>"`, но по умолчанию используем integrated.
 
 ### Опции: где что искать
 

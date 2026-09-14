@@ -14,6 +14,7 @@
   user.gui = {
     firefox.enable = true;
     packages.enable = true;
+    userDirs.enable = true;
     # Portal comes from the system GNOME module on darkstar, no HM override.
   };
 

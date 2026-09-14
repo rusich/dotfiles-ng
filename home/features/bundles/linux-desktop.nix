@@ -23,5 +23,7 @@ in
       mimeapps.enable = true;
       packages.enable = true;
     };
+
+    user.gui.userDirs.enable = true;
   };
 }

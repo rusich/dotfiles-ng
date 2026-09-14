@@ -198,6 +198,24 @@ nixos-rebuild switch --flake .#<server>
 конкурирующие генерации. Тот же файл доступен и как
 `homeConfigurations."rusich@<server>"`, но по умолчанию используем integrated.
 
+**Bare-metal vs VPS.**
+- Профиль сервера выключает `hardware.enableRedistributableFirmware`
+  (~790 MiB) и документацию. На **физическом** сервере обязательно верни
+  прошивки, иначе ядро может не поднять NIC/GPU/диск:
+
+  ```nix
+  hardware.enableRedistributableFirmware = lib.mkForce true;
+  ```
+
+  (шаблон — `templates/server/configuration.nix`).
+- `nixpkgs`-исходник (~485 MiB) лежит в замыкании из-за `nix.nixPath`
+  (`modules/common/nix.nix`; нужен для `<nixpkgs>` и nixd). Это общая
+  настройка, поэтому присутствует и на серверах; на VPS можно вынести
+  её в десктопный слой.
+- Генерации на всех NixOS-хостах чистит `nh clean all --keep 5
+  --keep-since 14d` (daily): остаются последние 5 и всё моложе 14 дней;
+  `/boot` ограничен `boot.loader.{grub,systemd-boot}.configurationLimit = 5`.
+
 ### Опции: где что искать
 
 - **Система**: `nixos.profiles.*`, `nixos.services.*`, `nixos.hardware.*`,

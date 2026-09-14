@@ -47,6 +47,11 @@
   # Headless-профиль: daily gc/optimise, resolved, key-only SSH, серверные пакеты.
   nixos.profiles.server.enable = true;
 
+  # BARE-METAL: профиль сервера выключает redistributable firmware (~790 MiB),
+  # т.к. VPS/QEMU он не нужен. На ФИЗИЧЕСКОМ сервере включи обратно, иначе
+  # ядру может не хватить прошивок для NIC/GPU/диска:
+  # hardware.enableRedistributableFirmware = lib.mkForce true;
+
   # Деплой home-manager вместе с системой (nixos-rebuild), а не standalone.
   nixos.home-manager.integrated.enable = true;
 

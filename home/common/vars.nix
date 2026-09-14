@@ -1,6 +1,5 @@
 {
   home.sessionVariables = {
-    NH_FLAKE = "$HOME/.dotfiles";
     PAGER = "less";
     MANROFFOPT = "-c";
     # MANPAGER = "sh -c 'col -bx | bat --theme Dracula -l man -p'";

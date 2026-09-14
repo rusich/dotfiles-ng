@@ -8,7 +8,10 @@ let
   cfg = config.user.cli.yazi;
 in
 {
-  options.user.cli.yazi.enable = lib.mkEnableOption "yazi file manager";
+  options.user.cli.yazi = {
+    enable = lib.mkEnableOption "yazi file manager";
+    graphical = lib.mkEnableOption "desktop-only yazi integration (xdg file-chooser portal, kitty .desktop entry, noctalia wallpaper, gvfs)";
+  };
 
   config = lib.mkIf cfg.enable {
     home.packages =
@@ -18,39 +21,47 @@ in
         mediainfo # for mediainfo
         trash-cli
       ]
-      ++ lib.optionals pkgs.stdenv.isLinux [
+      ++ lib.optionals (pkgs.stdenv.isLinux && cfg.graphical) [
         xdg-desktop-portal-termfilechooser # use yazi as a file chooser
       ];
 
-    home.file.".local/share/applications/yazi.desktop".text = ''
-      [Desktop Entry]
-      Type=Application
-      Name=Yazi
-      Exec=kitty -e yazi %F
-      Icon=yazi
-      Categories=Utility;FileManager;
-      MimeType=inode/directory;
-    '';
+    home.file.".local/share/applications/yazi.desktop" =
+      lib.mkIf (pkgs.stdenv.isLinux && cfg.graphical)
+        {
+          text = ''
+            [Desktop Entry]
+            Type=Application
+            Name=Yazi
+            Exec=kitty -e yazi %F
+            Icon=yazi
+            Categories=Utility;FileManager;
+            MimeType=inode/directory;
+          '';
+        };
 
     # Termfilechooser config
-    home.file.".config/xdg-desktop-portal-termfilechooser/config" = lib.mkIf pkgs.stdenv.isLinux {
-      text = ''
-        [filechooser]
-        cmd=${pkgs.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
-        default_dir=$HOME
-        create_help_file=1
-        env=TERMCMD='kitty --title filechooser'
-        env=PATH="$PATH:/run/current-system/sw/bin"
-        open_mode = suggested
-        save_mode = last
-      '';
-    };
+    home.file.".config/xdg-desktop-portal-termfilechooser/config" =
+      lib.mkIf (pkgs.stdenv.isLinux && cfg.graphical)
+        {
+          text = ''
+            [filechooser]
+            cmd=${pkgs.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
+            default_dir=$HOME
+            create_help_file=1
+            env=TERMCMD='kitty --title filechooser'
+            env=PATH="$PATH:/run/current-system/sw/bin"
+            open_mode = suggested
+            save_mode = last
+          '';
+        };
 
     # Подключаем termfilechooser как FileChooser портал
-    xdg.portal.extraPortals = lib.mkIf pkgs.stdenv.isLinux [ pkgs.xdg-desktop-portal-termfilechooser ];
-    xdg.portal.config.common."org.freedesktop.impl.portal.FileChooser" = lib.mkIf pkgs.stdenv.isLinux (
-      lib.mkForce "termfilechooser"
-    );
+    xdg.portal.extraPortals = lib.mkIf (pkgs.stdenv.isLinux && cfg.graphical) [
+      pkgs.xdg-desktop-portal-termfilechooser
+    ];
+    xdg.portal.config.common."org.freedesktop.impl.portal.FileChooser" = lib.mkIf (
+      pkgs.stdenv.isLinux && cfg.graphical
+    ) (lib.mkForce "termfilechooser");
 
     programs.yazi = {
       enable = true;
@@ -82,7 +93,7 @@ in
           package = unstable.yaziPlugins.easyjump;
           setup = true;
         };
-        gvfs = lib.mkIf pkgs.stdenv.isLinux {
+        gvfs = lib.mkIf (pkgs.stdenv.isLinux && cfg.graphical) {
           package = yaziPlugins.gvfs;
           setup = true;
         };
@@ -372,93 +383,96 @@ in
         ];
       };
 
-      settings = {
+      settings = lib.mkMerge [
+        (lib.mkIf cfg.graphical {
+          open = {
+            prepend_rules = [
+              {
+                mime = "image/*";
+                use = [
+                  "open"
+                  "set-wallpaper"
+                ];
+              }
+            ];
+          };
 
-        open = {
-          prepend_rules = [
-            {
-              mime = "image/*";
-              use = [
-                "open"
-                "set-wallpaper"
-              ];
-            }
-          ];
-        };
-
-        # set wallpeperr in noctalia shell
-        opener = {
-          set-wallpaper = [
-            {
-              run = "noctalia msg wallpaper-set %s1";
-              for = "linux";
-              desc = "Set as wallpaper";
-            }
-          ];
-        };
+          # set wallpeperr in noctalia shell
+          opener = {
+            set-wallpaper = [
+              {
+                run = "noctalia msg wallpaper-set %s1";
+                for = "linux";
+                desc = "Set as wallpaper";
+              }
+            ];
+          };
+        })
 
         # plugins registration
-        plugin = {
-          # Preloades
-          prepend_preloaders = [
-            # Replace magick, image, video with mediainfo
-            {
-              mime = "{audio,video,image}/*";
-              run = "mediainfo";
-            }
-            {
-              mime = "application/subrip";
-              run = "mediainfo";
-            }
-            # Adobe Illustrator, Adobe Photoshop is image/adobe.photoshop, already handled above
-            {
-              mime = "application/postscript";
-              run = "mediainfo";
-            }
-          ];
-          # Previewers
-          prepend_previewers = [
-            # Replace magick, image, video with mediainfo
-            {
-              mime = "{audio,video,image}/*";
-              run = "mediainfo";
-            }
-            {
-              mime = "application/subrip";
-              run = "mediainfo";
-            }
-            # Adobe Illustrator, Adobe Photoshop is image/adobe.photoshop, already handled above
-            {
-              mime = "application/postscript";
-              run = "mediainfo";
-            }
-          ];
-          # Fetchers
-          prepend_fetchers = [
-            # git
-            {
-              url = "*";
-              run = "git";
-              group = "git";
-            }
-            {
-              url = "*/";
-              run = "git";
-              group = "git";
-            }
-          ];
-        };
-        # There are more extensions which are supported by mediainfo.
-        # Just add file's MIME type to `previewers`, `preloaders` above.
-        # https://mediaarea.net/en/MediaInfo/Support/Formats
+        {
+          plugin = {
+            # Preloades
+            prepend_preloaders = [
+              # Replace magick, image, video with mediainfo
+              {
+                mime = "{audio,video,image}/*";
+                run = "mediainfo";
+              }
+              {
+                mime = "application/subrip";
+                run = "mediainfo";
+              }
+              # Adobe Illustrator, Adobe Photoshop is image/adobe.photoshop, already handled above
+              {
+                mime = "application/postscript";
+                run = "mediainfo";
+              }
+            ];
+            # Previewers
+            prepend_previewers = [
+              # Replace magick, image, video with mediainfo
+              {
+                mime = "{audio,video,image}/*";
+                run = "mediainfo";
+              }
+              {
+                mime = "application/subrip";
+                run = "mediainfo";
+              }
+              # Adobe Illustrator, Adobe Photoshop is image/adobe.photoshop, already handled above
+              {
+                mime = "application/postscript";
+                run = "mediainfo";
+              }
+            ];
+            # Fetchers
+            prepend_fetchers = [
+              # git
+              {
+                url = "*";
+                run = "git";
+                group = "git";
+              }
+              {
+                url = "*/";
+                run = "git";
+                group = "git";
+              }
+            ];
+          };
+          # There are more extensions which are supported by mediainfo.
+          # Just add file's MIME type to `previewers`, `preloaders` above.
+          # https://mediaarea.net/en/MediaInfo/Support/Formats
 
-        # For a large file like Adobe Illustrator, Adobe Photoshop, etc
-        # you may need to increase the memory limit if no image is rendered.
-        # https://yazi-rs.github.io/docs/configuration/yazi#tasks
-        tasks = {
-          image_alloc = 1073741824; # = 1024*1024*1024 = 1024MB
-        };
-      };
+          # For a large file like Adobe Illustrator, Adobe Photoshop, etc
+          # you may need to increase the memory limit if no image is rendered.
+          # https://yazi-rs.github.io/docs/configuration/yazi#tasks
+          tasks = {
+            image_alloc = 1073741824; # = 1024*1024*1024 = 1024MB
+          };
+        }
+      ];
     };
   };
 }

@@ -38,6 +38,11 @@ in
     # Let Home Manager install and manage itself.
     programs.home-manager.enable = true;
 
+    # yazi is part of the base set for every machine (TUI, works headless);
+    # desktop-only bits (portal/desktop-entry/noctalia/gvfs) are opt-in via
+    # user.cli.yazi.graphical, enabled by the graphical bundle.
+    user.cli.yazi.enable = true;
+
     home = {
       stateVersion = "25.05";
       username = primaryUser.username;

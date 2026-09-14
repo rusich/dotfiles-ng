@@ -21,7 +21,10 @@ in
     };
 
     user.cli = {
-      yazi.enable = true;
+      yazi = {
+        enable = true;
+        graphical = true;
+      };
       television.enable = true;
       tmux.enable = true;
       nix-search-tv.enable = true;

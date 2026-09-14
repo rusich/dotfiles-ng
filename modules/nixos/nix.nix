@@ -1,6 +1,7 @@
 # common nixos and home-manager settings for nix
 # This module automatically loaded in all nixos configurations
 {
+  lib,
   ...
 }:
 {
@@ -13,9 +14,9 @@
     #   dates = [ "daily" ];
     # };
 
-    # cleanup system automatically
+    # cleanup system automatically (overridable, e.g. daily on servers)
     gc = {
-      dates = "weekly";
+      dates = lib.mkDefault "weekly";
     };
   };
 

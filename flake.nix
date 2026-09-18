@@ -33,9 +33,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Use noctalia theme in steam. Overlay must be set in ./overlays/default.nix
-    millennium.url = "github:SteamClientHomebrew/Millennium?dir=packages/nix";
-
     # disko: declarative disk partitioning. Used by nixos-anywhere on servers
     # (hosts/nixos/<server>/disko.nix).
     disko = {

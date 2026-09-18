@@ -39,7 +39,6 @@ in
 
     programs.steam = {
       enable = true;
-      # package = pkgs.millennium-steam;
       package = pkgs.unstable.steam;
       gamescopeSession.enable = true;
       protontricks.enable = true;

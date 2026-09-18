@@ -112,7 +112,7 @@ nix fmt          # отформатировать все .nix файлы
 - `nixpkgs-unstable` — `nixos-unstable`
 - `home-manager` — `release-26.05`
 - `nix-darwin` — `nix-darwin-26.05`
-- `nixos-hardware`, `musnix`, `firefox-addons`, `millennium`
+- `nixos-hardware`, `musnix`, `firefox-addons`
 - `disko` — декларативная разбивка дисков для серверов (`nixos-anywhere`)
 
 Версия релиза указана в трёх input-ах; flake-схема требует строковых

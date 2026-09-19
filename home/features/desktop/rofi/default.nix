@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -15,5 +16,9 @@ in
       ".config/rofi".source =
         config.lib.file.mkOutOfStoreSymlink config.homeModulesPath + "/features/desktop/rofi/config";
     };
+
+    home.packages = [
+      pkgs.rofi
+    ];
   };
 }

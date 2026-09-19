@@ -79,7 +79,7 @@ in
 
     programs.opencode = {
       enable = true;
-      package = pkgs.unstable.opencode;
+      # package = pkgs.unstable.opencode;
       settings = {
         # Порт хаба для веб-UI (traefik → 4096). На инстансы проектов не влияет:
         # те запускаются с явным `--port 0` (случайный свободный порт).

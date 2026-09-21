@@ -762,7 +762,16 @@ function M.generate_hub_page()
 
   -- Простая команда поиска (проверим сначала без экранирования)
   local search_pattern = string.format('\\[\\[%s\\]\\]', hub_name)
-  local command = string.format('rg --files-with-matches "%s" "%s"', search_pattern, notes_dir)
+  local command = {
+    'rg',
+    '--files-with-matches',
+    '--glob',
+    '*.md',
+    '--glob',
+    '!**/daily/**',
+    search_pattern,
+    notes_dir,
+  }
 
   -- print("Команда поиска:", command)
 
@@ -785,6 +794,25 @@ function M.generate_hub_page()
   local hub_file_path = vim.api.nvim_buf_get_name(bufnr)
   files = vim.tbl_filter(function(file)
     return file ~= hub_file_path
+  end, files)
+
+  -- Игнорируем ссылки, которые встречаются только в авто-сгенерированном
+  -- разделе "## Заметки" других хабов. Иначе возникают циклы вида
+  -- Programming <-> Rust и в списке потомков оказывается родительский хаб.
+  local target = '[[' .. hub_name .. ']]'
+  files = vim.tbl_filter(function(file)
+    local in_notes_section = false
+    for _, line in ipairs(read_file(file)) do
+      if line:match '^## Заметки' then
+        in_notes_section = true
+      elseif in_notes_section and line:match '^## ' then
+        in_notes_section = false
+      end
+      if not in_notes_section and line:find(target, 1, true) then
+        return true
+      end
+    end
+    return false
   end, files)
 
   -- Находим и удаляем существующий раздел "Заметки"

@@ -402,6 +402,7 @@ window-rule {
     match title="ПОКЕРОК"
     match title="Cashier"
     match app-id="steam_app_2571507377"
+    match app-id="re.sonny.Junction"
     open-floating true
 }
 

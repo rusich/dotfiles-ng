@@ -22,6 +22,7 @@ in
       ]
       ++ lib.optionals (pkgs.stdenv.isLinux && cfg.graphical) [
         xdg-desktop-portal-termfilechooser # use yazi as a file chooser
+        junction # "Open with" app chooser (re.sonny.Junction)
       ];
 
     home.file.".local/share/applications/yazi.desktop" =
@@ -173,12 +174,6 @@ in
             on = "l";
             run = "plugin smart-enter";
             desc = "Enter the child directory, or open the file";
-          }
-          # open with xdg-open
-          {
-            on = "<C-o>";
-            run = "shell \"xdg-open %h\"";
-            desc = "Open hovered file with xdg-open";
           }
           # omni-trash
           {
@@ -378,6 +373,14 @@ in
             for = "unix";
             run = "shell \"$SHELL\" --block";
             desc = "Open $SHELL here";
+          }
+        ]
+        ++ lib.optionals (pkgs.stdenv.isLinux && cfg.graphical) [
+          # open with a system app chooser (GNOME "Open with")
+          {
+            on = "<C-o>";
+            run = "shell \"re.sonny.Junction %h\"";
+            desc = "Open hovered file via app chooser (Junction)";
           }
         ];
       };

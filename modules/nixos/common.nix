@@ -108,6 +108,7 @@ in
       cifs-utils
       lshw
       iotop
+      ethtool # NIC diagnostics / Wake-on-LAN
     ]
     ++ config.packages.common;
 

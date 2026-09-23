@@ -99,6 +99,17 @@
   # drive does not park itself in a power state it cannot wake up from.
   boot.kernelParams = [ "nvme_core.default_ps_max_latency_us=0" ];
 
+  # Wake-on-LAN for the onboard Realtek RTL8125 (eno1). The interface is managed
+  # by NetworkManager, so arm WoL via a udev .link file (honored by udev whether
+  # or not systemd-networkd runs, and not touched by NM's default wake-on-lan
+  # setting). "magic" = classic magic-packet WoL. For waking from S5 the BIOS
+  # option Settings -> Platform Power -> "Wake on LAN" must be Enabled and "ErP"
+  # Disabled (ErP cuts standby power in S5).
+  systemd.network.links."40-eno1" = {
+    matchConfig.OriginalName = "eno1";
+    linkConfig.WakeOnLan = "magic";
+  };
+
   users.users.zaychik = {
     isNormalUser = true;
     description = "Sakhaya Sergina";

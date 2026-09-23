@@ -19,10 +19,12 @@ in
 
     # Overclocking support
     hardware.amdgpu.overdrive.enable = true;
-    # ets the amdgpu.ppfeaturemask kernel option. It can be used to enable the overdrive bit.
-    # Default is 0xfffd7fff as it is less likely to cause flicker issues. Setting it to 0xffffffff enables all features,
-    # but also can be unstable. See the kernel documentation for more information.
-    hardware.amdgpu.overdrive.ppfeaturemask = "0xffffffff";
+    # Sets the amdgpu.ppfeaturemask kernel option (includes the overdrive bit).
+    # Keep the conservative 0xfffd7fff: 0xffffffff additionally enables
+    # PP_GFXOFF_MASK (0x8000) and PP_AVFS_MASK (0x20000), which make this RDNA3
+    # card wake immediately from S3 (suspend enters and instantly exits).
+    # See [[Gigabyte AORUS b550 Elite v2 fix broken suspend on Linux]].
+    hardware.amdgpu.overdrive.ppfeaturemask = "0xfffd7fff";
 
     # ROCm
 

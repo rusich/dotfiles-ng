@@ -43,8 +43,61 @@
       SUBSYSTEM=="input", ATTRS{idVendor}=="044f", ATTRS{idProduct}=="0402", SYMLINK+="input/js1", MODE="0666"
       # ThrustMaster, Inc. HOTAS Warthog Throttle
       SUBSYSTEM=="input", ATTRS{idVendor}=="044f", ATTRS{idProduct}=="0404", SYMLINK+="input/js2", MODE="0666"
+
+      # Gigabyte B550 AORUS ELITE V2: USB devices and the xHCI controllers fire
+      # spurious GPE wakeups that make the system resume immediately after
+      # suspend entry. Disable USB wakeup on every USB device and xHCI
+      # controller (wake via the power button still works).
+      ACTION=="add", SUBSYSTEM=="usb", TEST=="power/wakeup", ATTR{power/wakeup}="disabled"
+      ACTION=="add", SUBSYSTEM=="pci", DRIVER=="xhci_hcd", TEST=="power/wakeup", ATTR{power/wakeup}="disabled"
     '';
   };
+
+  # Gigabyte B550 AORUS ELITE V2: GPP0 (PCIe bridge 0000:00:01.1) is an enabled
+  # S4 wake source that fires spuriously and makes the system wake up right
+  # after entering suspend. Writing the device name to /proc/acpi/wakeup
+  # toggles it, so only toggle when still enabled.
+  # See [[Gigabyte AORUS b550 Elite v2 fix broken suspend on Linux]].
+  systemd.services.disable-gpp0-wakeup = {
+    description = "Disable GPP0 ACPI wakeup source to fix suspend (Gigabyte B550)";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "sysinit.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      if grep -q '^GPP0.*enabled' /proc/acpi/wakeup; then
+        echo GPP0 > /proc/acpi/wakeup
+      fi
+    '';
+  };
+
+  # Line6 POD HD500 (USB audio, driver snd_usb_podhd) oopses in line6_suspend()
+  # when entering sleep (RIP: line6_suspend+0x1e/0x70 [snd_usb_line6]), which
+  # wedges the whole machine on suspend entry. Deauthorize the device before
+  # sleep and reauthorize it on resume so the buggy suspend callback never runs.
+  powerManagement.powerDownCommands = ''
+    for d in /sys/bus/usb/devices/*/; do
+      if [ "$(cat "$d/idVendor" 2>/dev/null)" = "0e41" ] && [ "$(cat "$d/idProduct" 2>/dev/null)" = "414d" ]; then
+        echo 0 > "$d/authorized"
+      fi
+    done
+  '';
+  powerManagement.resumeCommands = ''
+    for d in /sys/bus/usb/devices/*/; do
+      if [ "$(cat "$d/idVendor" 2>/dev/null)" = "0e41" ] && [ "$(cat "$d/idProduct" 2>/dev/null)" = "414d" ]; then
+        echo 1 > "$d/authorized"
+      fi
+    done
+  '';
+
+  # XrayDisk 128GB (Silicon Motion SM2263EN, DRAM-less, Windows disk): after an
+  # S3 resume the root port 0000:03:03.0 and the drive fail the D3hot->D0
+  # transition ("device inaccessible") and the kernel disables the controller,
+  # so the disk vanishes until a cold power cycle. Disable NVMe APST so the
+  # drive does not park itself in a power state it cannot wake up from.
+  boot.kernelParams = [ "nvme_core.default_ps_max_latency_us=0" ];
 
   users.users.zaychik = {
     isNormalUser = true;

@@ -297,11 +297,23 @@ sudo swapoff /dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789
 
 ### CPU (Broadwell i5-5250U)
 
-- **Нет HWP** → `intel_pstate` работает в `passive`, governor `schedutil`.
-  Переключение power-profiles (Noctalia/PPD) на частотах **ничего не меняет**
-  — это ожидаемо и не баг. Для реального управления профилями нужен был бы
-  `intel_pstate=disable` + `acpi-cpufreq` — **не делаем** (потеря pstate-регуляторов
-  ради косметики; CPU не узкое место, `cpu_some` max ~40 % под нагрузкой).
+- **Нет HWP** → `intel_pstate` работает в `passive` (драйвер `intel_cpufreq`),
+  governor `schedutil`. Как следствие, нет `energy_performance_preference` (EPP)
+  и `platform_profile` — firmware профилей не даёт.
+- **Профили PPD/Noctalia — НЕ декоративны, но работают частично.** Замерено
+  (переключение профиля + сэмпл частот):
+  - меняют **только `energy_perf_bias` (EPB)**: power-saver=**15**,
+    balanced=**6**, performance=**0**;
+  - **не трогают** governor (всегда `schedutil`), `min/max_perf_pct`,
+    `no_turbo` (всё одинаково во всех профилях);
+  - эффект виден **в простое**: ~**1567 МГц** (power-saver) против
+    ~**1860 МГц** (performance), разница ~300 МГц;
+  - **под полной нагрузкой разницы нет** — все упираются в 2500 МГц
+    (там ограничивает не EPB, а мощностной/тепловой бюджет).
+  - Вывод: профили дают умеренную экономию батареи в простое. Оставляем как
+    есть; `intel_pstate=disable` + `acpi-cpufreq` ради «полноценных» профилей
+    **не делаем** (потеря pstate-регуляторов ради косметики; CPU не узкое
+    место — `cpu_some` max ~40 % под нагрузкой).
 
 ### Отдельно: парсер `gitcommit` (nvim)
 
@@ -529,8 +541,9 @@ sudo chown $USER:users /mnt/samsung
 - **Suspend:** **работает** в обоих режимах; активен **`deep` (S3)** —
   экономичнее по батарее. Проверено 3+ цикла deep и 3+ s2idle, включая
   «ушёл с ноутбуком, закрыл крышку». Fallback — `s2idle`.
-- **CPU:** Broadwell i5-5250U, pstate passive/schedutil (HWP нет). Профили
-  PPD/Noctalia на частоты не влияют — это норма для этого чипа.
+- **CPU:** Broadwell i5-5250U, pstate passive (`intel_cpufreq`)/schedutil (HWP нет).
+  Профили PPD/Noctalia реально меняют лишь `energy_perf_bias` (EPB 15/6/0):
+  ~300 МГц разницы **в простое**, под нагрузкой без разницы (раздел 5).
 - **Термал:** mbpfan активен, thermald выключен.
 - **Ребилд:** `sudo nixos-rebuild switch --flake ~/.dotfiles#MacBook-Air`.
 - **Конфиг:** `hosts/nixos/MacBook-Air/configuration.nix` (все параметры — раздел 5).

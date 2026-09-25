@@ -41,6 +41,9 @@ O_DIRECT ниже.
 | **Samsung FIT Plus 128G** (`MUF-128AB`) | ~400 МБ/с ⚠️ | ~60 МБ/с ⚠️ | н/д ⚠️ | н/д ⚠️ |
 | USB-SSD (ориентир) | 300–1000 МБ/с | 200–900 МБ/с | 10–50k IOPS | 5–30k IOPS |
 
+**Текущий носитель:** AGI на **порту 2-2** (`sda`, `24a9:205a`), root `/dev/sda2`.
+Fio-сравнение (раздел 2a) сделано на этом же порту.
+
 ⚠️ **Samsung FIT Plus в этой таблице — ТЕОРЕТИЧЕСКИЕ данные из интернета,
 реально он НЕ тестировался.** Цифры взяты из обзора Windows Central
 (синтетика на свежем носителе). Если флешка будет куплена — **обязательно
@@ -75,7 +78,7 @@ O_DIRECT ниже.
 | rand read 4K | **2476 IOPS** | 1344 IOPS | SD |
 | rand write 4K | **509 IOPS** | 300 IOPS | SD |
 | mix 70/30 r/w | read 672 / write 289 | read 436 / write 191 | SD |
-| **boot** | 1м 09.8с | **44.3–47.4с** | **AGI (−22…−25с)** |
+| **boot** | 1м 09.8с | **44.3с** (холодн.) / 47.4с | **AGI (−22…−25с)** |
 | rg --files /nix/store | 83.3с | 96–206с* | SD |
 
 \* `rg` зависит от фоновой нагрузки и размера store (файлов растёт с
@@ -165,15 +168,15 @@ s2idle на Broadwell требует S0ix; в логах `intel_pch_thermal: S0i
 
 Вывод: это **memory-pressure ливлок + своп на медленный SD**, а не CPU.
 
-## 5. Итоговый тюнинг (коммиты `7029dc5`, `7447d96`)
+## 5. Итоговый тюнинг (актуальное состояние конфига)
 
-Файл: `hosts/nixos/MacBook-Air/configuration.nix`.
+Файл: `hosts/nixos/MacBook-Air/configuration.nix`. Значения ниже — **текущие
+на AGI** (после раздела 2c). В скобках — что было на SD, если менялось.
 
-- **Запись:** `vm.dirty_bytes=32M`, `dirty_background_bytes=8M`,
-  `dirty_expire_centisecs=1500`, `dirty_writeback_centisecs=300` — не копить
-  сотни МБ грязных страниц и не вешать систему массовым сбросом.
-- **Память:** `vm.swappiness=60` (умеренно, не заливать zram проактивно),
-  `vm.vfs_cache_pressure=60`, `vm.page-cluster=0`.
+- **Запись:** `vm.dirty_bytes=64M` (на SD 32M), `dirty_background_bytes=16M`
+  (8M), `dirty_expire_centisecs=1500`, `dirty_writeback_centisecs=300`.
+- **Память:** `vm.swappiness=150` (на SD 60), `vm.vfs_cache_pressure=60`,
+  `vm.page-cluster=0`.
 - **zram swap = 100 % RAM** (память не резервируется).
 - **sda3 → `noauto`**: диск-своп не активен в работе (свопимся только в zram),
   гибернация возможна вручную:
@@ -183,12 +186,25 @@ s2idle на Broadwell требует S0ix; в логах `intel_pch_thermal: S0i
 - **Изоляция сессии:** `app.slice` (терминалы/сборки/браузер)
   `MemoryHigh=2300M`, `CPUWeight=50`; `session.slice` (композитор niri)
   `CPUWeight=300`, `MemoryMin=200M`, `MemoryLow=400M`.
-- **ФС/диск:** root `noatime,commit=30`; udev `rotational=0`,
-  `read_ahead=1024`, `mq-deadline`; `/tmp` в zram (`ram/4`), `/var/tmp` tmpfs,
-  кэш Firefox в tmpfs для `rusich` и `bunny`.
+- **ФС/диск:** root `noatime,commit=60` (на SD 30); udev для обоих носителей
+  (`05ac:8406` и `24a9:205a`): `rotational=0`, `read_ahead=1024`,
+  `mq-deadline`. `/tmp` в zram (`ram/4`), `/var/tmp` tmpfs **256M**,
+  кэш Firefox в tmpfs **384M** для `rusich` и `bunny`.
 - **journald:** `persistent`, лимит 32 МБ (логи зависаний переживают ребут).
-- **Suspend:** `usbcore.autosuspend=-1`, `usb-storage.delay_use=5`,
-  фикс `fix-sd-reader` (поиск ридера по `05ac:8406`).
+- **fstrim.timer:** **выключен** (TRIM нет). Раньше включался nixos-hardware.
+- **Suspend:** `mem_sleep_default=s2idle`, `usbcore.autosuspend=-1`,
+  `usb-storage.delay_use=5`, `acpi_sleep=nonvs`. `fix-sd-reader` **удалён**
+  (деавторизовал корневое USB-устройство → краш); вместо него безопасный
+  sleep-hook `/etc/systemd/system-sleep/rescan-sd-reader.sh` (только rescan).
+- **Термал:** `thermald` **выключен**, `mbpfan` — единственный (из nixos-hardware).
+
+### CPU (Broadwell i5-5250U)
+
+- **Нет HWP** → `intel_pstate` работает в `passive`, governor `schedutil`.
+  Переключение power-profiles (Noctalia/PPD) на частотах **ничего не меняет**
+  — это ожидаемо и не баг. Для реального управления профилями нужен был бы
+  `intel_pstate=disable` + `acpi-cpufreq` — **не делаем** (потеря pstate-регуляторов
+  ради косметики; CPU не узкое место, `cpu_some` max ~40 % под нагрузкой).
 
 ### Отдельно: парсер `gitcommit` (nvim)
 
@@ -203,12 +219,16 @@ s2idle на Broadwell требует S0ix; в логах `intel_pch_thermal: S0i
 поддерживается `O_DIRECT` (ext4/f2fs). На iso9660/raw без root не выйдет —
 именно поэтому ранние замеры AGI были буферизованными и недостоверными.
 
-Подготовка флешки (ext4 без журнала, чтобы не мешал замерам):
+Подготовка флешки (ext4 без журнала, чтобы не мешал замерам). В системе нет
+`parted` — используем `sfdisk` (размер раздела задать по своему носителю):
 
 ```bash
 sudo umount /dev/sdX1 2>/dev/null
 sudo wipefs -a /dev/sdX
-sudo parted -s /dev/sdX mklabel gpt mkpart primary ext4 1MiB 100%
+sudo sfdisk /dev/sdX <<EOF
+label: gpt
+start=2048, size=<СЕКТОРЫ>, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, name="iobench"
+EOF
 sudo mkfs.ext4 -F -O ^has_journal -m 0 -L iobench /dev/sdX1
 sudo mount -o noatime /dev/sdX1 /mnt/iobench
 sudo chown $USER:users /mnt/iobench
@@ -273,10 +293,23 @@ free -h; swapon --show; zramctl
 
 ## 8. Артефакты
 
-- Сырой лог монитора: `/home/rusich/psi-monitor.log` (PSI/память/слайсы,
-  2-секундный шаг). Монитор сейчас не запущен.
-- Коммиты: `2ef0955` (первичный тюнинг), `7029dc5` (память/своп/earlyoom/
-  слайсы), `7447d96` (gitcommit).
+- Скрипты и логи: `~/macbook-suspend/` (вне git-репо):
+  - `system-bench.sh` — fio + systemd-analyze + PSI + rg; результат в `results/`.
+  - `writeback-bench.sh` — буферизованная запись, всплески writeback/PSI.
+  - `readahead-test.sh` — чередующийся read_ahead (нужен root, drop_caches).
+  - `suspend-test.sh` — тест сна с внешним логом (переживает краш root).
+  - `sync-to-flash.sh` / `watch-sync-to-flash.sh` — автосинк результатов на флешку.
+  - `clone-1-format.sh`, `clone-2-rsync.sh`, `clone-3-bootloader.sh` — клон системы.
+  - `results/` — `bench-SD-*.txt`, `bench-AGI-2-*.txt` (финальный),
+    `baseline-AGI.txt`, `suspend-s2idle-AGI-works-*.log`.
+- Сырой лог PSI-монитора: `/home/rusich/psi-monitor.log` (SD-эпоха).
+- Ключевые коммиты (по порядку):
+  - `2ef0955` первичный тюнинг SD; `7029dc5` память/своп/earlyoom/слайсы;
+    `7447d96` gitcommit; `679cd10` честные O_DIRECT-замеры;
+    `4c8606e` thermald off; `ce4d301` переезд на AGI + fix suspend;
+    `21fd324` финальный бенчмарк AGI; `0cb3c02` fstrim off;
+    `73de141` swappiness 150; `07f8a94` writeback-лимиты;
+    `910f8b0` RAM-монтирования (кэш 384M, /var/tmp 256M); `424bd8c` раздел 2c.
 
 ## 9. Приложение: скрипт монитора PSI
 
@@ -314,11 +347,95 @@ while true; do
 done
 ```
 
-## 10. Примечание по Samsung FIT Plus
+## 10. План сравнения AGI → Samsung FIT Plus (при покупке)
 
-**Samsung FIT Plus 128G (`MUF-128AB`) реально не тестировался** — см. пометку
-⚠️ в таблице раздела 2. Цифры (`~400 МБ/с` чтение, `~60 МБ/с` запись) взяты из
-обзора в интернете (синтетика Windows Central), а не из замеров на этой машине.
-Считать их ориентиром, не фактом. **При покупке — обязательно прогнать
-методику из разделов 6–7 на реальном экземпляре** и занести живые цифры в
-таблицу.
+Цель: сравнить носители объективно, тем же инструментарием, что SD и AGI.
+Samsung уже заказан. FIT Plus — тоже `usb-storage` BOT, без UAS и TRIM.
+
+### 10.1. Прежде чем что-либо трогать
+
+1. Записать **текущий baseline AGI** (уже в `results/bench-AGI-2-*.txt`).
+2. Перепроверить, что тесты делаются **на том же USB-порту** (2-2), иначе
+   сравнение некорректно. `readlink -f /sys/block/sdX/device` → `.../2-2/...`.
+3. Помнить: **fio-разброс ±30 %** на этих флешках — делать ≥2–3 прогона,
+   брать лучший/медиану, не доверять одиночному числу.
+
+### 10.2. Замер «сырого» носителя (до переноса системы)
+
+Разметить Samsung как **отдельный bench-носитель** (не трогая root AGI):
+
+```bash
+sudo umount /dev/sdX1 2>/dev/null
+sudo wipefs -a /dev/sdX
+sudo sfdisk /dev/sdX <<EOF
+label: gpt
+start=2048, size=<...>, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, name="iobench"
+EOF
+sudo mkfs.ext4 -F -O ^has_journal -m 0 -L iobench /dev/sdX1
+sudo mkdir -p /mnt/samsung && sudo mount -o noatime /dev/sdX1 /mnt/samsung
+sudo chown $USER:users /mnt/samsung
+```
+
+Затем — **методика из разделов 6 и 2** (O_DIRECT: посл. чтение/запись, случ.
+4K чтение/запись с p50/p95/p99) и **`system-bench.sh`** в этот каталог:
+
+```bash
+~/macbook-suspend/system-bench.sh /mnt/samsung Samsung
+# + 2-3 повторных прогона, взять медиану
+```
+
+Занести в таблицы разделов 2 и 2a рядом с AGI/SD.
+
+### 10.3. Перенос системы AGI → Samsung (клонирование)
+
+Тем же способом, что SD → AGI (UUID совпадают, чтобы конфиг нашёл разделы):
+
+- `clone-1-format.sh` — указывает на целевой носитель; разметка 1G EFI +
+  root + swap 8G, те же UUID (`3122-0FD9`, `8302097e-…`, `d237160e-…`).
+- `clone-2-rsync.sh` — пофайловое копирование `/` и `/boot`.
+- `clone-3-bootloader.sh` — systemd-boot в `EFI/BOOT/BOOTX64.EFI` (fallback
+  для Apple) + `EFI/systemd/`.
+- **Важно:** скрипты рассчитаны на источник `sda` → цель `sdb`. При клоне
+  AGI→Samsung источник — это AGI (`sda`), цель — Samsung; проверить буквы
+  устройств и **размеры** (Samsung может быть меньше/больше — если меньше,
+  старые `dd`-планы не годятся, используем rsync).
+
+Порядок: загрузиться как обычно (AGI), воткнуть Samsung, прогнать 3 скрипта,
+выключить, вынуть AGI, загрузиться с Samsung (Option → EFI Boot).
+
+### 10.4. После переезда на Samsung
+
+1. Проверить `rotational=0` для `24a9:…`? — нет, у Samsung **другой VID:PID** →
+   добавить udev-правило под его `idVendor:idProduct`. Обновить `rescan-sd-reader`
+   не нужно (он generic). Проверить `mem_sleep`/suspend (важнейший критерий —
+   переживает ли resume, как AGI, или отваливается, как Apple-ридер).
+2. Прогнать `system-bench.sh` на Samsung как root.
+3. Сравнить: **посл. запись**, **rand 4K**, **boot**, **suspend**.
+
+### 10.5. Критерии выбора
+
+| Критерий | Вес |
+|---|---|
+| **Suspend переживает resume** | критично (иначе как SD — краш) |
+| Посл. запись | высокий (влияет на отзывчивость) |
+| Загрузка (boot) | высокий |
+| Случ. 4K запись p99 | средний |
+| Посл. чтение | низкий |
+
+## 11. Шпаргалка текущего состояния (актуально на 2026-09-26)
+
+- **Носитель:** AGI-флешка (`24a9:205a`), root `/dev/sda2` (ext4), порт USB `2-2`.
+- **Загрузка:** штатная, без Option (systemd-boot в NVRAM).
+- **Suspend:** **работает** (`mem_sleep_default=s2idle`). Проверено 3+ цикла,
+  включая «ушёл на улицу, закрыл крышку, вернулся, открыл».
+- **CPU:** Broadwell i5-5250U, pstate passive/schedutil (HWP нет). Профили
+  PPD/Noctalia на частоты не влияют — это норма для этого чипа.
+- **Термал:** mbpfan активен, thermald выключен.
+- **Ребилд:** `sudo nixos-rebuild switch --flake ~/.dotfiles#MacBook-Air`.
+- **Конфиг:** `hosts/nixos/MacBook-Air/configuration.nix` (все параметры — раздел 5).
+- **Метрики/скрипты:** `~/macbook-suspend/` (+ `results/`).
+- **Открытый план:** сравнить с Samsung FIT Plus при получении (раздел 10).
+- **Незакрытый вопрос:** Wi-Fi `wl` ворчит при resume (`WLAN scan error`),
+  но сеть поднимается — при проблемах смотреть драйверы `wl`/`b43`.
+
+

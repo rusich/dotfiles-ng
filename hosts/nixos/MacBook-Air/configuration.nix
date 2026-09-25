@@ -105,16 +105,15 @@ in
     "usbcore.autosuspend=-1"
     # Даём время ридеру подняться, в т.ч. после resume
     "usb-storage.delay_use=5"
-    # Явно указываем устройство
+    # Устройство для гибернации (sda3 активируется вручную, см. swapDevices)
     "resume=/dev/sda3"
-    # Добавляем время ожидания для USB
     "resume_wait=10"
-    # Добавляем параметры для корректного восстановления
+    # Корректное восстановление после S3
     "acpi_sleep=nonvs"
     # "acpi_osi=!Windows 2013"
   ];
 
-  # Указываем устройство для гибернации
+  # Устройство для гибернации
   boot.resumeDevice = "/dev/sda3";
 
   # Отключаем заморозку сессий через Service-файл systemd-suspend
@@ -163,7 +162,10 @@ in
     "vm.dirty_background_bytes" = 8 * 1024 * 1024; # фоновый сброс начинается раньше
     "vm.dirty_expire_centisecs" = 1500; # 15 с
     "vm.dirty_writeback_centisecs" = 300; # 3 с
-    "vm.swappiness" = 10; # меньше трогать медленный swap на SD (zram приоритетнее)
+    # Умеренный swappiness: не заливаем zram проактивно холодной анонкой,
+    # оставляя запас под пики (напр. сборку парсеров). Диск-своп отключён,
+    # поэтому вытеснение page cache на медленный своп уже не грозит.
+    "vm.swappiness" = 60;
     "vm.vfs_cache_pressure" = 60; # держим метаданные в кэше — меньше чтений
     "vm.page-cluster" = 0; # для zram: постраничное чтение swap вместо кластеров
   };
@@ -185,10 +187,12 @@ in
     ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="8406", ATTR{queue/rotational}="0", ATTR{queue/read_ahead_kb}="1024", ATTR{queue/scheduler}="mq-deadline"
   '';
 
-  # Логи в RAM (tmpfs), чтобы journald не точил SD постоянной записью.
+  # Логи — persistent с малым лимитом: сохраняем логи зависаний,
+  # но не раздуваем запись на SD.
   services.journald.extraConfig = ''
-    Storage=volatile
-    RuntimeMaxUse=64M
+    Storage=persistent
+    SystemMaxUse=32M
+    RuntimeMaxUse=32M
   '';
 
   # /tmp — в zram (сжатый RAM). Временные файлы больше не пишутся на SD.
@@ -229,7 +233,56 @@ in
 
   zramSwap = {
     enable = true;
-    memoryPercent = 75;
+    # 100% от RAM: больше «ёмкость» свопа до упора → earlyoom/OOM реже
+    # срабатывают на тяжёлых разовых задачах. Память не резервируется,
+    # тратится только под реально сжатые данные.
+    memoryPercent = 100;
+  };
+
+  # sda3 (та же SD-карта) как обычный swap — только во вред: когда zram
+  # переполняется, ядро сливает анонку на 5 МБ/с карту, и система встаёт
+  # (в тесте ушло ~2.4 ГБ на sda3 при io_full до 88%). Помечаем его
+  # `noauto`: в обычной работе диск-своп не активен (свопимся только в zram),
+  # а гибернация остаётся возможной — активировать вручную перед сном:
+  #   sudo swapon /dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789
+  #   systemctl hibernate
+  swapDevices = lib.mkForce [
+    {
+      device = "/dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789";
+      options = [ "noauto" ];
+    }
+  ];
+
+  # Страховка от «завис вместо OOM»: earlyoom убивает самого прожорливого,
+  # когда и доступная память, и свободный своп почти исчерпаны. Браузер и
+  # композитор защищены через --avoid, сборщики/установщики — в приоритете
+  # на убийство. Порог 5% — срабатывает только в крайнем случае.
+  services.earlyoom = {
+    enable = true;
+    freeMemThreshold = 5;
+    freeSwapThreshold = 5;
+    extraArgs = [
+      "--avoid" "(firefox|firefox-bin|Isolated[[:space:]]Web[[:space:]]Co|Web[[:space:]]Content|WebExtensions|niri|gnome-shell|Xwayland|Xorg)"
+      "--prefer" "(cc1|cc1plus|gcc|clang|rustc|cargo|node|npm|yarn|pnpm|tar|unzip|7z|zstd|xz|nvim|git)"
+    ];
+  };
+
+  # Изоляция ресурсов пользовательской сессии. Композитор (niri) живёт в
+  # session.slice, приложения (терминалы, сборки, браузер) — в app.slice.
+  # Ограничиваем память приложений, чтобы тяжёлые сборки/установки не утянули
+  # всю RAM и не уронили сессию в memory-pressure ливлок. MemoryHigh только
+  # притормаживает (не убивает) — браузер не вылетит. Плюс приоритет CPU
+  # композитору, чтобы UI не голодал под нагрузкой.
+  systemd.user.slices.app.sliceConfig = {
+    MemoryHigh = "2300M";
+    CPUWeight = "50";
+  };
+  systemd.user.slices.session.sliceConfig = {
+    CPUWeight = "300";
+    # Гарантируем память композитору: его страницы не вытесняются/не свопятся,
+    # поэтому UI (мышь, окна) остаётся отзывчивым даже под тяжёлой нагрузкой.
+    MemoryMin = "200M";
+    MemoryLow = "400M";
   };
 
   networking.enableB43Firmware = false;

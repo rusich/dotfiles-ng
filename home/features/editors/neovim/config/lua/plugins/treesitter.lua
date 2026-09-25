@@ -42,7 +42,9 @@ return {
       'git_config',
       'git_rebase',
       'gitattributes',
-      'gitcommit',
+      -- 'gitcommit', -- parser.c ~3.3 МБ, сборка съедает ~3 ГБ RAM и вешает
+      --   слабые машины (MacBook-Air 4 ГБ). Ставить вручную на мощных:
+      --   :TSInstall gitcommit
       'gitignore',
       'just',
       'query', -- treesitter query files (.scm)

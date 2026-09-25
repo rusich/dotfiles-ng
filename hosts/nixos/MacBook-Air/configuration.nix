@@ -195,6 +195,11 @@ in
     ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTRS{idVendor}=="24a9", ATTRS{idProduct}=="205a", ATTR{queue/rotational}="0", ATTR{queue/read_ahead_kb}="1024", ATTR{queue/scheduler}="mq-deadline"
   '';
 
+  # fstrim бесполезен: носитель подключён как Bulk-Only (BOT), не UASP,
+  # `discard_max_bytes=0` — TRIM физически недоступен. Таймер только зря
+  # просыпается. Отключаем (модуль nixos-hardware common/pc/ssd включает его).
+  services.fstrim.enable = false;
+
   # Логи — persistent с малым лимитом: сохраняем логи зависаний,
   # но не раздуваем запись на SD.
   services.journald.extraConfig = ''

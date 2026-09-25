@@ -53,8 +53,10 @@ in
     };
   };
 
-  # Enable daemon for temperature monitoring
-  services.thermald.enable = true;
+  # thermald отключён: на Apple-железе он не знает машину и может лишний
+  # раз резать частоты. Управлением вентилятором заведует mbpfan
+  # (включается модулем apple-macbook-air-7 из nixos-hardware).
+  services.thermald.enable = false;
 
   # Users configuration
   # `rusich` is created by modules/nixos/common.nix (from primaryUser).

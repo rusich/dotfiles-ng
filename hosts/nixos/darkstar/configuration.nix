@@ -31,6 +31,8 @@
     wlr-randr
     xrandr
     anydesk
+    custom.freelib
+    discord
   ];
 
   services.udev = {

@@ -29,7 +29,6 @@ in
       chatbox
       loupe
       papers
-      custom.freelib
     ];
   };
 }

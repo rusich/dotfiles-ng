@@ -14,7 +14,6 @@ in
     home.packages = with pkgs; [
       whitesur-gtk-theme
       gnome-calculator
-      discord
       showtime
       mpv
       telegram-desktop

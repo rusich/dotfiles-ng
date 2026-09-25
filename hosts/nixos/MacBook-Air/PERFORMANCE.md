@@ -62,22 +62,29 @@ O_DIRECT ниже.
 ## 2a. Бенчмарк системы: SD vs AGI (fio)
 
 Полный сравнительный прогон (`system-bench.sh`, fio 3.41, `iodepth=1`,
-`O_DIRECT`). Результаты: `~/macbook-suspend/results/bench-{SD,AGI}*.txt`.
-Оба носителя — на одном USB3-контроллере (`usb2`, 5000 Мбит/с).
+`O_DIRECT`). Результаты: `~/macbook-suspend/results/bench-{SD,AGI-2}*.txt`.
+Оба носителя — на одном USB3-контроллере (`usb2`, 5000 Мбит/с). Для AGI
+указан **финальный прогон** — уже с применённым тюнингом (udev
+`rotational=0`, `mq-deadline`, `read_ahead=1024`); он лучше первого на
+записи (25→31.7 МБ/с) и mix (386→436 IOPS read).
 
 | Тест | SD | AGI | Победитель |
 |---|---|---|---|
-| seq read 1M | 93.5 МБ/с | **113–129 МБ/с** | AGI |
-| seq write 1M | **4.8 МБ/с** | **26–28.5 МБ/с** | **AGI (×6)** |
-| rand read 4K | **2476 IOPS** | 1338 IOPS | SD |
-| rand write 4K | **509 IOPS** | 285 IOPS | SD |
-| mix 70/30 r/w | read 672 / write 289 | read 400 / write 176 | SD |
-| **boot** | 1м 09.8с | **44.3с** | **AGI (−25с)** |
-| rg --files /nix/store | 83.3с | 96.3с | SD |
+| seq read 1M | 93.5 МБ/с | **126 МБ/с** | AGI |
+| seq write 1M | **4.8 МБ/с** | **31.7 МБ/с** | **AGI (×6.6)** |
+| rand read 4K | **2476 IOPS** | 1344 IOPS | SD |
+| rand write 4K | **509 IOPS** | 300 IOPS | SD |
+| mix 70/30 r/w | read 672 / write 289 | read 436 / write 191 | SD |
+| **boot** | 1м 09.8с | **44.3–47.4с** | **AGI (−22…−25с)** |
+| rg --files /nix/store | 83.3с | 96–206с* | SD |
+
+\* `rg` зависит от фоновой нагрузки и размера store (файлов растёт с
+поколениями) — не показатель носителя.
 
 Разбор boot: SD `firmware 12.4 + loader 18.6 + kernel 0.8 + initrd 17.7 +
-userspace 20.2`; AGI `firmware 3.1 + loader 4.0 + kernel 0.8 + initrd 12.9 +
-userspace 23.6`. У AGI сильно быстрее firmware/loader/initrd.
+userspace 20.2`; AGI `firmware 3.1–3.4 + loader 4.0–6.3 + kernel 0.8 +
+initrd 12.9–13.1 + userspace 23.6–23.8`. У AGI сильно быстрее
+firmware/loader/initrd.
 
 **Вывод:** AGI заметно лучше там, где важно для отзывчивости — **последо-
 вательная запись (×6)** и **загрузка (−25с)**. SD чуть быстрее на случайных

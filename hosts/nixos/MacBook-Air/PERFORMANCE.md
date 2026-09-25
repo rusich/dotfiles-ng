@@ -20,23 +20,37 @@ USB-BOT-ридер (контроллер NVMe на плате мёртв).
 
 ## 2. Базовые замеры носителей
 
-Методика: `O_DIRECT` (мимо кэша) там, где ФС поддерживает; для USB-флешки
-(iso9660) — буферизованно с `POSIX_FADV_RANDOM`. 4K = 200–2000 операций.
+Методика: **`O_DIRECT` (мимо кэша)** для всех носителей на writable ext4.
+4K = 2000 операций. Посл. чтение — 512 МиБ, посл. запись — 256 МиБ с
+`fsync`. Ранние замеры AGI (18.5 МБ/с, 2.83 мс) были сделаны **буферизованно**
+по read-only iso9660 и оказались артефактом метода — заменены на честный
+O_DIRECT ниже.
 
-| Носитель | Посл. чтение | Посл. запись | Случ. 4K чтение | Случ. 4K запись |
+| Носитель (FS, метод) | Посл. чтение | Посл. запись | Случ. 4K чтение | Случ. 4K запись |
 |---|---|---|---|---|
-| **SD-карта** (Apple reader, root) | 91.3 → 92.8 МБ/с | **5.0–5.1 МБ/с** | 0.41 мс (~2450 IOPS) | 1.97 мс (~507 IOPS), p99 **52 мс** |
-| **AGI 128G** USB-флешка (`24a9:205a`) | **18.5 МБ/с** | — (был ISO) | 2.83 мс (~354 IOPS, буфер.) | — |
-| Samsung FIT Plus 128G (`MUF-128AB`) | ~400 МБ/с* | ~60 МБ/с* | н/д | н/д |
+| **SD-карта** (Apple reader, ext4, O_DIRECT) | 93.1 МБ/с | **4.3 МБ/с** | 0.41 мс (~2450 IOPS) | avg 2.65 мс, p50 1.42, p99 **53.4 мс**, ~377 IOPS |
+| **AGI 128G** USB, порт 2-1 (ext4, O_DIRECT) | 97.9 МБ/с | 42.4 МБ/с | 0.85 мс (~1178 IOPS) | avg 5.28 мс, p50 3.13, p99 26.2 мс, ~189 IOPS |
+| **AGI 128G** USB, порт 2-2 (ext4, O_DIRECT) | **128 МБ/с** | 39.7 МБ/с | 0.76 мс (~1323 IOPS) | avg 5.21 мс, p50 3.00, p99 30.3 мс, ~192 IOPS |
+| **Samsung FIT Plus 128G** (`MUF-128AB`) | ~400 МБ/с ⚠️ | ~60 МБ/с ⚠️ | н/д ⚠️ | н/д ⚠️ |
 | USB-SSD (ориентир) | 300–1000 МБ/с | 200–900 МБ/с | 10–50k IOPS | 5–30k IOPS |
 
-\* по обзору Windows Central (синтетика, свежий носитель). FIT Plus — тоже
-`usb-storage` BOT, **без UAS и TRIM**, поэтому случайный I/O у него, скорее
-всего, слабый и деградирует по мере заполнения.
+⚠️ **Samsung FIT Plus в этой таблице — ТЕОРЕТИЧЕСКИЕ данные из интернета,
+реально он НЕ тестировался.** Цифры взяты из обзора Windows Central
+(синтетика на свежем носителе). Если флешка будет куплена — **обязательно
+прогнать тот же тест** (разделы 6–7) и занести живые цифры. FIT Plus — тоже
+`usb-storage` BOT, **без UAS и TRIM**, поэтому случайный I/O ожидаемо слабый
+и деградирует по мере заполнения.
 
-**Ключевой вывод:** у SD посл. запись всего ~5 МБ/с, а p99 случайной записи
-52 мс — это и есть источник фризов. Флешка AGI оказалась ещё хуже карты по
-чтению (в 5–7 раз), поэтому для ОС не подошла.
+**Ключевые выводы:**
+- У SD последовательная запись всего **~4.3 МБ/с**, а p99 случайной записи
+  **53 мс** — это и есть источник фризов под нагрузкой.
+- AGI в честном O_DIRECT **лучше SD** для ОС: посл. запись 40 МБ/с против 4.3
+  (**×9**), случайная запись p99 26–30 мс против 53 (стабильнее). Случайное
+  чтение у SD чуть лучше (0.41 vs 0.76 мс), но это вторично.
+- Смена USB-порта (2-1 → 2-2, оба на контроллере `usb2`, 5000 Мбит/с) дала
+  прирост только по посл. чтению (98 → 128 МБ/с); запись без изменений.
+- Узкое место обоих — **случайные 4K-записи** (BOT, `queue_depth=1`, без
+  TRIM): команды сериализуются, p99 в десятки мс.
 
 ## 3. Системные метрики: до и после тюнинга
 
@@ -101,30 +115,45 @@ USB-BOT-ридер (контроллер NVMe на плате мёртв).
 ## 6. Как воспроизвести замеры
 
 Общее: перед случайными тестами нужен **writable** носитель с ФС, где
-поддерживается `O_DIRECT` (ext4/f2fs). На iso9660/raw без root не выйдет.
+поддерживается `O_DIRECT` (ext4/f2fs). На iso9660/raw без root не выйдет —
+именно поэтому ранние замеры AGI были буферизованными и недостоверными.
+
+Подготовка флешки (ext4 без журнала, чтобы не мешал замерам):
 
 ```bash
+sudo umount /dev/sdX1 2>/dev/null
+sudo wipefs -a /dev/sdX
+sudo parted -s /dev/sdX mklabel gpt mkpart primary ext4 1MiB 100%
+sudo mkfs.ext4 -F -O ^has_journal -m 0 -L iobench /dev/sdX1
+sudo mount -o noatime /dev/sdX1 /mnt/iobench
+sudo chown $USER:users /mnt/iobench
+```
+
+```bash
+# Тестовый файл 512 МиБ на измеряемом носителе (для чтения)
+M=/mnt/iobench
+dd if=/dev/zero of=$M/big bs=1M count=512 conv=fsync
+
 # Последовательное чтение 512 МиБ (O_DIRECT)
-BIG=$(find /nix/store -maxdepth 3 -type f -size +300M | head -1)
-dd if="$BIG" of=/dev/null bs=1M count=512 iflag=direct
+dd if=$M/big of=/dev/null bs=1M iflag=direct count=512
 
 # Случайное чтение 4K, O_DIRECT
-python3 - "$BIG" <<'PY'
+python3 - "$M/big" <<'PY'
 import os,time,random,mmap,sys
 p=sys.argv[1]; size=os.path.getsize(p)
 fd=os.open(p,os.O_RDONLY|os.O_DIRECT); m=mmap.mmap(-1,4096); mv=memoryview(m)
-lat=[]; n=200
+lat=[]; n=2000
 for i in range(n):
     off=random.randrange(0,size-4096,4096)
     s=time.perf_counter(); os.preadv(fd,[mv],off); lat.append(time.perf_counter()-s)
 del mv; os.close(fd); m.close(); lat.sort(); a=sum(lat)/n
-print("avg=%.2fms p50=%.2f p95=%.2f max=%.2f ~%.0f IOPS"%(a*1e3,lat[n//2]*1e3,lat[int(n*.95)]*1e3,lat[-1]*1e3,1000/(a*1e3)))
+print("avg=%.2fms p50=%.2f p95=%.2f p99=%.2f max=%.2f ~%.0f IOPS"%(a*1e3,lat[n//2]*1e3,lat[int(n*.95)]*1e3,lat[int(n*.99)]*1e3,lat[-1]*1e3,1000/(a*1e3)))
 PY
 
-# Случайная запись 4K, O_DIRECT (пишет 256 МиБ, потом удаляет)
+# Случайная запись 4K, O_DIRECT (256 МиБ, n=2000, fsync в конце)
 python3 - <<'PY'
 import os,time,random,mmap
-p="/home/rusich/.iotest_rand"; size=256*1024*1024
+p="/mnt/iobench/rand"; size=256*1024*1024
 open(p,"wb").truncate(size)
 fd=os.open(p,os.O_RDWR|os.O_DIRECT); m=mmap.mmap(-1,4096); mv=memoryview(m); mv[:]=b"x"*4096
 lat=[]; n=2000
@@ -137,7 +166,7 @@ os.unlink(p)
 PY
 
 # Последовательная запись 256 МиБ с fsync
-dd if=/dev/zero of=/home/rusich/.iotest_seq bs=1M count=256 conv=fsync
+dd if=/dev/zero of=$M/seq bs=1M count=256 conv=fsync
 
 # PSI и память
 cat /proc/pressure/io /proc/pressure/memory
@@ -150,9 +179,11 @@ free -h; swapon --show; zramctl
    `readlink -f /sys/block/sdX/device/driver` → `usb-storage` (BOT) или `uas`.
 2. `cat /sys/block/sdX/device/queue_depth` — 1 (BOT) или >1 (UAS).
 3. `cat /sys/block/sdX/queue/discard_max_bytes` — есть ли TRIM.
-4. Разметить (ext4/f2fs) и смонтировать в writable-точку.
-5. Прогнать замеры из раздела 6, записать в таблицу (раздел 2).
-6. Для сравнения «для ОС» важны: **посл. запись**, **случ. 4K запись (p99)**,
+4. Определить порт: `lsusb -t` и `readlink -f /sys/block/sdX/device` —
+   на каком `usbN` контроллере и порту висит носитель.
+5. Разметить (ext4/f2fs) и смонтировать в writable-точку (см. раздел 6).
+6. Прогнать замеры из раздела 6, записать в таблицу (раздел 2).
+7. Для сравнения «для ОС» важны: **посл. запись**, **случ. 4K запись (p99)**,
    `queue_depth`, TRIM. Посл. чтение — вторично.
 
 ## 8. Артефакты
@@ -197,3 +228,12 @@ while true; do
   sleep 2
 done
 ```
+
+## 10. Примечание по Samsung FIT Plus
+
+**Samsung FIT Plus 128G (`MUF-128AB`) реально не тестировался** — см. пометку
+⚠️ в таблице раздела 2. Цифры (`~400 МБ/с` чтение, `~60 МБ/с` запись) взяты из
+обзора в интернете (синтетика Windows Central), а не из замеров на этой машине.
+Считать их ориентиром, не фактом. **При покупке — обязательно прогнать
+методику из разделов 6–7 на реальном экземпляре** и занести живые цифры в
+таблицу.

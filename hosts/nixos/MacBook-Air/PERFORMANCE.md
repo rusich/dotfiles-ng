@@ -94,27 +94,41 @@ firmware/loader/initrd.
 4K (лучше FTL-контроллер карты), но это вторично: система и так не упирается
 в random-4K. Для работы на этой машине **AGI предпочтительнее.**
 
-## 2b. Suspend: почему SD крашил, а AGI работает
+## 2b. Suspend: почему SD крашил, а AGI работает (теперь в режиме deep/S3)
 
-Root-FS на USB-устройстве **не переживает S3/s2idle, если устройство
-отваливается при resume**. Диагностика (логи в `~/macbook-suspend/results/`):
+Root-FS на USB-устройстве **не переживает resume, если устройство
+отваливается при выходе из сна**. Диагностика (логи в `~/macbook-suspend/results/`):
 
 - **SD (Apple-ридер `05ac:8406`):** при resume `usb 2-3: USB disconnect` →
   `sd ... DID_ERROR` → `EXT4-fs error` → `Remounting filesystem read-only`
   → краш. Воспроизводилось и на `deep`, и на `s2idle`. Причина — **сам
-  Apple Card Reader** сбрасывается при S3-выходе и не успевает
+  Apple Card Reader** сбрасывается при выходе из сна и не успевает
   переподключиться, пока ядро уже пишет на root.
-- **AGI (флешка `24a9:205a`):** при resume **USB disconnect НЕ происходит**,
-  `sda` остаётся подключён, root жив. Два подтверждённых цикла s2idle
-  (79с и 23с) — оба успешно.
+- **AGI (флешка `24a9:205a`):** resume переживает и в `s2idle`, и в `deep`.
+  Проверено: s2idle — 3+ цикла (79с, 23с, «ушёл с ноутбуком»);
+  **deep (S3) — 3 цикла** (7.5 мин, 6 мин 11 с, короткий). В deep USB-контроллер
+  реально переинициализируется, но `sda` поднимается заново штатно, root ext4
+  остаётся `rw` — **ни одного `USB disconnect`/`DID_ERROR`/`EXT4 error`**.
+
+**Почему deep, а не s2idle:** прошивка заявляет S3
+(`ACPI: PM: (supports S0 S3 S4 S5)`), и в S3 машина экономичнее по батарее
+(CPU выключен, питание периферии снято), тогда как s2idle держит SoC в S0ix и
+тратит больше. Для ноутбука это главное преимущество.
+
+**Как переключить (важно):** `mem_sleep_default=deep` в `boot.kernelParams`.
+В рантайме — только через `echo deep | sudo tee /sys/power/mem_sleep`
+(простой `sudo echo deep > /sys/...` **не сработает**: редирект `>` делает
+оболочка от юзера, а не sudo). Проверка, что удержалось: `grep '\[deep\]'`.
 
 Аппаратные детали: контроллер `Intel Wildcat Point-LP xHCI` (`0000:00:14.0`)
 сбрасывает USB при S3; Broadwell **без HWP**, поэтому `intel_pstate` passive.
 s2idle на Broadwell требует S0ix; в логах `intel_pch_thermal: S0ix might fail`
-(PCH 58°C > порога 50°C), но sleep всё равно отработал.
+(PCH 58°C > порога 50°C) — ещё один довод в пользу deep.
 
 **Итог:** проблема suspend была в носителе (Apple-ридер), а не в режиме.
-На AGI suspend работает. `mem_sleep_default=s2idle` — текущий рабочий режим.
+На AGI suspend работает в обоих режимах; текущий рабочий —
+**`deep` (S3)**, `s2idle` оставлен как fallback. Тестовый скрипт:
+`~/macbook-suspend/deep-test.sh`.
 
 ## 2c. Донастройка под AGI (научный процесс: одна правка → замер)
 
@@ -192,7 +206,7 @@ s2idle на Broadwell требует S0ix; в логах `intel_pch_thermal: S0i
   кэш Firefox в tmpfs **384M** для `rusich` и `bunny`.
 - **journald:** `persistent`, лимит 32 МБ (логи зависаний переживают ребут).
 - **fstrim.timer:** **выключен** (TRIM нет). Раньше включался nixos-hardware.
-- **Suspend:** `mem_sleep_default=s2idle`, `usbcore.autosuspend=-1`,
+- **Suspend:** `mem_sleep_default=deep` (S3; было s2idle), `usbcore.autosuspend=-1`,
   `usb-storage.delay_use=5`, `acpi_sleep=nonvs`. `fix-sd-reader` **удалён**
   (деавторизовал корневое USB-устройство → краш); вместо него безопасный
   sleep-hook `/etc/systemd/system-sleep/rescan-sd-reader.sh` (только rescan).
@@ -297,7 +311,10 @@ free -h; swapon --show; zramctl
   - `system-bench.sh` — fio + systemd-analyze + PSI + rg; результат в `results/`.
   - `writeback-bench.sh` — буферизованная запись, всплески writeback/PSI.
   - `readahead-test.sh` — чередующийся read_ahead (нужен root, drop_caches).
-  - `suspend-test.sh` — тест сна с внешним логом (переживает краш root).
+  - `suspend-test.sh` — тест сна с внешним логом (переживает краш root);
+    2-й аргумент — режим (`s2idle`/`deep`).
+  - `deep-test.sh` — тест deep(S3) без внешнего носителя, лог в persistent
+    journald; проверяет `boot_id` и `root rw` до/после, ставит/снимает deep.
   - `sync-to-flash.sh` / `watch-sync-to-flash.sh` — автосинк результатов на флешку.
   - `clone-1-format.sh`, `clone-2-rsync.sh`, `clone-3-bootloader.sh` — клон системы.
   - `results/` — `bench-SD-*.txt`, `bench-AGI-2-*.txt` (финальный),
@@ -426,8 +443,9 @@ sudo chown $USER:users /mnt/samsung
 
 - **Носитель:** AGI-флешка (`24a9:205a`), root `/dev/sda2` (ext4), порт USB `2-2`.
 - **Загрузка:** штатная, без Option (systemd-boot в NVRAM).
-- **Suspend:** **работает** (`mem_sleep_default=s2idle`). Проверено 3+ цикла,
-  включая «ушёл на улицу, закрыл крышку, вернулся, открыл».
+- **Suspend:** **работает** в обоих режимах; активен **`deep` (S3)** —
+  экономичнее по батарее. Проверено 3+ цикла deep и 3+ s2idle, включая
+  «ушёл с ноутбуком, закрыл крышку». Fallback — `s2idle`.
 - **CPU:** Broadwell i5-5250U, pstate passive/schedutil (HWP нет). Профили
   PPD/Noctalia на частоты не влияют — это норма для этого чипа.
 - **Термал:** mbpfan активен, thermald выключен.

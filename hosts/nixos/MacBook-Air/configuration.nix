@@ -105,11 +105,13 @@ in
   # Параметры ядра
   boot.kernelParams = [
     "hid_apple.swap_opt_cmd=1"
-    # s2idle вместо deep (S3). Проверено на обоих носителях: Apple-ридер
-    # (SD) с корневой ФС при resume отваливался (`usb 2-3: USB disconnect`
-    # → ext4 ro → краш), а AGI-флешка (текущий root) s2idle переживает —
-    # USB не переподключается, root жив. Оставляем s2idle.
-    "mem_sleep_default=s2idle"
+    # deep (S3) вместо s2idle: экономичнее по батарее во сне.
+    # Прошивка заявляет S3 (`ACPI: PM: supports S0 S3 S4 S5`), и AGI-флешка
+    # (текущий root) S3-resume переживает — USB-контроллер переинициализируется,
+    # но `sda` остаётся подключён, root ext4 не отваливается. Apple-ридер (SD)
+    # при S3 отваливался → краш; SD больше не используется. Проверено: цикл
+    # deep 7.5 мин, boot_id без изменений, root rw. s2idle остаётся fallback.
+    "mem_sleep_default=deep"
     "i915.enable_psr=0"
     "pcie_aspm=off"
     # Не даём USB-носителю автоусыпляться, иначе root пропадает

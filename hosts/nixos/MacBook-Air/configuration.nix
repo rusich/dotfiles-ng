@@ -241,6 +241,15 @@ in
   hardware.enableRedistributableFirmware = true;
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
+  # Broadcom BCM4360 (14e4:43a0) — проприетарный `wl` (broadcom-sta) является
+  # ЕДИНСТВЕННЫМ рабочим драйвером: открытый `b43` этот чип не поддерживает,
+  # `brcmfmac` — только SDIO/USB-чипы.
+  #
+  # ВАЖНО (проверено на практике): `wl` ДОЛЖЕН быть в boot.kernelModules —
+  # именно эта опция пишет его в systemd-modules-load.d, и без неё модуль
+  # НЕ загружается сам (extraModulePackages лишь собирает .ko в дерево, но
+  # не загружает его). `b43` держим в blacklist: иначе он может перехватить
+  # PCIe-устройство у `wl`. Убирать эти строки НЕЛЬЗЯ — Wi-Fi отвалится.
   boot.kernelModules = [
     "kvm-intel"
     "wl"
@@ -250,8 +259,11 @@ in
     broadcom_sta
   ];
 
+  # Пакет помечен insecure (проприетарный blob). Разрешаем его, беря имя
+  # НАПРЯМУЮ из пакета: строка автоматически обновится при смене версии
+  # ядра (раньше была захардкожена и устаревала при каждом апдейте).
   nixpkgs.config.permittedInsecurePackages = [
-    "broadcom-sta-6.30.223.271-59-6.18.52"
+    config.boot.kernelPackages.broadcom_sta.name
   ];
 
   boot.blacklistedKernelModules = [ "b43" ];
@@ -311,8 +323,6 @@ in
     MemoryMin = "200M";
     MemoryLow = "400M";
   };
-
-  networking.enableB43Firmware = false;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   system.stateVersion = "25.11";

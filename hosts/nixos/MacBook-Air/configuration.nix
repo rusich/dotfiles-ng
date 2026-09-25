@@ -12,7 +12,12 @@ let
     bunny = 1001;
   };
 
-  # Кэш Firefox каждого пользователя — в RAM, чтобы не точить SD.
+  # Кэш Firefox каждого пользователя — в RAM, чтобы не точить флешку.
+  # Приоритет — отзывчивость Firefox: disk-кэш идёт на tmpfs, а не на
+  # медленный USB. Лимит 384M: Firefox по умолчанию держит disk-кэш до
+  # ~350M, при меньшем потолке он начнёт пересоздавать кэш и тормозить.
+  # tmpfs занимает память только по факту и вытесняется в zram под
+  # давлением, так что резервации 384M нет.
   browserCacheMounts = lib.listToAttrs (
     lib.mapAttrsToList (user: uid: {
       name = "/home/${user}/.cache/mozilla";
@@ -23,7 +28,7 @@ let
           "mode=0700"
           "uid=${toString uid}"
           "gid=100"
-          "size=512M"
+          "size=384M"
           "nosuid"
           "nodev"
         ];
@@ -190,7 +195,8 @@ in
     "/var/tmp" = {
       device = "tmpfs";
       fsType = "tmpfs";
-      options = [ "mode=1777" "size=512M" "nosuid" "nodev" ];
+      # 256M достаточно: /var/tmp обычно пуст; меньший worst-case RAM при 4 ГБ.
+      options = [ "mode=1777" "size=256M" "nosuid" "nodev" ];
     };
   };
 

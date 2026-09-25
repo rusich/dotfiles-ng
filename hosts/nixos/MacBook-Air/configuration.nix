@@ -100,12 +100,16 @@ in
   # Параметры ядра
   boot.kernelParams = [
     "hid_apple.swap_opt_cmd=1"
-    "mem_sleep_default=deep"
+    # s2idle вместо deep (S3). Проверено на обоих носителях: Apple-ридер
+    # (SD) с корневой ФС при resume отваливался (`usb 2-3: USB disconnect`
+    # → ext4 ro → краш), а AGI-флешка (текущий root) s2idle переживает —
+    # USB не переподключается, root жив. Оставляем s2idle.
+    "mem_sleep_default=s2idle"
     "i915.enable_psr=0"
     "pcie_aspm=off"
-    # Не даём USB-ридеру карты автоусыпляться, иначе root пропадает
+    # Не даём USB-носителю автоусыпляться, иначе root пропадает
     "usbcore.autosuspend=-1"
-    # Даём время ридеру подняться, в т.ч. после resume
+    # Даём USB-устройствам время подняться, в т.ч. после resume
     "usb-storage.delay_use=5"
     # Устройство для гибернации (sda3 активируется вручную, см. swapDevices)
     "resume=/dev/sda3"
@@ -125,40 +129,40 @@ in
     };
   };
 
-  # Принудительно пробуждаем SD-ридер после выхода из сна.
-  # ВНИМАНИЕ: ридер сидит на 2-3 (idVendor:idProduct = 05ac:8406),
-  # раньше сервис бил в несуществующий 2-2 и молча ничего не делал.
-  systemd.services.fix-sd-reader = {
-    description = "Reinitialize SD card reader after resume";
-    after = [ "systemd-suspend.service" ];
-    wantedBy = [ "suspend.target" ];
-    script = ''
-      sleep 3
-      # Ищем ридер по VID:PID = 05ac:8406, а не по жёсткому пути 2-3.
-      for dev in /sys/bus/usb/devices/*; do
-        [ -e "$dev/authorized" ] || continue
-        [ "$(cat "$dev/idVendor" 2>/dev/null)" = "05ac" ] || continue
-        [ "$(cat "$dev/idProduct" 2>/dev/null)" = "8406" ] || continue
-        echo 0 > "$dev/authorized" 2>/dev/null || true
-        sleep 2
-        echo 1 > "$dev/authorized" 2>/dev/null || true
-      done
-      sleep 3
-      for host in /sys/class/scsi_host/host*/scan; do
-        [ -e "$host" ] || continue
-        echo "- - -" > "$host" 2>/dev/null || true
-      done
+  # Пересканирование шины SCSI/USB после пробуждения.
+  #
+  # ИСТОРИЯ: раньше здесь был сервис `fix-sd-reader`, который по
+  # `wantedBy = suspend.target` деавторизовал USB-устройство (echo 0 >
+  # authorized) — а на нём лежала КОРНЕВАЯ ФС. Деавторизация корневого
+  # устройства обрывала root → I/O errors → краш после пробуждения.
+  # Сервис удалён.
+  #
+  # Теперь — безопасный sleep-hook (systemd-sleep, /etc/systemd/system-sleep):
+  # НЕ трогает `authorized` и НЕ деавторизует устройство. Только пересканирует
+  # хосты, что заставляет ядро заново обнаружить устройство, если оно
+  # отвалилось при засыпании. Если носитель пережил сон — операция безвредна.
+  environment.etc."systemd/system-sleep/rescan-sd-reader.sh" = {
+    mode = "0755";
+    text = ''
+      #!/bin/sh
+      case "$1" in
+        post)
+          sleep 2
+          for host in /sys/class/scsi_host/host*/scan; do
+            [ -e "$host" ] || continue
+            echo "- - -" > "$host" 2>/dev/null || true
+          done
+          ;;
+      esac
+      exit 0
     '';
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = false;
-    };
   };
 
-  # --- Тюнинг для жизни на медленной SD за USB-ридером (BOT, queue_depth=1) ---
+  # --- Тюнинг для жизни на медленном USB-носителе (BOT, queue_depth=1) ---
+  # Актуально и для AGI-флешки: запись быстрее SD, но всё ещё не SSD.
   # Ограничиваем «грязные» страницы абсолютными объёмами: по умолчанию ядро
-  # копит сотни МБ (dirty_ratio=20% от 4 ГБ) и при массовом сбросе на медленную
-  # карту блокирует всю систему. dirty_bytes и dirty_ratio взаимоисключающие.
+  # копит сотни МБ (dirty_ratio=20% от 4 ГБ) и при массовом сбросе на медленный
+  # носитель блокирует всю систему. dirty_bytes и dirty_ratio взаимоисключающие.
   boot.kernel.sysctl = {
     "vm.dirty_bytes" = 32 * 1024 * 1024; # 32 МиБ — потолок для грязных страниц
     "vm.dirty_background_bytes" = 8 * 1024 * 1024; # фоновый сброс начинается раньше
@@ -184,9 +188,11 @@ in
     };
   };
 
-  # Помечаем карту как невращающуюся и задаём разумный read-ahead.
+  # Помечаем USB-носители как невращающиеся и задаём разумный read-ahead.
+  # Два правила: Apple SD-ридер (05ac:8406) и AGI-флешка (24a9:205a).
   services.udev.extraRules = ''
     ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="8406", ATTR{queue/rotational}="0", ATTR{queue/read_ahead_kb}="1024", ATTR{queue/scheduler}="mq-deadline"
+    ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTRS{idVendor}=="24a9", ATTRS{idProduct}=="205a", ATTR{queue/rotational}="0", ATTR{queue/read_ahead_kb}="1024", ATTR{queue/scheduler}="mq-deadline"
   '';
 
   # Логи — persistent с малым лимитом: сохраняем логи зависаний,

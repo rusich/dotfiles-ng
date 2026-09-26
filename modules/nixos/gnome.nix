@@ -18,9 +18,12 @@ in
     environment.systemPackages = with pkgs; [
       whitesur-cursors
       gnome-tweaks
-      # must-have extensiongs
+      # must-have extensions (enable manually after rebuild)
       gnomeExtensions.dash-to-dock
       gnomeExtensions.desktop-icons-ng-ding
+      gnomeExtensions.appindicator # system tray (KStatusNotifierItem support)
+      gnomeExtensions.blur-my-shell
+      gnomeExtensions.just-perfection
     ];
   };
 }

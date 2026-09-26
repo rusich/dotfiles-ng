@@ -12,6 +12,28 @@ suspend/resume ридер отваливался → краш. Затем сис
 по результатам замеров (раздел 2) переехали на **Samsung FIT Plus**
 (`04e8:6300`) — быстрее AGI во всём. **Актуальный носитель — Samsung.**
 
+## 0. Сводка: сравнение всех носителей
+
+Все замеры — на одном USB3-контроллере (порт 2-2), `usb-storage` BOT,
+`queue_depth=1`, без TRIM. Методика — O_DIRECT (раздел 2) и `system-bench.sh`
+(раздел 2a). Медианы где применимо.
+
+| Показатель | SD (Apple reader) | AGI (`24a9:205a`) | **Samsung FIT Plus** | Победитель |
+|---|---|---|---|---|
+| seq read | 93 МБ/с | 126 МБ/с | **370 МБ/с** | Samsung |
+| seq write | 4.3 МБ/с | 32–42 МБ/с | **40–58 МБ/с** | Samsung |
+| rand read 4K | 2450 IOPS | 1344 IOPS | **2743 IOPS** | Samsung |
+| rand write 4K | 377–509 IOPS | 189–300 IOPS | **5563–6050 IOPS** | **Samsung (×20)** |
+| rand write p99 | 53 мс | 26–30 мс | **0.31 мс** | Samsung (~100×) |
+| boot | 70с | 44–47с | **40с** | Samsung |
+| rg --files /nix/store | 83с | 96–206с | **~80с** (64–96) | нагрузко-зависим |
+| suspend resume | **краш** | ок | **ок** | AGI/Samsung |
+
+**Вывод:** Samsung быстрее всех и не крашит suspend → выбран. SD отвергнут
+(посл. запись 4 МБ/с + краш при resume). AGI был рабочим, Samsung заменил его.
+`rg` — не показатель носителя: зависит от кэша/нагрузки/размера store
+(~785k файлов, 28 ГБ).
+
 ## 1. Железо и путь ввода-вывода
 
 | Параметр | Значение |
@@ -47,8 +69,8 @@ root `/dev/sda2`. AGI работал на том же порту 2-2.
 
 ### Samsung FIT Plus — живые замеры
 
-Проведено **5 прогонов** O_DIRECT (`raw-bench.sh` + 4× на смонтированном
-носителе), порт **2-1**. Разброс маленький, цифры стабильны:
+Проведено **5 прогонов** O_DIRECT (форматирование + замер, см. раздел 6),
+порт **2-1**. Разброс маленький, цифры стабильны:
 
 | Тест | прогон 1 | 2 | 3 | 4 | 5 | **медиана** |
 |---|---|---|---|---|---|---|
@@ -79,16 +101,16 @@ root `/dev/sda2`. AGI работал на том же порту 2-2.
   ОС: посл. чтение **+180 %** (360 vs 128), посл. запись **+47 %** (58.5 vs 39.7),
   случ. запись **×~29** (5563 vs 192 IOPS). При этом так же BOT/без TRIM.
   Это делает Samsung наиболее предпочтительным носителем (при прочих равных —
-  см. критерий suspend в разделе 10.5).
+  см. критерий suspend в разделе 10.1).
 
 ## 2a. Бенчмарк системы: SD vs AGI vs Samsung (fio)
 
-Полный сравнительный прогон (`system-bench.sh`, fio 3.41, `iodepth=1`,
-`O_DIRECT`). Результаты: `~/macbook-suspend/results/bench-{SD,AGI-2,Samsung}*.txt`.
-Все носители — на одном USB3-контроллере (`usb2`, 5000 Мбит/с), порт 2-2,
-с тюнингом (udev `rotational=0`, `mq-deadline`, `read_ahead=1024`). Samsung
-тестировался на **своём корневом ext4** (с журналом), SD/AGI — тоже на
-корневых ext4; поэтому seq write ниже, чем в «сыром» тесте раздела 2.
+Полный сравнительный прогон (`system-bench.sh`, раздел 8.1; fio 3.41,
+`iodepth=1`, `O_DIRECT`). Все носители — на одном USB3-контроллере
+(`usb2`, 5000 Мбит/с), порт 2-2, с тюнингом (udev `rotational=0`,
+`mq-deadline`, `read_ahead=1024`). Samsung тестировался на **своём корневом
+ext4** (с журналом), SD/AGI — тоже на корневых ext4; поэтому seq write ниже,
+чем в «сыром» тесте раздела 2.
 
 | Тест | SD | AGI | **Samsung** | Победитель |
 |---|---|---|---|---|
@@ -98,10 +120,11 @@ root `/dev/sda2`. AGI работал на том же порту 2-2.
 | rand write 4K | 509 IOPS | 300 IOPS | **6050 IOPS** | **Samsung (×20 vs AGI)** |
 | mix 70/30 r/w | read 672 / write 289 | read 436 / write 191 | **read 564 / write 244** | Samsung (близко к SD) |
 | **boot** | 1м 09.8с | 44.3с (холодн.) / 47.4с | **40.0с** | **Samsung** |
-| rg --files /nix/store | 83.3с | 96–206с* | 102.7с* | — |
+| rg --files /nix/store | 83.3с | 96–206с* | ~80с (64–96) | — |
 
-\* `rg` зависит от фоновой нагрузки и размера store (файлов растёт с
-поколениями) — не показатель носителя.
+\* `rg` зависит от фоновой нагрузки, кэша и размера store (~785k файлов,
+28 ГБ) — не показатель носителя. Samsung на пустом кэше: 96с, повтор — 65с;
+`rg --files --sort=path` (метаданные) — 79с; `rg -l` по содержимому — 2.5с.
 
 Разбор boot: SD `firmware 12.4 + loader 18.6 + kernel 0.8 + initrd 17.7 +
 userspace 20.2`; AGI `firmware 3.1–3.4 + loader 4.0–6.3 + kernel 0.8 +
@@ -117,7 +140,7 @@ firmware/loader/initrd; у Samsung ещё и userspace (18.5 против 23.6).
 ## 2b. Suspend: почему SD крашил, а AGI работает (теперь в режиме deep/S3)
 
 Root-FS на USB-устройстве **не переживает resume, если устройство
-отваливается при выходе из сна**. Диагностика (логи в `~/macbook-suspend/results/`):
+отваливается при выходе из сна**. Диагностика (по логам ядра):
 
 - **SD (Apple-ридер `05ac:8406`):** при resume `usb 2-3: USB disconnect` →
   `sd ... DID_ERROR` → `EXT4-fs error` → `Remounting filesystem read-only`
@@ -152,9 +175,8 @@ s2idle на Broadwell требует S0ix; в логах `intel_pch_thermal: S0i
 (PCH 58°C > порога 50°C) — ещё один довод в пользу deep.
 
 **Итог:** проблема suspend была в носителе (Apple-ридер), а не в режиме.
-На AGI suspend работает в обоих режимах; текущий рабочий —
-**`deep` (S3)**, `s2idle` оставлен как fallback. Тестовый скрипт:
-`~/macbook-suspend/deep-test.sh`.
+На AGI/Samsung suspend работает в обоих режимах; текущий рабочий —
+**`deep` (S3)**, `s2idle` оставлен как fallback. Тестовый скрипт — раздел 8.3.
 
 ## 2c. Донастройка под AGI (научный процесс: одна правка → замер)
 
@@ -175,10 +197,10 @@ s2idle на Broadwell требует S0ix; в логах `intel_pch_thermal: S0i
 | `/var/tmp` tmpfs 512M → 256M | **оставлено** | пуст; меньший worst-case RAM |
 | `/tmp` в zram `ram/4` | **оставлено** | сжатие, полезно для сборок |
 
-Инструменты: `system-bench.sh` (fio + systemd-analyze + PSI + rg),
-`writeback-bench.sh` (буферизованная запись / всплески writeback),
-`readahead-test.sh` (чередующийся тест read_ahead со сбросом кэша).
-Все — в `~/macbook-suspend/`.
+Инструменты: `system-bench.sh` (раздел 8.1: fio + systemd-analyze + PSI + rg).
+`writeback-bench.sh` и `readahead-test.sh` использовались в этой серии
+экспериментов и удалены вместе с системой (при необходимости воспроизводимы
+по разделу 6).
 
 ## 2d. Swap, hibernate и suspend-then-hibernate (на будущее)
 
@@ -278,7 +300,7 @@ sudo swapoff /dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789
 ## 4. Тест под тяжёлой нагрузкой (пересборка nvim-treesitter)
 
 Сценарий: удалить runtime nvim, запустить — lazy.nvim + сборка ~45 парсеров
-+ ~20 mason-пакетов. По логу монитора (`/home/rusich/psi-monitor.log`):
++ ~20 mason-пакетов. По логу PSI-монитора (раздел 9):
 
 - `app.slice` всё время прижат к капу **2.3 ГБ**: `memory.events high = 15342`,
   OOM-килов `0`.
@@ -293,7 +315,7 @@ sudo swapoff /dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789
 ## 5. Итоговый тюнинг (актуальное состояние конфига)
 
 Файл: `hosts/nixos/MacBook-Air/configuration.nix`. Значения ниже — **текущие
-на AGI** (после раздела 2c). В скобках — что было на SD, если менялось.
+на Samsung**. В скобках — что было на SD, если менялось.
 
 - **Запись:** `vm.dirty_bytes=64M` (на SD 32M), `dirty_background_bytes=16M`
   (8M), `dirty_expire_centisecs=1500`, `dirty_writeback_centisecs=300`.
@@ -309,10 +331,10 @@ sudo swapoff /dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789
 - **Изоляция сессии:** `app.slice` (терминалы/сборки/браузер)
   `MemoryHigh=2300M`, `CPUWeight=50`; `session.slice` (композитор niri)
   `CPUWeight=300`, `MemoryMin=200M`, `MemoryLow=400M`.
-- **ФС/диск:** root `noatime,commit=60` (на SD 30); udev для обоих носителей
-  (`05ac:8406` и `24a9:205a`): `rotational=0`, `read_ahead=1024`,
-  `mq-deadline`. `/tmp` в zram (`ram/4`), `/var/tmp` tmpfs **256M**,
-  кэш Firefox в tmpfs **384M** для `rusich` и `bunny`.
+- **ФС/диск:** root `noatime,commit=60` (на SD 30); udev по VID:PID для всех
+  носителей (Apple `05ac:8406`, AGI `24a9:205a`, Samsung `04e8:6300`):
+  `rotational=0`, `read_ahead=1024`, `mq-deadline`. `/tmp` в zram (`ram/4`),
+  `/var/tmp` tmpfs **256M**, кэш Firefox в tmpfs **384M** для `rusich` и `bunny`.
 - **journald:** `persistent`, лимит 32 МБ (логи зависаний переживают ребут).
 - **fstrim.timer:** **выключен** (TRIM нет). Раньше включался nixos-hardware.
 - **Suspend:** `mem_sleep_default=deep` (S3; было s2idle), `usbcore.autosuspend=-1`,
@@ -428,32 +450,107 @@ free -h; swapon --show; zramctl
 
 ## 8. Артефакты
 
-- Скрипты и логи: `~/macbook-suspend/` (вне git-репо):
-  - `system-bench.sh` — fio + systemd-analyze + PSI + rg; результат в `results/`.
-  - `writeback-bench.sh` — буферизованная запись, всплески writeback/PSI.
-  - `readahead-test.sh` — чередующийся read_ahead (нужен root, drop_caches).
-  - `suspend-test.sh` — тест сна с внешним логом (переживает краш root);
-    2-й аргумент — режим (`s2idle`/`deep`).
-  - `deep-test.sh` — тест deep(S3) без внешнего носителя, лог в persistent
-    journald; проверяет `boot_id` и `root rw` до/после, ставит/снимает deep.
-  - `sync-to-flash.sh` / `watch-sync-to-flash.sh` — автосинк результатов на флешку.
-  - `clone-1-format.sh`, `clone-2-rsync.sh`, `clone-3-bootloader.sh` — клон системы.
-  - `results/` — `bench-SD-*.txt`, `bench-AGI-2-*.txt` (финальный),
-    `baseline-AGI.txt`, `suspend-s2idle-AGI-works-*.log`.
-- Сырой лог PSI-монитора: `/home/rusich/psi-monitor.log` (SD-эпоха).
-- Ключевые коммиты (по порядку):
+> **Примечание:** система на этом ноутбуке будет переустановлена, поэтому
+> каталог `~/macbook-suspend/` со скриптами и логами удалён; его содержимое
+> либо уже отражено в этом документе, либо не критично. Ключевые готовые
+> скрипты встроены ниже (разделы 8.1–8.3), чтобы их можно было пересоздать.
+
+- Ключевые коммиты в истории репозитория:
   - `2ef0955` первичный тюнинг SD; `7029dc5` память/своп/earlyoom/слайсы;
     `7447d96` gitcommit; `679cd10` честные O_DIRECT-замеры;
     `4c8606e` thermald off; `ce4d301` переезд на AGI + fix suspend;
     `21fd324` финальный бенчмарк AGI; `0cb3c02` fstrim off;
     `73de141` swappiness 150; `07f8a94` writeback-лимиты;
-    `910f8b0` RAM-монтирования (кэш 384M, /var/tmp 256M); `424bd8c` раздел 2c.
+    `910f8b0` RAM-монтирования; `424bd8c` раздел 2c; `db59b0d` Broadcom wl;
+    `265573d` чистка GNOME; `f761bee` замеры Samsung;
+    `fe68a98` переезд на Samsung; `5b375d1` Samsung в системе.
+- **Воспроизведение замеров** — команды в разделе 6 (базовые O_DIRECT) и
+  скрипт `system-bench.sh` ниже (раздел 8.1).
 
-## 9. Приложение: скрипт монитора PSI
+### 8.1. `system-bench.sh` — объективный бенчмарк носителя/системы
 
-Пишет на SD с `sync`, чтобы данные пережили жёсткое выключение. Запуск:
-`setsid nohup ./psi-monitor.sh >/dev/null 2>&1 &`, остановка:
-`pkill -f psi-monitor.sh`.
+```sh
+#!/bin/sh
+# Использование: system-bench.sh <каталог-на-носителе> [метка]
+# Требует: fio, systemd-analyze, rg. Запускать под пользователем.
+set -e
+TESTDIR="${1:?Укажи каталог на носителе, напр. /mnt/iobench}"
+LABEL="${2:-$(basename "$TESTDIR")}"
+FIO=$(command -v fio || echo fio)
+OUT="$HOME/bench-${LABEL}-$(date +%Y%m%d-%H%M%S).txt"
+mkdir -p "$TESTDIR"; TESTFILE="${TESTDIR}/fio-testfile"; SIZE=512M
+
+sep() { printf '\n===== %s =====\n' "$1" | tee -a "$OUT"; }
+psi() { awk '/^some/{s=$2} /^full/{f=$2} END{printf "io: some=%s full=%s\n", s, f}' /proc/pressure/io; }
+
+{ echo "######## SYSTEM BENCH ########"
+  echo "date:    $(date -Is)"
+  echo "label:   $LABEL"
+  echo "root:    $(findmnt -no SOURCE,FSTYPE /)"
+  echo "fio:     $($FIO --version)"
+} | tee "$OUT"
+
+sep "1a. fio: посл. чтение (O_DIRECT, qd=1)"
+$FIO --name=seq-read  --filename="$TESTFILE" --size=$SIZE --rw=read     --bs=1M --direct=1 --iodepth=1 --ioengine=psync 2>&1 | tee -a "$OUT"
+sep "1b. fio: посл. запись (O_DIRECT, qd=1, fsync)"
+$FIO --name=seq-write --filename="$TESTFILE" --size=$SIZE --rw=write    --bs=1M --direct=1 --iodepth=1 --ioengine=psync --fsync=1 2>&1 | tee -a "$OUT"
+sep "1c. fio: случ. чтение 4K (O_DIRECT, qd=1)"
+$FIO --name=rand-read --filename="$TESTFILE" --size=$SIZE --rw=randread --bs=4k --direct=1 --iodepth=1 --ioengine=psync --runtime=15 --time_based=1 2>&1 | tee -a "$OUT"
+sep "1d. fio: случ. запись 4K (O_DIRECT, qd=1)"
+$FIO --name=rand-write --filename="$TESTFILE" --size=$SIZE --rw=randwrite --bs=4k --direct=1 --iodepth=1 --ioengine=psync --runtime=15 --time_based=1 2>&1 | tee -a "$OUT"
+sep "1e. fio: mix 70/30 r/w 4K (qd=1)"
+$FIO --name=mix7030 --filename="$TESTFILE" --size=$SIZE --rw=randrw --rwmixread=70 --bs=4k --direct=1 --iodepth=1 --ioengine=psync --runtime=15 --time_based=1 2>&1 | tee -a "$OUT"
+rm -f "$TESTFILE"
+
+sep "2. systemd-analyze"; systemd-analyze 2>&1 | tee -a "$OUT"
+systemd-analyze blame 2>&1 | head -15 | tee -a "$OUT"
+
+sep "3. PSI под нагрузкой"; echo "до: $(psi)" | tee -a "$OUT"
+$FIO --name=psi --filename="${TESTDIR}/psi-tmp" --size=256M --rw=randrw --bs=4k --direct=1 --iodepth=1 --ioengine=psync --runtime=10 --time_based=1 >/dev/null 2>&1 &
+F=$!; sleep 2; for i in 1 2 3 4; do echo "t=$i: $(psi)" | tee -a "$OUT"; sleep 2; done
+wait $F 2>/dev/null || true; rm -f "${TESTDIR}/psi-tmp"; echo "после: $(psi)" | tee -a "$OUT"
+
+sep "4. rg --files /nix/store (metadata-heavy)"
+t0=$(date +%s%N); N=$(rg --files /nix/store 2>/dev/null | wc -l); t1=$(date +%s%N)
+echo "файлов: $N, время: $(( (t1-t0)/1000000 )) ms" | tee -a "$OUT"
+t0=$(date +%s%N); rg -m20 -l "GNU General Public" /nix/store --no-messages 2>/dev/null | head -20 >/dev/null; t1=$(date +%s%N)
+echo "rg -l по содержимому: $(( (t1-t0)/1000000 )) ms" | tee -a "$OUT"
+
+sep "ГОТОВО"; echo "Результат: $OUT"
+```
+
+### 8.2. `raw-bench.sh` — «сырой» замер носителя (O_DIRECT)
+
+Полный текст — по образцу раздела 6; ключевое: разметить ext4 **без журнала**,
+смонтировать, затем прогнать seq read 512M, seq write 256M (fsync),
+случ. 4K чтение/запись (n=2000, p50/p95/p99). Разметку делать `sfdisk`
+(`parted` в системе нет), `size=$((SECTORS-4096))` (оставить запас под GPT).
+
+### 8.3. `deep-test.sh` — проверка deep(S3) без внешнего носителя
+
+```sh
+#!/bin/sh
+# Запускать под sudo. Лог — в persistent journald (переживёт краш root).
+set -e
+WAIT="${1:-5}"
+MARKER="DEEPTEST-$(date +%Y%m%d-%H%M%S)-$$"
+echo "marker=$MARKER"; echo "root: $(findmnt -no SOURCE /)"
+echo deep > /sys/power/mem_sleep
+grep -q '\[deep\]' /sys/power/mem_sleep || { echo "deep не удержался"; exit 1; }
+logger -t deep-test "$MARKER BEFORE boot_id=$(cat /proc/sys/kernel/random/boot_id)"
+sync; sleep "$WAIT"; systemctl suspend
+logger -t deep-test "$MARKER AFTER root=$(findmnt -no SOURCE /) boot_id=$(cat /proc/sys/kernel/random/boot_id)"
+echo "resumed: $(findmnt -no SOURCE,FSTYPE,OPTIONS /)"
+# Проверки: journalctl -k -b 0 | grep -E 'suspend entry|sleep state S3'
+#           journalctl -t deep-test | tail   (должны быть BEFORE и AFTER)
+```
+
+## 9. Приложение: скрипт монитора PSI (справочно)
+
+Скрипт использовался для записи PSI/памяти во время тяжёлых тестов (раздел 4)
+и лёг в основу выводов о memory-pressure. Лог и сам файл удалены вместе с
+системой. Запуск был: `setsid nohup ./psi-monitor.sh >/dev/null 2>&1 &`,
+остановка: `pkill -f psi-monitor.sh`. При необходимости пересоздать из текста:
 
 ```sh
 #!/bin/sh
@@ -485,64 +582,40 @@ while true; do
 done
 ```
 
-## 10. Переезд на Samsung (СДЕЛАНО)
+## 10. Переезд на Samsung — отчёт
 
-Samsung FIT Plus протестирован (раздел 2), выбран как новый носитель и
-**система уже перенесена** на него: клонирование пофайлово (rsync) с теми же
-UUID, systemd-boot в `EFI/BOOT` + `EFI/systemd`, AGI вынут. Samsung грузится,
-udev-правило `04e8:6300` применилось, deep (S3) resume переживается.
-Скрипты: `clone-new-1-format.sh`, `clone-new-2-rsync.sh`,
-`clone-new-3-bootloader.sh` (определяют диски по **серийнику**, не по буквам).
+Samsung FIT Plus протестирован (разделы 2, 2a), выбран вместо AGI и система
+**перенесена** на него. Как это делалось (для повторения в будущем):
 
-### 10.1. Прежде чем что-либо трогать
+1. **Разметка + ФС** на Samsung с **теми же UUID**, что у AGI (чтобы
+   `hardware-configuration.nix`/fstab нашли разделы без правок):
+   - boot vfat `3122-0FD9` (1G EFI), root ext4 `8302097e-…`, swap `d237160e-…` (8G).
+   - `mkfs.vfat -i 31220FD9`, `mkfs.ext4 -U <uuid>`, `mkswap -U <uuid>`.
+   - Разметка `sfdisk` (GPT; `parted` в системе нет).
+2. **rsync** `/` и `/boot` на новый root (исключая `/boot`, `/proc`, `/sys`,
+   `/dev`, `/run`, `/tmp`, `/mnt`, `/media`, `/var/tmp`, кэш Firefox).
+3. **systemd-boot**: `EFI/BOOT/BOOTX64.EFI` (fallback для Apple) +
+   `EFI/systemd/systemd-bootx64.efi` (+ `loader/entries` из `/boot`).
+4. Выключить, **вынуть AGI**, загрузиться с Samsung (Option → EFI Boot).
+5. Пост-проверки: `findmnt /` = Samsung `sda2`; udev (`rotational=0`,
+   `read_ahead=1024`, `mq-deadline`); `mem_sleep_default=deep` в cmdline;
+   suspend (deep/S3) переживает resume.
 
-1. Записать **текущий baseline AGI** (уже в `results/bench-AGI-2-*.txt`).
-2. Перепроверить, что тесты делаются **на том же USB-порту** (2-2), иначе
-   сравнение некорректно. `readlink -f /sys/block/sdX/device` → `.../2-2/...`.
-3. Помнить: **fio-разброс ±30 %** на этих флешках — делать ≥2–3 прогона,
-   брать лучший/медиану, не доверять одиночному числу.
+**Важные уроки:**
+- Устройства в скриптах клонирования лучше искать **по серийнику/VID:PID**, а
+  не по `sda`/`sdb` — буквы плавают. Samsung: `04e8:6300` /
+  serial `0374525090001858`; AGI: `24a9:205a` / `AGIUME0657547`. UUID у носителей
+  намеренно **совпадают**, иначе система не найдёт root.
+- Для новой флешки на будущее: критерии выбора — ниже.
 
-### 10.2. Замер «сырого» носителя (СДЕЛАНО)
-
-Samsung отформатирован как отдельный bench-носитель (`raw-bench.sh`: gpt +
-ext4 без журнала, `mke2fs`), прогоны O_DIRECT сделаны на порту **2-1**.
-Результаты — в разделе 2 (медианы 5 прогонов). Скрипты: `raw-bench.sh`
-(формат + прогон) и `raw-repeat.sh` (повторные прогоны на смонтированном).
-
-### 10.3. Перенос системы AGI → Samsung (клонирование)
-
-Тем же способом, что SD → AGI (UUID совпадают, чтобы конфиг нашёл разделы):
-
-- `clone-1-format.sh` — указывает на целевой носитель; разметка 1G EFI +
-  root + swap 8G, те же UUID (`3122-0FD9`, `8302097e-…`, `d237160e-…`).
-- `clone-2-rsync.sh` — пофайловое копирование `/` и `/boot`.
-- `clone-3-bootloader.sh` — systemd-boot в `EFI/BOOT/BOOTX64.EFI` (fallback
-  для Apple) + `EFI/systemd/`.
-- **Важно:** скрипты рассчитаны на источник `sda` → цель `sdb`. При клоне
-  AGI→Samsung источник — это AGI (`sda`), цель — Samsung; проверить буквы
-  устройств и **размеры** (Samsung может быть меньше/больше — если меньше,
-  старые `dd`-планы не годятся, используем rsync).
-
-Порядок: загрузиться как обычно (AGI), воткнуть Samsung, прогнать 3 скрипта,
-выключить, вынуть AGI, загрузиться с Samsung (Option → EFI Boot).
-
-### 10.4. После переезда на Samsung
-
-1. Проверить `rotational=0` для `24a9:…`? — нет, у Samsung **другой VID:PID** →
-   добавить udev-правило под его `idVendor:idProduct`. Обновить `rescan-sd-reader`
-   не нужно (он generic). Проверить `mem_sleep`/suspend (важнейший критерий —
-   переживает ли resume, как AGI, или отваливается, как Apple-ридер).
-2. Прогнать `system-bench.sh` на Samsung как root.
-3. Сравнить: **посл. запись**, **rand 4K**, **boot**, **suspend**.
-
-### 10.5. Критерии выбора
+### 10.1. Критерии выбора носителя (по важности)
 
 | Критерий | Вес |
 |---|---|
 | **Suspend переживает resume** | критично (иначе как SD — краш) |
-| Посл. запись | высокий (влияет на отзывчивость) |
-| Загрузка (boot) | высокий |
-| Случ. 4K запись p99 | средний |
+| Случ. 4K запись (p99) | высокий (узкое место USB) |
+| Посл. запись | высокий |
+| Загрузка (boot) | средний |
 | Посл. чтение | низкий |
 
 ## 11. Шпаргалка текущего состояния (актуально на 2026-09-26)
@@ -559,7 +632,7 @@ ext4 без журнала, `mke2fs`), прогоны O_DIRECT сделаны н
 - **Термал:** mbpfan активен, thermald выключен.
 - **Ребилд:** `sudo nixos-rebuild switch --flake ~/.dotfiles#MacBook-Air`.
 - **Конфиг:** `hosts/nixos/MacBook-Air/configuration.nix` (все параметры — раздел 5).
-- **Метрики/скрипты:** `~/macbook-suspend/` (+ `results/`).
+- **Скрипты замеров:** встроены в документ (раздел 8); отдельного каталога нет.
 - **Открытый план:** переезд на Samsung **выполнен** (раздел 10).
 - **Задел на будущее:** если начнутся проблемы с отключением/разрядом во сне —
   вернуться к разделу **2d** (swap под hibernate, `suspend-then-hibernate`).

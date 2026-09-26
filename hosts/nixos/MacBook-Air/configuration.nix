@@ -46,6 +46,45 @@ in
   nixos.profiles.desktop.enable = true;
   nixos.profiles.gnome.enable = true;
 
+  # --- Облегчение GNOME под 4 ГБ RAM (host-specific для этой машины) ---
+  #
+  # Ни rusich, ни bunny НЕ пользуются почтой/календарём/контактами в GNOME,
+  # онлайн-аккаунтами и поиском по файлам. А по умолчанию GNOME тянет под
+  # это ~0.5 ГБ фоновых сервисов, а localsearch ещё и постоянно индексирует
+  # файлы на медленной USB-флешке. Замер до чистки (RSS):
+  #   evolution-alarm-notify 83M, gnome-calendar 86M,
+  #   evolution-source-registry 63M, evolution-addressbook-factory 43M,
+  #   evolution-calendar-factory 37M, localsearch+extractor 73M,
+  #   goa-daemon+identity 43M, gvfs-* ~44M.
+  #
+  # Выключаем именно СЕРВИСЫ — они и держат память в фоне. Пакеты-приложения
+  # (maps/music/weather/...) на RAM не влияют, пока их не запускать, поэтому
+  # их НЕ исключаем (место на диске не проблема).
+  #
+  # Выключения — только здесь, НЕ в modules/nixos/gnome.nix: на других
+  # машинах PIM/онлайн-аккаунты могут быть нужны. mkForce перебивает
+  # `= true` из modules/nixos/desktop-common.nix.
+  services.gnome.evolution-data-server.enable = lib.mkForce false;
+  services.gnome.gnome-online-accounts.enable = lib.mkForce false;
+  services.gnome.localsearch.enable = lib.mkForce false;
+  services.gnome.tinysparql.enable = lib.mkForce false;
+
+  # Шеринг/DLNA/удалённый доступ — не нужны, лишние сервисы и порты.
+  services.gnome.gnome-user-share.enable = lib.mkForce false;
+  services.gnome.rygel.enable = lib.mkForce false;
+  services.gnome.gnome-remote-desktop.enable = lib.mkForce false;
+
+  # gnome-calendar и gnome-contacts завязаны на evolution-data-server, который
+  # мы выключили, — без него они нерабочие. Исключаем их из СИСТЕМЫ, чтобы
+  # у bunny (HM для неё не настроен) их не было вовсе. У rusich они остаются
+  # через home-manager (user.pim.calendar/contacts, home.packages) — его
+  # конфиг не затрагиваем. Остальные приложения GNOME не трогаем: на
+  # рантайм-память они не влияют, пока не запущены.
+  environment.gnome.excludePackages = with pkgs; [
+    gnome-calendar
+    gnome-contacts
+  ];
+
   powerManagement = {
     enable = true;
   };

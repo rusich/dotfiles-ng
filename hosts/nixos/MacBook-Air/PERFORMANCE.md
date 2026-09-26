@@ -81,37 +81,38 @@ root `/dev/sda2`. AGI работал на том же порту 2-2.
   Это делает Samsung наиболее предпочтительным носителем (при прочих равных —
   см. критерий suspend в разделе 10.5).
 
-## 2a. Бенчмарк системы: SD vs AGI (fio)
+## 2a. Бенчмарк системы: SD vs AGI vs Samsung (fio)
 
 Полный сравнительный прогон (`system-bench.sh`, fio 3.41, `iodepth=1`,
-`O_DIRECT`). Результаты: `~/macbook-suspend/results/bench-{SD,AGI-2}*.txt`.
-Оба носителя — на одном USB3-контроллере (`usb2`, 5000 Мбит/с). Для AGI
-указан **финальный прогон** — уже с применённым тюнингом (udev
-`rotational=0`, `mq-deadline`, `read_ahead=1024`); он лучше первого на
-записи (25→31.7 МБ/с) и mix (386→436 IOPS read).
+`O_DIRECT`). Результаты: `~/macbook-suspend/results/bench-{SD,AGI-2,Samsung}*.txt`.
+Все носители — на одном USB3-контроллере (`usb2`, 5000 Мбит/с), порт 2-2,
+с тюнингом (udev `rotational=0`, `mq-deadline`, `read_ahead=1024`). Samsung
+тестировался на **своём корневом ext4** (с журналом), SD/AGI — тоже на
+корневых ext4; поэтому seq write ниже, чем в «сыром» тесте раздела 2.
 
-| Тест | SD | AGI | Победитель |
-|---|---|---|---|
-| seq read 1M | 93.5 МБ/с | **126 МБ/с** | AGI |
-| seq write 1M | **4.8 МБ/с** | **31.7 МБ/с** | **AGI (×6.6)** |
-| rand read 4K | **2476 IOPS** | 1344 IOPS | SD |
-| rand write 4K | **509 IOPS** | 300 IOPS | SD |
-| mix 70/30 r/w | read 672 / write 289 | read 436 / write 191 | SD |
-| **boot** | 1м 09.8с | **44.3с** (холодн.) / 47.4с | **AGI (−22…−25с)** |
-| rg --files /nix/store | 83.3с | 96–206с* | SD |
+| Тест | SD | AGI | **Samsung** | Победитель |
+|---|---|---|---|---|
+| seq read 1M | 93.5 МБ/с | 126 МБ/с | **370 МБ/с** | **Samsung** |
+| seq write 1M | 4.8 МБ/с | 31.7 МБ/с | **40.3 МБ/с** | **Samsung** |
+| rand read 4K | 2476 IOPS | 1344 IOPS | **2743 IOPS** | **Samsung** |
+| rand write 4K | 509 IOPS | 300 IOPS | **6050 IOPS** | **Samsung (×20 vs AGI)** |
+| mix 70/30 r/w | read 672 / write 289 | read 436 / write 191 | **read 564 / write 244** | Samsung (близко к SD) |
+| **boot** | 1м 09.8с | 44.3с (холодн.) / 47.4с | **40.0с** | **Samsung** |
+| rg --files /nix/store | 83.3с | 96–206с* | 102.7с* | — |
 
 \* `rg` зависит от фоновой нагрузки и размера store (файлов растёт с
 поколениями) — не показатель носителя.
 
 Разбор boot: SD `firmware 12.4 + loader 18.6 + kernel 0.8 + initrd 17.7 +
 userspace 20.2`; AGI `firmware 3.1–3.4 + loader 4.0–6.3 + kernel 0.8 +
-initrd 12.9–13.1 + userspace 23.6–23.8`. У AGI сильно быстрее
-firmware/loader/initrd.
+initrd 12.9–13.1 + userspace 23.6–23.8`; Samsung `firmware 3.5 + loader 4.3 +
+kernel 0.8 + initrd 12.8 + userspace 18.5`. У AGI/Samsung сильно быстрее
+firmware/loader/initrd; у Samsung ещё и userspace (18.5 против 23.6).
 
-**Вывод:** AGI заметно лучше там, где важно для отзывчивости — **последо-
-вательная запись (×6)** и **загрузка (−25с)**. SD чуть быстрее на случайных
-4K (лучше FTL-контроллер карты), но это вторично: система и так не упирается
-в random-4K. Для работы на этой машине **AGI предпочтительнее.**
+**Вывод:** **Samsung лучше всех** по каждому показателю. Ключевое —
+случайная запись **×20 к AGI** (6050 vs 300 IOPS) и посл. чтение **×2.9**
+(370 vs 126). Именно random-4K был узким местом USB-носителей, и Samsung
+его снимает. Boot быстрее AGI на ~4с, SD — на 30с.
 
 ## 2b. Suspend: почему SD крашил, а AGI работает (теперь в режиме deep/S3)
 

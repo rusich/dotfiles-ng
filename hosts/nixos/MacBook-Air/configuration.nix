@@ -242,10 +242,13 @@ in
   };
 
   # Помечаем USB-носители как невращающиеся и задаём разумный read-ahead.
-  # Два правила: Apple SD-ридер (05ac:8406) и AGI-флешка (24a9:205a).
+  # Правила по VID:PID для всех носителей, на которых жила/может жить система:
+  #   Apple SD-ридер (05ac:8406), AGI-флешка (24a9:205a),
+  #   Samsung FIT Plus (04e8:6300) — новый root.
   services.udev.extraRules = ''
     ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="8406", ATTR{queue/rotational}="0", ATTR{queue/read_ahead_kb}="1024", ATTR{queue/scheduler}="mq-deadline"
     ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTRS{idVendor}=="24a9", ATTRS{idProduct}=="205a", ATTR{queue/rotational}="0", ATTR{queue/read_ahead_kb}="1024", ATTR{queue/scheduler}="mq-deadline"
+    ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTRS{idVendor}=="04e8", ATTRS{idProduct}=="6300", ATTR{queue/rotational}="0", ATTR{queue/read_ahead_kb}="1024", ATTR{queue/scheduler}="mq-deadline"
   '';
 
   # fstrim бесполезен: носитель подключён как Bulk-Only (BOT), не UASP,

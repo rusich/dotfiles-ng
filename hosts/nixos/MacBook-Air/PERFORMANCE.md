@@ -39,7 +39,7 @@ suspend/resume ридер отваливался → краш. Затем сис
 | Параметр | Значение |
 |---|---|
 | Машина | MacBookAir7,2, kernel 6.18.52 |
-| Root | `/dev/sda2` (ext4) на **USB-флешке Samsung FIT Plus** `04e8:6300` (с 2026-09-26) |
+| Root | `/dev/disk/by-partlabel/root` (ext4) на **USB-флешке Samsung FIT Plus** `04e8:6300`; раскладка disko: ESP + swap + root |
 | Было | AGI-флешка `24a9:205a`; до неё — SD за Apple-ридером `05ac:8406` (медленно + suspend крашил) |
 | Драйвер | `usb-storage` (BOT), **не UAS** |
 | Очередь | `queue_depth=1` |
@@ -65,7 +65,7 @@ O_DIRECT ниже.
 | USB-SSD (ориентир) | 300–1000 МБ/с | 200–900 МБ/с | 10–50k IOPS | 5–30k IOPS |
 
 **Текущий носитель:** Samsung FIT Plus на **порту 2-2** (`sda`, `04e8:6300`),
-root `/dev/sda2`. AGI работал на том же порту 2-2.
+root `/dev/disk/by-partlabel/root` (disko: ESP + swap + root). AGI работал на том же порту 2-2.
 
 ### Samsung FIT Plus — живые замеры
 
@@ -208,44 +208,46 @@ s2idle на Broadwell требует S0ix; в логах `intel_pch_thermal: S0i
 
 Здесь разобрано, зачем отключён дисковый swap, нужен ли он для hibernate и
 как эти механизмы сосуществуют. Вывод: **рабочий своп — только zram;
-дисковый `sda3` — исключительно под hibernate** (активируется вручную).
+дисковый swap-раздел (`/dev/disk/by-partlabel/swap`, создаётся disko) —
+исключительно под hibernate** (активируется вручную).
 
-### 2d.1. Почему sda3 в `noauto` (диск-своп не активен в работе)
+### 2d.1. Почему диск-своп в `noauto` (диск-своп не активен в работе)
 
 Дисковый своп на USB-флешке был **главным источником фризов** в SD-эпоху
-(разделы 3–4: после отключения sda3 PSI I/O `full` упал с ~42 % до ~0.9 %,
+(разделы 3–4: после отключения диск-свопа PSI I/O `full` упал с ~42 % до ~0.9 %,
 load average 4.27 → 0.32). Рабочий своп полностью обеспечивает **zram
-(=100 % RAM, сжатие ~2–3×)** плюс `vm.swappiness=150`. Возвращать sda3
+(=100 % RAM, сжатие ~2–3×)** плюс `vm.swappiness=150`. Возвращать диск-своп
 в обычную работу — значит вернуть фризы. **Для текущего режима (deep) диск-своп
 не нужен.**
 
 ### 2d.2. Hibernate требует ДИСКОВЫЙ swap
 
 `hibernate` (S4) пишет образ RAM на swap-устройство. **zram не подходит**
-(он сам в RAM — при выключении пропадёт). Нужен физический swap (`sda3`,
-8.4 ГБ ≥ RAM 4 ГБ). Поэтому, если однажды понадобится hibernate,
-**sda3 придётся активировать** — но только под него.
+(он сам в RAM — при выключении пропадёт). Нужен физический swap (раздел
+`swap`, 8 ГБ ≥ RAM 4 ГБ). Поэтому, если однажды понадобится hibernate,
+**раздел swap придётся активировать** — но только под него.
 
 ### 2d.3. Как swap и hibernate сосуществуют
 
-| Режим | sda3 в работе | Поведение |
+| Режим | swap в работе | Поведение |
 |---|---|---|
-| **A: sda3 активен всегда** | да | hibernate «из коробки», но рабочий своп снова идёт на флешку → **фризы могут вернуться** |
-| **B: sda3 только под hibernate** | нет | zram-only в работе (без фризов); sda3 включается лишь на время сна/гибернации |
+| **A: swap активен всегда** | да | hibernate «из коробки», но рабочий своп снова идёт на флешку → **фризы могут вернуться** |
+| **B: swap только под hibernate** | нет | zram-only в работе (без фризов); swap включается лишь на время сна/гибернации |
 
-**Рекомендуемый — режим B**, он и настроен сейчас (sda3 `noauto`, ручной
+**Рекомендуемый — режим B**, он и настроен сейчас (swap `noauto`, ручной
 `swapon` перед гибернацией, `swapoff` после):
 
 ```bash
-# вручную уйти в hibernate (образ RAM → sda3, затем полное выключение)
-sudo swapon /dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789
+# вручную уйти в hibernate (образ RAM → swap, затем полное выключение)
+sudo swapon /dev/disk/by-partlabel/swap
 systemctl hibernate
 # после пробуждения вернуть zram-only:
-sudo swapoff /dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789
+sudo swapoff /dev/disk/by-partlabel/swap
 ```
 
-Нюанс: `resume=/dev/sda3 resume_wait=10` уже прописаны в `boot.kernelParams`
-и `boot.resumeDevice`, поэтому ядру есть откуда читать образ при загрузке.
+Нюанс: `resume=/dev/disk/by-partlabel/swap resume_wait=10` уже прописаны
+(disko задаёт `boot.resumeDevice` на раздел swap, `resume=` добавляет NixOS),
+поэтому ядру есть откуда читать образ при загрузке.
 
 ### 2d.4. `suspend-then-hibernate` (на будущее)
 
@@ -259,11 +261,11 @@ sudo swapoff /dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789
 до этого.
 
 **Что нужно, чтобы включить (не настроено):**
-1. **Активировать sda3** (сейчас `noauto`) — причём для *автоматического*
+1. **Активировать раздел swap** (сейчас `noauto`) — причём для *автоматического*
    гибрида режима B «на лету» недостаточно: нужен либо постоянно активный
    swap (режим A), либо sleep-хук, делающий `swapon`/`swapoff` вокруг
    hibernate.
-2. **Проверить S4-resume на USB** — ядро должно прочитать образ с `sda3`
+2. **Проверить S4-resume на USB** — ядро должно прочитать образ с раздела swap
    *до* монтирования root, а USB-контроллер после сна сбрасывается. При
    `resume_wait=10` может не хватить (флешка поднимается медленно). Это **не
    проверено** и является главным риском.
@@ -294,7 +296,7 @@ sudo swapoff /dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789
 | PSI I/O `full` avg300 | ~44 % | 0.14 % |
 | PSI memory | до ~26 % (промежуточно) | **0 %** |
 | Load average (простой) | 4.27 | 0.32 |
-| Swap used | 441 МБ (zram) + 61 МБ (sda3) | **0 Б** |
+| Swap used | 441 МБ (zram) + 61 МБ (диск-своп) | **0 Б** |
 | Запись `/tmp` | на SD (~5 МБ/с) | 1.5 ГБ/с (zram) |
 | Запись `/var/tmp` | на SD | 1.8 ГБ/с (tmpfs) |
 | Запись кэша Firefox | на SD | 2.0 ГБ/с (tmpfs) |
@@ -324,16 +326,17 @@ sudo swapoff /dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789
 - **Память:** `vm.swappiness=150` (на SD 60), `vm.vfs_cache_pressure=60`,
   `vm.page-cluster=0`.
 - **zram swap = 100 % RAM** (память не резервируется).
-- **sda3 → `noauto`**: диск-своп не активен в работе (свопимся только в zram),
+- **swap (`/dev/disk/by-partlabel/swap`, disko) → `noauto`**: диск-своп не активен в работе (свопимся только в zram),
   гибернация возможна вручную:
-  `sudo swapon /dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789 && systemctl hibernate`.
+  `sudo swapon /dev/disk/by-partlabel/swap && systemctl hibernate`.
   Подробный разбор swap/hibernate — раздел 2d.
 - **earlyoom**: пороги 5 %/5 %, `--avoid` для Firefox/композитора,
   `--prefer` для компиляторов/установщиков. Страховка от «завис вместо OOM».
 - **Изоляция сессии:** `app.slice` (терминалы/сборки/браузер)
   `MemoryHigh=2300M`, `CPUWeight=50`; `session.slice` (композитор niri)
   `CPUWeight=300`, `MemoryMin=200M`, `MemoryLow=400M`.
-- **ФС/диск:** root `noatime,commit=60` (на SD 30); udev по VID:PID для всех
+- **ФС/диск:** раскладка — disko (`hosts/nixos/MacBook-Air/disko.nix`: GPT, ESP `/boot`, swap, root; UEFI-only, без LVM);
+  root `noatime,commit=60` (на SD 30); udev по VID:PID для всех
   носителей (Apple `05ac:8406`, AGI `24a9:205a`, Samsung `04e8:6300`):
   `rotational=0`, `read_ahead=1024`, `mq-deadline`. `/tmp` в zram (`ram/4`),
   `/var/tmp` tmpfs **256M**, кэш Firefox в tmpfs **384M** для `rusich` и `bunny`.
@@ -620,10 +623,11 @@ Samsung FIT Plus протестирован (разделы 2, 2a), выбран
 | Загрузка (boot) | средний |
 | Посл. чтение | низкий |
 
-## 11. Шпаргалка текущего состояния (актуально на 2026-09-26)
+## 11. Шпаргалка текущего состояния (актуально на 2026-09-27)
 
-- **Носитель:** **Samsung FIT Plus** (`04e8:6300`), root `/dev/sda2` (ext4),
+- **Носитель:** **Samsung FIT Plus** (`04e8:6300`), root `/dev/disk/by-partlabel/root` (ext4),
   порт USB `2-2`. Был AGI (`24a9:205a`) — снят после переезда (раздел 10).
+- **Раскладка:** disko (UEFI-only GPT: ESP `/boot` + swap + root), `disko.nix`; `hardware-configuration.nix` — только модули/загрузчик.
 - **Загрузка:** штатная, без Option (systemd-boot в NVRAM).
 - **Suspend:** **работает** в обоих режимах; активен **`deep` (S3)** —
   экономичнее по батарее. Проверено 3+ цикла deep и 3+ s2idle (включая
@@ -638,7 +642,7 @@ Samsung FIT Plus протестирован (разделы 2, 2a), выбран
 - **Открытый план:** переезд на Samsung **выполнен** (раздел 10).
 - **Задел на будущее:** если начнутся проблемы с отключением/разрядом во сне —
   вернуться к разделу **2d** (swap под hibernate, `suspend-then-hibernate`).
-  Сейчас сознательно **чистый deep**, sda3 выключен (рабочий своп — zram).
+  Сейчас сознательно **чистый deep**, диск-своп выключен (рабочий своп — zram).
 - **Незакрытый вопрос:** Wi-Fi `wl` ворчит при resume (`WLAN scan error`),
   но сеть поднимается — при проблемах смотреть драйверы `wl`/`b43`.
 

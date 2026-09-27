@@ -331,7 +331,7 @@ in
   #   systemctl hibernate
   swapDevices = lib.mkForce [
     {
-      device = "/dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789";
+      device = "/dev/disk/by-id/usb-Samsung_Flash_Drive_FIT_0374525090001858-0:0-part3";
       options = [ "noauto" ];
     }
   ];

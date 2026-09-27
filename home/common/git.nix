@@ -21,13 +21,19 @@
       difftool."nvim.difftool" = {
         cmd = "LC_ALL=C nvim -c \"packadd nvim.difftool\" -c \"DiffTool $LOCAL $REMOTE\"";
       };
-      # merge = {
-      #   tool = "nvimdiff";
-      #   prompt = false;
-      # };
-      # mergetool."nvimdiff" = {
-      #   cmd = "nvim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'";
-      # };
+      merge = {
+        tool = "nvimdiff2";
+        prompt = false;
+        conflictStyle = "zdiff3";
+      };
+      mergetool = {
+        keepBackup = false;
+        # Ask "Was the merge successful?" if the file was left unchanged
+        # (e.g. quitting nvim with :q!), so an untouched file stays unmerged.
+        "nvimdiff2" = {
+          trustExitCode = false;
+        };
+      };
     };
   };
 }

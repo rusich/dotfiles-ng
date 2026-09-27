@@ -127,6 +127,51 @@ in
     };
   };
 
+  # Скрываем rusich из списка на экране входа GDM.
+  #
+  # Greeter (gnome-shell в режиме gdm) строит список через AccountsService и
+  # пропускает аккаунты, для которых is_system_account() == true. Свойства
+  # `Hidden` в accountsservice 23.13 больше нет (в D-Bus User есть только
+  # SystemAccount/Locked/Saved/AccountType), поэтому скрывать приходится,
+  # помечая аккаунт системным в его файле AccountsService.
+  #
+  # Файл правим идемпотентно и до старта accounts-daemon, не затирая
+  # Icon/Session/язык. Через systemd.tmpfiles `f` так нельзя: он пишет
+  # контент только если файла ещё нет, а accounts-daemon/set-session могли
+  # создать его раньше с SystemAccount=false — тогда правило молча не сработает.
+  #
+  # Побочки: rusich пропадёт из «Пользователи» в GNOME Settings и его не будет
+  # трогать gdm-шный set-session (авто-выбор сессии). Ручной вход через
+  # «Not listed?» работает как обычно — PAM про SystemAccount не знает.
+  systemd.services.gdm-hide-rusich = {
+    description = "Mark rusich as an AccountsService system account (hide from GDM)";
+    wantedBy = [ "graphical.target" ];
+    before = [ "accounts-daemon.service" ];
+    path = with pkgs; [
+      coreutils
+      gnugrep
+      gnused
+    ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      file=/var/lib/AccountsService/users/rusich
+      mkdir -p "$(dirname "$file")"
+      if [ ! -e "$file" ]; then
+        printf '[User]\nSystemAccount=true\n' > "$file"
+      elif grep -q '^SystemAccount=' "$file"; then
+        sed -i 's/^SystemAccount=.*/SystemAccount=true/' "$file"
+      elif grep -qxF '[User]' "$file"; then
+        sed -i '/^\[User\]/a SystemAccount=true' "$file"
+      else
+        printf '\n[User]\nSystemAccount=true\n' >> "$file"
+      fi
+      chmod 0600 "$file"
+    '';
+  };
+
   # MacBook Air specific
 
   # Загрузчик задаём здесь, а не в hardware-configuration.nix: последний

@@ -20,6 +20,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # Move conflicting pre-existing files aside instead of aborting activation.
+    # Hosts that previously managed some dotfiles by hand (e.g. MacBook-Air)
+    # otherwise fail with "Existing file ... would be clobbered".
+    home-manager.backupFileExtension = "hm-backup";
+
     home-manager = {
       useGlobalPkgs = true;
       useUserPackages = true;

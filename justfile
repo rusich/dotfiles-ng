@@ -83,7 +83,7 @@ switch configuration="":
 
 # Apply home-manager for the current user@hostname (standalone).
 home:
-    home-manager switch --flake .
+    home-manager switch --flake . -b hm-backup
 
 # Update flake inputs.
 update:

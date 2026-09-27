@@ -176,6 +176,17 @@ in
     '';
   };
 
+  # Старые Windows-игры (для bunny). Lutris — FHS-обёртка с multiArch,
+  # так что 32-битные игры работают; 32-битная графика уже включена выше
+  # (hardware.graphics.enable32Bit). steamSupport выключаем: Steam на этой
+  # машине нет, а он тянет лишние гигабайты в замыкание на USB-флешке.
+  # Свой wine не нужен — Lutris скачивает свои сборки в
+  # ~/.local/share/lutris; winetricks работает поверх wine из Lutris.
+  environment.systemPackages = [
+    (pkgs.lutris.override { steamSupport = false; })
+    pkgs.winetricks
+  ];
+
   # MacBook Air specific
 
   # Загрузчик задаём здесь, а не в hardware-configuration.nix: последний

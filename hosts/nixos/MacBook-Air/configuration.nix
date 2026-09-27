@@ -241,7 +241,12 @@ in
       device = "tmpfs";
       fsType = "tmpfs";
       # 256M достаточно: /var/tmp обычно пуст; меньший worst-case RAM при 4 ГБ.
-      options = [ "mode=1777" "size=256M" "nosuid" "nodev" ];
+      options = [
+        "mode=1777"
+        "size=256M"
+        "nosuid"
+        "nodev"
+      ];
     };
   };
 
@@ -347,8 +352,10 @@ in
     freeMemThreshold = 5;
     freeSwapThreshold = 5;
     extraArgs = [
-      "--avoid" "(firefox|firefox-bin|Isolated[[:space:]]Web[[:space:]]Co|Web[[:space:]]Content|WebExtensions|niri|gnome-shell|Xwayland|Xorg)"
-      "--prefer" "(cc1|cc1plus|gcc|clang|rustc|cargo|node|npm|yarn|pnpm|tar|unzip|7z|zstd|xz|nvim|git)"
+      "--avoid"
+      "(firefox|firefox-bin|Isolated[[:space:]]Web[[:space:]]Co|Web[[:space:]]Content|WebExtensions|niri|gnome-shell|Xwayland|Xorg)"
+      "--prefer"
+      "(cc1|cc1plus|gcc|clang|rustc|cargo|node|npm|yarn|pnpm|tar|unzip|7z|zstd|xz|nvim|git)"
     ];
   };
 

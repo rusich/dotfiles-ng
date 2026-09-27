@@ -36,8 +36,14 @@
 - **Фичи** включаются через `user.<group>.<name>.enable = true` в
   `home/users/<user>/<host>.nix` (листья) или одним флагом через
   `user.bundle.{graphical,linux-desktop}.enable` (наборы-«meta-фичи»).
-- **Десктопы/macOS** используют standalone home-manager; **серверы** —
-  home-manager как NixOS-модуль (тот же файл `home/users/<user>/<host>.nix`).
+- **Десктопы/macOS** используют standalone home-manager; **серверы** и
+  **MacBook-Air** — home-manager как NixOS-модуль (integrated, тот же файл
+  `home/users/<user>/<host>.nix`). MacBook-Air управляется удалённо
+  (`REMOTE_INSTALL.md`), поэтому его home применяется вместе с системой.
+  Профиль MacBook-Air — **base-only, как у серверов** (`imports = [ ./home.nix ]`):
+  репозиторий на нём не клонируется, поэтому `user.bundle.*` и out-of-store
+  фичи (neovim, kitty, niri, rofi, noctalia, keepassxc, mimeapps, opencode) не
+  включаются — они линкуют конфиги из `~/.dotfiles`.
 - **Серверный профиль** `nixos.profiles.server.enable = true` добавляет
   daily gc/optimise, `systemd-resolved`, key-only SSH и серверные пакеты
   (остальное уже в `modules/nixos/common.nix`).
@@ -86,8 +92,14 @@ darwin-rebuild switch --flake .#macos-sonoma-vm
 ```bash
 nix flake update                 # обновить inputs
 sudo nixos-rebuild switch --flake .#<host>
-home-manager switch --flake .    # применить home-изменения
+home-manager switch --flake .    # применить home-изменения (НЕ для MacBook-Air)
 ```
+
+Для MacBook-Air home встроен в систему: отдельный `home-manager switch`
+(и `just home`) на нём не применять — `sudo nixos-rebuild switch --flake
+.#MacBook-Air` (или `just rebuild MacBook-Air <ip>`) применяет и систему, и
+dotfiles одним поколением. Перед первым rebuild после миграции стоит один раз
+подчистить старые standalone-поколения: `home-manager remove-generations all`.
 
 ### 5. Управление поколениями
 

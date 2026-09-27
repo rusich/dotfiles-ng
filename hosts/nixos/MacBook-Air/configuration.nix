@@ -47,6 +47,13 @@ in
   nixos.profiles.desktop.enable = true;
   nixos.profiles.gnome.enable = true;
 
+  # Деплой home-manager вместе с системой (nixos-rebuild), а не standalone:
+  # хост управляется удалённо (см. REMOTE_INSTALL.md), поэтому один
+  # `just rebuild MacBook-Air <ip>` применяет и систему, и dotfiles.
+  # НЕ запускать здесь standalone `home-manager switch`/`just home` —
+  # иначе получатся две конкурирующие поколения HM.
+  nixos.home-manager.integrated.enable = true;
+
   # --- Облегчение GNOME под 4 ГБ RAM (host-specific для этой машины) ---
   #
   # Ни rusich, ни bunny НЕ пользуются почтой/календарём/контактами в GNOME,

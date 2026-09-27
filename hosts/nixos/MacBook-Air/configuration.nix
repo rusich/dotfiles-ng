@@ -257,6 +257,14 @@ in
     };
   };
 
+  # systemd создаёт родительский каталог для tmpfs-маунта `.cache/mozilla`
+  # от root, из-за чего `~/.cache` остаётся `root:root 755`, и HM-активация
+  # (идёт от пользователя) падает на `ln .../​.cache/.keep: Отказано в доступе`.
+  # Возвращаем владельца и права на каждом boot.
+  systemd.tmpfiles.rules = lib.mapAttrsToList (
+    user: _: "d /home/${user}/.cache 0700 ${user} ${config.users.users.${user}.group} -"
+  ) userUids;
+
   # Помечаем USB-носители как невращающиеся и задаём разумный read-ahead.
   # Правила по VID:PID для всех носителей, на которых жила/может жить система:
   #   Apple SD-ридер (05ac:8406), AGI-флешка (24a9:205a),

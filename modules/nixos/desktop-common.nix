@@ -11,6 +11,12 @@ in
 {
   options = {
     nixos.profiles.desktop.enable = lib.mkEnableOption "unified configuration for desktop computer, like: GUI Software, bluetooth, sound, etc";
+
+    nixos.profiles.desktop.nextcloud-client.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Install the Nextcloud desktop sync client.";
+    };
   };
   config = lib.mkIf cfg.enable {
     networking.networkmanager.enable = true;
@@ -144,30 +150,32 @@ in
 
     # packaages
 
-    environment.systemPackages = with pkgs; [
-      # dev toolchain (desktops only; servers build through the nix sandbox)
-      gcc
-      python3
-      pkg-config
-      libreoffice
-      kitty
-      hunspell
-      hunspellDicts.en_US
-      hunspellDicts.ru_RU
-      gparted
-      gimp
-      nextcloud-client
-      # Nautilus + dependencies
-      nautilus
-      nautilus-python # for nextcloud integration
-      nautilus-open-any-terminal
-      nfs-utils
-      file-roller
-      firefox
-      chromium
-      # misc
-      xkill
-    ];
+    environment.systemPackages =
+      with pkgs;
+      [
+        # dev toolchain (desktops only; servers build through the nix sandbox)
+        gcc
+        python3
+        pkg-config
+        libreoffice
+        kitty
+        hunspell
+        hunspellDicts.en_US
+        hunspellDicts.ru_RU
+        gparted
+        gimp
+        # Nautilus + dependencies
+        nautilus
+        nautilus-python # for nextcloud integration
+        nautilus-open-any-terminal
+        nfs-utils
+        file-roller
+        firefox
+        chromium
+        # misc
+        xkill
+      ]
+      ++ lib.optionals cfg.nextcloud-client.enable [ pkgs.nextcloud-client ];
 
     # Let nautilus find extensions
     environment.sessionVariables.NAUTILUS_4_EXTENSION_DIR = "${config.system.path}/lib/nautilus/extensions-4";

@@ -47,6 +47,10 @@ in
   nixos.profiles.desktop.enable = true;
   nixos.profiles.gnome.enable = true;
 
+  # Nextcloud-клиент на этой машине не нужен (постоянно лез с уведомлениями),
+  # а место на USB-флешке лишним не бывает. Вернуть — убрать эту строку.
+  nixos.profiles.desktop.nextcloud-client.enable = false;
+
   # Деплой home-manager вместе с системой (nixos-rebuild), а не standalone:
   # хост управляется удалённо (см. REMOTE_INSTALL.md), поэтому один
   # `just rebuild MacBook-Air <ip>` применяет и систему, и dotfiles.

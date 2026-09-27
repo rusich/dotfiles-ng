@@ -39,6 +39,7 @@ in
 {
   imports = [
     ./hardware-configuration.nix
+    ./disko.nix
     inputs.nixos-hardware.nixosModules.apple-macbook-air-7
   ];
 
@@ -159,16 +160,15 @@ in
     "usbcore.autosuspend=-1"
     # Даём USB-устройствам время подняться, в т.ч. после resume
     "usb-storage.delay_use=5"
-    # Устройство для гибернации (sda3 активируется вручную, см. swapDevices)
-    "resume=/dev/sda3"
+    # Устройство для гибернации задаётся disko (boot.resumeDevice, раздел swap).
+    # Даём устройству время подняться перед попыткой resume.
     "resume_wait=10"
     # Корректное восстановление после S3
     "acpi_sleep=nonvs"
     # "acpi_osi=!Windows 2013"
   ];
 
-  # Устройство для гибернации
-  boot.resumeDevice = "/dev/sda3";
+  # Устройство для гибернации задаёт disko (resumeDevice на разделе swap).
 
   # Отключаем заморозку сессий через Service-файл systemd-suspend
   systemd.services.systemd-suspend = {
@@ -228,13 +228,9 @@ in
     "vm.page-cluster" = 0; # для zram: постраничное чтение swap вместо кластеров
   };
 
-  # atime не обновляем — это лишние записи на карту.
-  # commit=60 — реже журнальные синхронизации ext4 (меньше всплесков записи,
-  # меньше износа флешки). Носитель быстрее SD, батарея есть — потеря до 60с
-  # данных при внезапном снятии приемлема.
-  # Плюс /var/tmp и кэши браузеров (browserCacheMounts) — в RAM.
+  # Опции корня (noatime, commit=60) задаёт disko. /var/tmp и кэши браузеров —
+  # в RAM.
   fileSystems = browserCacheMounts // {
-    "/".options = [ "noatime" "commit=60" ];
     "/var/tmp" = {
       device = "tmpfs";
       fsType = "tmpfs";
@@ -322,16 +318,16 @@ in
     memoryPercent = 100;
   };
 
-  # sda3 (та же SD-карта) как обычный swap — только во вред: когда zram
-  # переполняется, ядро сливает анонку на 5 МБ/с карту, и система встаёт
-  # (в тесте ушло ~2.4 ГБ на sda3 при io_full до 88%). Помечаем его
+  # Диск-своп (раздел swap, создаётся disko) как обычный swap — только во вред:
+  # когда zram переполняется, ядро сливает анонку на медленную флешку, и система
+  # встаёт (в тесте ушло ~2.4 ГБ на диск-своп при io_full до 88%). Помечаем его
   # `noauto`: в обычной работе диск-своп не активен (свопимся только в zram),
   # а гибернация остаётся возможной — активировать вручную перед сном:
-  #   sudo swapon /dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789
+  #   sudo swapon /dev/disk/by-partlabel/swap
   #   systemctl hibernate
   swapDevices = lib.mkForce [
     {
-      device = "/dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789";
+      device = "/dev/disk/by-partlabel/swap";
       options = [ "noauto" ];
     }
   ];

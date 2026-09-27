@@ -30,23 +30,8 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/8302097e-90fc-49b8-b71c-983583a94f80";
-    fsType = "ext4";
-  };
-
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/3122-0FD9";
-    fsType = "vfat";
-    options = [
-      "fmask=0077"
-      "dmask=0077"
-    ];
-  };
-
-  swapDevices = [
-    { device = "/dev/disk/by-uuid/d237160e-7b7a-436c-81c7-dc3451f2d789"; }
-  ];
+  # Файловые системы и swap объявляет disko (./disko.nix). Этот файл заново
+  # генерируется при `just install` и в репозитории хранится без fileSystems.
 
   networking.useDHCP = lib.mkDefault true;
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

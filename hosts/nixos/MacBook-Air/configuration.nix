@@ -122,6 +122,12 @@ in
 
   # MacBook Air specific
 
+  # Загрузчик задаём здесь, а не в hardware-configuration.nix: последний
+  # генерируется заново при `just install` (--generate-hardware-config) и
+  # boot-секцию не сохраняет (без этого падает grub-assertion).
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
   boot.initrd.availableKernelModules = [
     "ext4" # Добавляем
     "usbcore" # Добавляем

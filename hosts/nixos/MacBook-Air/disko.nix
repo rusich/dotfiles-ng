@@ -1,13 +1,14 @@
 # UEFI-only GPT layout for the MacBook Air (Apple firmware; internal SSD absent,
 # the system lives on a USB flash drive). No BIOS/EF02 partition is needed.
 #   ESP (/boot) + swap (resume device) + ext4 root.
-# Override the device per host or at install time, e.g.:
-#   nixos-anywhere ... --disk /dev/sda
+# Device is pinned by the Samsung flash's by-id: on this machine the target and
+# a bootable SD installer are both USB mass storage (sda/sdb is a coin flip), so
+# /dev/sda is NOT safe. Override per host or at install time if the flash changes.
 { lib, ... }:
 {
   disko.devices = {
     disk.disk1 = {
-      device = lib.mkDefault "/dev/sda";
+      device = lib.mkDefault "/dev/disk/by-id/usb-Samsung_Flash_Drive_FIT_0374525090001858-0:0";
       type = "disk";
       content = {
         type = "gpt";

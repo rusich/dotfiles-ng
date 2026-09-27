@@ -13,11 +13,8 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  # Bootloader.
-  boot = {
-    loader.systemd-boot.enable = true;
-    loader.efi.canTouchEfiVariables = true;
-  };
+  # Загрузчик (systemd-boot) объявлен в ./configuration.nix: этот файл
+  # генерируется заново при `just install` и boot-секцию не сохраняет.
 
   boot.initrd.availableKernelModules = [
     "xhci_pci"

@@ -19,6 +19,25 @@ in
       "input"
     ];
 
+    # esync/fsync need a high open-file limit; without it Wine refuses to
+    # launch (EsyncLimitError: "Your ESYNC limits are not set correctly").
+    # See the NixOS wiki, Lutris -> "Using Esync".
+    systemd.settings.Manager.DefaultLimitNOFILE = 524288;
+    security.pam.loginLimits = [
+      {
+        domain = "@users";
+        type = "hard";
+        item = "nofile";
+        value = "524288";
+      }
+      {
+        domain = "@users";
+        type = "soft";
+        item = "nofile";
+        value = "524288";
+      }
+    ];
+
     environment.systemPackages = with pkgs; [
       opencomposite
       wayvr

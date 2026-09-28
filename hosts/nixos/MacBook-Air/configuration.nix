@@ -193,6 +193,25 @@ in
     pkgs.vulkan-tools # vulkaninfo on the host, for manual diagnostics
   ];
 
+  # esync/fsync need a high open-file limit; without it Wine refuses to
+  # launch (EsyncLimitError: "Your ESYNC limits are not set correctly").
+  # See the NixOS wiki, Lutris -> "Using Esync".
+  systemd.settings.Manager.DefaultLimitNOFILE = 524288;
+  security.pam.loginLimits = [
+    {
+      domain = "@users";
+      type = "hard";
+      item = "nofile";
+      value = "524288";
+    }
+    {
+      domain = "@users";
+      type = "soft";
+      item = "nofile";
+      value = "524288";
+    }
+  ];
+
   # MacBook Air specific
 
   # Загрузчик задаём здесь, а не в hardware-configuration.nix: последний

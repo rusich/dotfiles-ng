@@ -13,7 +13,8 @@ in
   config = lib.mkIf cfg.enable {
     # required packages
     home.packages = with pkgs; [
-      xwayland-satellite
+      # 0.8.3 fixes Steam popups closing instantly (override-redirect focus).
+      unstable.xwayland-satellite
     ];
 
     # Map the niri config files to standard location

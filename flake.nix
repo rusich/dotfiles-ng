@@ -1,20 +1,14 @@
 {
-  description = "NixOS, nix-darwin and home-manager config in one place!";
+  description = "NixOS and home-manager config in one place!";
 
   # NOTE: release version is duplicated below because flake inputs require
-  # literal URL strings (expressions are not allowed). Keep these three in sync:
+  # literal URL strings (expressions are not allowed). Keep these two in sync:
   #   - nixpkgs-stable       nixos-<release>
-  #   - nix-darwin           nix-darwin-<release>
   #   - home-manager         release-<release>
   inputs = rec {
     nixpkgs-stable.url = "nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
     nixpkgs = nixpkgs-stable;
-
-    nix-darwin = {
-      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
@@ -52,7 +46,7 @@
       # Import overlays
       overlays = import ./overlays { inherit inputs; };
 
-      # Common module for NixOS, nix-darwin and home-manager
+      # Common module for NixOS and home-manager
       overlayModule = {
         nixpkgs.overlays = overlays;
         # nixpkgs.config.allowUnfree = true;
@@ -60,7 +54,6 @@
 
       # Get host directories
       nixosHosts = builtins.attrNames (builtins.readDir ./hosts/nixos);
-      darwinHosts = builtins.attrNames (builtins.readDir ./hosts/darwin);
 
       # Module arguments shared by all systems
       args = host: {
@@ -80,18 +73,6 @@
             inputs.disko.nixosModules.disko
             ./hosts/nixos/${host}/configuration.nix
             # inputs.stylix.nixosModules.stylix
-          ];
-        };
-
-      mkDarwin =
-        host:
-        inputs.nix-darwin.lib.darwinSystem {
-          specialArgs = args host;
-          modules = [
-            overlayModule
-            ./modules/common
-            ./modules/darwin
-            ./hosts/darwin/${host}/configuration.nix
           ];
         };
 
@@ -139,19 +120,14 @@
       # (`home-manager switch --flake .`) использует `user@<hostname>`, поэтому
       # неизвестный хост честно падает.
       nixosAll = lib.genAttrs nixosHosts mkNixos;
-      darwinAll = lib.genAttrs darwinHosts mkDarwin;
-      homeAll = (namedHomes "x86_64-linux" nixosHosts) // (namedHomes "aarch64-darwin" darwinHosts);
+      homeAll = namedHomes "x86_64-linux" nixosHosts;
     in
     {
       formatter = {
         x86_64-linux = inputs.nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;
-        aarch64-darwin = inputs.nixpkgs.legacyPackages.aarch64-darwin.nixfmt-tree;
       };
       nixosConfigurations = nixosAll // {
         default = nixosAll.darkstar;
-      };
-      darwinConfigurations = darwinAll // {
-        default = darwinAll.macos-sonoma-vm;
       };
       homeConfigurations = homeAll // {
         default = homeAll."${primaryUser.username}@darkstar";

@@ -10,7 +10,7 @@ in
 {
   options.user.desktop.noctalia.enable = lib.mkEnableOption "noctalia shell and theming";
 
-  config = lib.mkIf (cfg.enable && pkgs.stdenv.isLinux) {
+  config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       unstable.noctalia
       adw-gtk3

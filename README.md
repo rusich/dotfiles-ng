@@ -1,6 +1,6 @@
 # NixOS Configuration
 
-Мой набор конфигураций для NixOS, nix-darwin и home-manager, использующий flakes.
+Мой набор конфигураций для NixOS и home-manager, использующий flakes.
 
 ## Структура проекта
 
@@ -10,9 +10,8 @@
 ├── flake.lock         # Зависимости flakes
 ├── justfile           # just-рецепты: deploy/rebuild/switch/home/update/fmt/check
 ├── hosts/             # Конфигурации хостов (авто-обнаруживаются по папкам)
-│   ├── nixos/         # NixOS: darkstar, matebook, MacBook-Air, generic-server
-│   │   └── <host>/    # configuration.nix (+ disko.nix у серверов)
-│   └── darwin/        # nix-darwin (macOS): macos-sonoma-vm
+│   └── nixos/         # NixOS: darkstar, matebook, MacBook-Air, generic-server
+│       └── <host>/    # configuration.nix (+ disko.nix у серверов)
 ├── home/              # home-manager слой
 │   ├── common/        # Безусловная база для всех (shell, git, xdg, CLI)
 │   ├── features/      # Опциональные фичи (options.user.*.enable)
@@ -20,9 +19,8 @@
 │   │   └── bundles/   # meta-фичи: graphical, linux-desktop
 │   └── users/         # Пользователи: home/users/<user>/{user,home,<host>}.nix
 ├── modules/           # Переиспользуемые системные модули
-│   ├── common/        # Общее для NixOS, darwin и home-manager
-│   ├── nixos/         # NixOS-модули
-│   └── darwin/        # nix-darwin модули
+│   ├── common/        # Общее для NixOS и home-manager
+│   └── nixos/         # NixOS-модули
 ├── templates/         # Шаблоны (server/…)
 ├── overlays/          # Кастомные overlays
 └── pkgs/              # Кастомные пакеты
@@ -30,13 +28,13 @@
 
 ## Как это устроено
 
-- **Хосты** обнаруживаются по папкам `hosts/nixos/<host>` и `hosts/darwin/<host>`.
+- **Хосты** обнаруживаются по папкам `hosts/nixos/<host>`.
 - **Пользователи и их машины** — по файлам `home/users/<user>/<host>.nix`;
   ключ `user@host` появляется в `homeConfigurations` автоматически.
 - **Фичи** включаются через `user.<group>.<name>.enable = true` в
   `home/users/<user>/<host>.nix` (листья) или одним флагом через
   `user.bundle.{graphical,linux-desktop}.enable` (наборы-«meta-фичи»).
-- **Десктопы/macOS** используют standalone home-manager; **серверы** и
+- **Десктопы** используют standalone home-manager; **серверы** и
   **MacBook-Air** — home-manager как NixOS-модуль (integrated, тот же файл
   `home/users/<user>/<host>.nix`). MacBook-Air управляется удалённо
   (`REMOTE_INSTALL.md`), поэтому его home применяется вместе с системой.
@@ -82,9 +80,6 @@ sudo nixos-rebuild switch --flake .#darkstar
 home-manager switch --flake .
 # или явно:
 home-manager switch --flake .#rusich@darkstar
-
-# macOS (nix-darwin)
-darwin-rebuild switch --flake .#macos-sonoma-vm
 ```
 
 ### 4. Обновление
@@ -123,12 +118,27 @@ nix fmt          # отформатировать все .nix файлы
 - `nixpkgs-stable` — `nixos-26.05` (он же `nixpkgs`)
 - `nixpkgs-unstable` — `nixos-unstable`
 - `home-manager` — `release-26.05`
-- `nix-darwin` — `nix-darwin-26.05`
 - `nixos-hardware`, `musnix`, `firefox-addons`
 - `disko` — декларативная разбивка дисков для серверов (`nixos-anywhere`)
 
-Версия релиза указана в трёх input-ах; flake-схема требует строковых
+Версия релиза указана в двух input-ах; flake-схема требует строковых
 литералов в `url`, поэтому вынести её в переменную нельзя — менять синхронно.
+
+## Возврат поддержки macOS (nix-darwin)
+
+macOS-хост и darwin-модули удалены и заархивированы в аннотированном теге
+`archive/nix-darwin` (запушен на origin). Тег самодостаточен: содержит
+запиненный `flake.lock` с nix-darwin, поэтому из него можно собрать прежнюю
+macOS-конфигурацию как есть:
+
+```bash
+git checkout archive/nix-darwin          # или: git branch darwin-restore archive/nix-darwin
+git show archive/nix-darwin:flake.nix    # референс, не переключая ветку
+```
+
+При возврате поддержку писать заново по upstream-доке nix-darwin, используя
+тег как референс, а не merge: main активно развивается и к тому моменту может
+быть архитектурно другим.
 
 ## Как добавлять
 

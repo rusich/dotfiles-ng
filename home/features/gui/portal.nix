@@ -13,7 +13,7 @@ in
 {
   options.user.gui.portal.enable = lib.mkEnableOption "XDG desktop portal (Linux GUI)";
 
-  config = lib.mkIf (cfg.enable && pkgs.stdenv.isLinux) {
+  config = lib.mkIf cfg.enable {
     xdg.portal = {
       enable = true;
       extraPortals = [ pkgs.xdg-desktop-portal-gtk ];

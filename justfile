@@ -1,4 +1,4 @@
-# NixOS / home-manager / nix-darwin task runner.
+# NixOS / home-manager task runner.
 # Servers: `just install <configuration> <server>` then `just rebuild ...`.
 # The <server> is a host/IP WITHOUT a user (root@ is added automatically).
 # Bootstrap SSH first (copy your key so nixos-anywhere needs no password):

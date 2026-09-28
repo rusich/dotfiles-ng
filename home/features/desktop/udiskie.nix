@@ -10,7 +10,7 @@ in
 {
   options.user.desktop.udiskie.enable = lib.mkEnableOption "udiskie automount tray";
 
-  config = lib.mkIf (cfg.enable && pkgs.stdenv.isLinux) {
+  config = lib.mkIf cfg.enable {
     services.udiskie = {
       enable = true;
       settings = {

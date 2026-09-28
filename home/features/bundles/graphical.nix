@@ -1,4 +1,4 @@
-# Meta-feature: cross-platform GUI workstation bundle.
+# Meta-feature: GUI workstation bundle.
 #
 # This is an opinionated selection (editors, CLI, GUI apps, PIM, rust,
 # opencode) meant for graphical machines. Servers must NOT enable it: it
@@ -12,7 +12,7 @@ let
   cfg = config.user.bundle.graphical;
 in
 {
-  options.user.bundle.graphical.enable = lib.mkEnableOption "cross-platform GUI workstation bundle";
+  options.user.bundle.graphical.enable = lib.mkEnableOption "GUI workstation bundle";
 
   config = lib.mkIf cfg.enable {
     user.editors = {

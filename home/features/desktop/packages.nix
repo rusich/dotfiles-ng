@@ -10,7 +10,7 @@ in
 {
   options.user.desktop.packages.enable = lib.mkEnableOption "Linux desktop applications";
 
-  config = lib.mkIf (cfg.enable && pkgs.stdenv.isLinux) {
+  config = lib.mkIf cfg.enable {
     programs.alacritty.enable = true;
 
     home.packages = with pkgs; [

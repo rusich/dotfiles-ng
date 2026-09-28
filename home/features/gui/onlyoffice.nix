@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -10,7 +9,7 @@ in
 {
   options.user.gui.onlyoffice.enable = lib.mkEnableOption "onlyoffice";
 
-  config = lib.mkIf (cfg.enable && pkgs.stdenv.isLinux) {
+  config = lib.mkIf cfg.enable {
     programs.onlyoffice = {
       enable = true;
       # settings = ''

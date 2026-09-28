@@ -5,7 +5,7 @@
 }:
 
 let
-  nixosAndDarwinPackages = with pkgs; [
+  commonPackages = with pkgs; [
     file
     usbutils
     pciutils
@@ -56,9 +56,9 @@ in
   options = {
     packages.common = lib.mkOption {
       type = lib.types.listOf lib.types.package;
-      default = nixosAndDarwinPackages;
+      default = commonPackages;
       readOnly = true;
-      description = "Common packages list for NixOS and Darwin.\n(for use in environment.systemPackages)";
+      description = "Common packages list for NixOS.\n(for use in environment.systemPackages)";
     };
   };
 }

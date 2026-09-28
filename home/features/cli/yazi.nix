@@ -20,48 +20,44 @@ in
         mediainfo # used by yazi's mediainfo plugin
         trash-cli
       ]
-      ++ lib.optionals (pkgs.stdenv.isLinux && cfg.graphical) [
+      ++ lib.optionals cfg.graphical [
         xdg-desktop-portal-termfilechooser # use yazi as a file chooser
         junction # "Open with" app chooser (re.sonny.Junction)
       ];
 
-    home.file.".local/share/applications/yazi.desktop" =
-      lib.mkIf (pkgs.stdenv.isLinux && cfg.graphical)
-        {
-          text = ''
-            [Desktop Entry]
-            Type=Application
-            Name=Yazi
-            Exec=kitty -e yazi %F
-            Icon=yazi
-            Categories=Utility;FileManager;
-            MimeType=inode/directory;
-          '';
-        };
+    home.file.".local/share/applications/yazi.desktop" = lib.mkIf cfg.graphical {
+      text = ''
+        [Desktop Entry]
+        Type=Application
+        Name=Yazi
+        Exec=kitty -e yazi %F
+        Icon=yazi
+        Categories=Utility;FileManager;
+        MimeType=inode/directory;
+      '';
+    };
 
     # Termfilechooser config
-    home.file.".config/xdg-desktop-portal-termfilechooser/config" =
-      lib.mkIf (pkgs.stdenv.isLinux && cfg.graphical)
-        {
-          text = ''
-            [filechooser]
-            cmd=${pkgs.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
-            default_dir=$HOME
-            create_help_file=1
-            env=TERMCMD='kitty --title filechooser'
-            env=PATH="$PATH:/run/current-system/sw/bin"
-            open_mode = suggested
-            save_mode = last
-          '';
-        };
+    home.file.".config/xdg-desktop-portal-termfilechooser/config" = lib.mkIf cfg.graphical {
+      text = ''
+        [filechooser]
+        cmd=${pkgs.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
+        default_dir=$HOME
+        create_help_file=1
+        env=TERMCMD='kitty --title filechooser'
+        env=PATH="$PATH:/run/current-system/sw/bin"
+        open_mode = suggested
+        save_mode = last
+      '';
+    };
 
     # Подключаем termfilechooser как FileChooser портал
-    xdg.portal.extraPortals = lib.mkIf (pkgs.stdenv.isLinux && cfg.graphical) [
+    xdg.portal.extraPortals = lib.mkIf cfg.graphical [
       pkgs.xdg-desktop-portal-termfilechooser
     ];
-    xdg.portal.config.common."org.freedesktop.impl.portal.FileChooser" = lib.mkIf (
-      pkgs.stdenv.isLinux && cfg.graphical
-    ) (lib.mkForce "termfilechooser");
+    xdg.portal.config.common."org.freedesktop.impl.portal.FileChooser" = lib.mkIf cfg.graphical (
+      lib.mkForce "termfilechooser"
+    );
 
     programs.yazi = {
       enable = true;
@@ -93,7 +89,7 @@ in
           package = unstable.yaziPlugins.easyjump;
           setup = true;
         };
-        gvfs = lib.mkIf (pkgs.stdenv.isLinux && cfg.graphical) {
+        gvfs = lib.mkIf cfg.graphical {
           package = yaziPlugins.gvfs;
           setup = true;
         };
@@ -375,7 +371,7 @@ in
             desc = "Open $SHELL here";
           }
         ]
-        ++ lib.optionals (pkgs.stdenv.isLinux && cfg.graphical) [
+        ++ lib.optionals cfg.graphical [
           # open with a system app chooser (GNOME "Open with")
           {
             on = "<C-o>";

@@ -1,6 +1,5 @@
 {
   primaryUser,
-  pkgs,
   lib,
   config,
   ...
@@ -18,8 +17,7 @@ in
   options = {
     homePath = lib.mkOption {
       type = lib.types.str;
-      default =
-        if pkgs.stdenv.isDarwin then "/Users/${primaryUser.username}" else "/home/${primaryUser.username}";
+      default = "/home/${primaryUser.username}";
       description = "Path to home directory";
     };
     dotfilesPath = lib.mkOption {

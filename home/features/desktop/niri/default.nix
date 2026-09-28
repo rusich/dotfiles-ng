@@ -10,7 +10,7 @@ in
 {
   options.user.desktop.niri.enable = lib.mkEnableOption "niri compositor";
 
-  config = lib.mkIf (cfg.enable && pkgs.stdenv.isLinux) {
+  config = lib.mkIf cfg.enable {
     # required packages
     home.packages = with pkgs; [
       xwayland-satellite

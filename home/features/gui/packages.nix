@@ -8,7 +8,7 @@ let
   cfg = config.user.gui.packages;
 in
 {
-  options.user.gui.packages.enable = lib.mkEnableOption "common cross-platform GUI applications";
+  options.user.gui.packages.enable = lib.mkEnableOption "common GUI applications";
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [

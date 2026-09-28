@@ -183,8 +183,14 @@ in
   # Свой wine не нужен — Lutris скачивает свои сборки в
   # ~/.local/share/lutris; winetricks работает поверх wine из Lutris.
   environment.systemPackages = [
-    (pkgs.lutris.override { steamSupport = false; })
+    # vulkan-tools is in extraPkgs because Lutris runs the absolute
+    # /usr/bin/vulkaninfo for GPU detection (not via PATH).
+    (pkgs.lutris.override {
+      steamSupport = false;
+      extraPkgs = pkgs: [ pkgs.vulkan-tools ];
+    })
     pkgs.winetricks
+    pkgs.vulkan-tools # vulkaninfo on the host, for manual diagnostics
   ];
 
   # MacBook Air specific

@@ -26,13 +26,18 @@ in
       mangojuice
       sidequest
       jstest-gtk
+      # vulkaninfo/vkcube for diagnostics on the host.
+      vulkan-tools
       # Lutris. Pull system Wine + winetricks into its FHS so Lutris can use
       # them directly (Wine version "System") instead of downloading the
       # Proton/umu/Sniper stack. Steam is enabled below, so keep steamSupport.
+      # vulkan-tools must be in the FHS too: Lutris runs the absolute
+      # /usr/bin/vulkaninfo for GPU detection (not via PATH).
       (pkgs.lutris.override {
         extraPkgs = pkgs: [
           pkgs.wineWow64Packages.stable
           pkgs.winetricks
+          pkgs.vulkan-tools
         ];
       })
       # heroic

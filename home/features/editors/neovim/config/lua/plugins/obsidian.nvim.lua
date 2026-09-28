@@ -1,7 +1,6 @@
 return {
   'obsidian-nvim/obsidian.nvim',
   version = '*', -- recommended, use latest release instead of latest commit
-  -- version = "3.14.7", -- Blink completion work!
   lazy = true,
   ft = 'markdown',
   cmd = 'Obsidian',
@@ -70,19 +69,25 @@ return {
     picker = {
       name = 'snacks.picker',
     },
+    cache = {
+      enabled = true,
+    },
     -- Obsidian hardcodes `layout.preset = "default"` in its snacks `select`,
     -- что перекрывает глобальный Ivy-лейаут из snacks.nvim. Патчим итоговый
     -- pick_opts, чтобы obsidian использовал предпочтительный лейаут (Ivy).
+    -- Upstream feature request: https://github.com/obsidian-nvim/obsidian.nvim/issues/948
     callbacks = {
       post_setup = function(_)
         local snacks_picker = require 'obsidian.picker.snacks'
         local orig_select = snacks_picker.select
-        local snacks_pick = require('snacks.picker').pick
+        if type(orig_select) ~= 'function' then
+          return
+        end
 
         snacks_picker.select = function(values, opts, on_choice)
           local orig_pick = require('snacks.picker').pick
           require('snacks.picker').pick = function(pick_opts, ...)
-            if type(pick_opts) == 'table' and pick_opts.layout then
+            if type(pick_opts) == 'table' and type(pick_opts.layout) == 'table' then
               pick_opts.layout.preset = nil
             end
             return orig_pick(pick_opts, ...)
@@ -99,20 +104,14 @@ return {
     templates = {
       folder = 'templates',
     },
+    note = {
+      template = 'default.md',
+    },
     ui = {
       enable = false,
     },
     attachments = {
       folder = '/media',
-      img_text_func = function(path)
-        local name = vim.fs.basename(tostring(path))
-        local encoded_name = require('obsidian.util').urlencode(name)
-        return string.format('![%s](%s)', name, encoded_name)
-      end,
-      img_name_func = function()
-        local name = 'image-' .. os.time()
-        return name
-      end,
     },
     checkbox = {
       enabled = true,

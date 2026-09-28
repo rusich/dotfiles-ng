@@ -31,7 +31,7 @@ in
       # Proton/umu/Sniper stack. Steam is enabled below, so keep steamSupport.
       (pkgs.lutris.override {
         extraPkgs = pkgs: [
-          pkgs.wineWowPackages.stable
+          pkgs.wineWow64Packages.stable
           pkgs.winetricks
         ];
       })

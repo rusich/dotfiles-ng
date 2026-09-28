@@ -1,9 +1,14 @@
 -- ~/.config/nvim/plugin/notes.lua
--- Единый модуль для работы с заметками
+-- Единый модуль для работы с заметками.
+--
+-- После рефакторинга опирается на публичные API obsidian.nvim:
+--   obsidian.section, obsidian.daily, obsidian.date, obsidian.picker,
+--   obsidian.actions.delete_note, obsidian.api, Note:backlinks().
 
 local M = {}
 
--- Конфигурация
+-- Конфигурация ---------------------------------------------------------------
+
 local config = {
   notes_dir = '~/Nextcloud/Notes',
   inbox_file = 'Inbox.md',
@@ -11,12 +16,13 @@ local config = {
 }
 
 -- Утилиты --------------------------------------------------------------------
-local function expand_path(path)
-  return vim.fn.expand(path)
-end
 
 local function notify(message, level)
   vim.notify(message, level or vim.log.levels.INFO)
+end
+
+local function expand_path(path)
+  return vim.fn.expand(path)
 end
 
 local function read_file(path)
@@ -42,147 +48,96 @@ local function get_current_datetime()
   return os.date '%Y-%m-%d %H:%M'
 end
 
--- Получить путь до Inbox
 local function get_inbox_path()
   return expand_path(config.notes_dir .. '/' .. config.inbox_file)
 end
---
--- Получить путь до daily заметки (исправленная версия)
-local function get_daily_note_path(date_str)
-  local daily_dir = expand_path(config.notes_dir .. '/' .. config.daily_dir)
 
-  if vim.fn.isdirectory(daily_dir) == 0 then
-    vim.fn.mkdir(daily_dir, 'p')
-  end
-
-  return daily_dir .. '/' .. date_str .. '.md'
+local function write_buffer(bufnr)
+  vim.api.nvim_buf_call(bufnr, function()
+    vim.cmd 'write'
+  end)
 end
 
--- Получить все заметки (кроме Inbox)
-local function get_all_notes()
-  local notes_dir = expand_path(config.notes_dir)
-  local notes = {}
+-- Секции заметок -------------------------------------------------------------
+-- obsidian.section парсит markdown на секции (preamble + заголовки).
+-- Все диапазоны Range — 0-based, end-exclusive.
 
-  local files = vim.fn.globpath(notes_dir, '**/*.md', false, true)
+--- Секция текущей заметки, содержащая курсор.
+---@return table|nil heading_data
+---@return string|nil error_msg
+local function get_current_section(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
 
-  for _, file in ipairs(files) do
-    if not file:match(config.inbox_file:gsub('%.', '%%.') .. '$') then
-      local content = read_file(file)
-      local title = nil
-      local in_yaml = false
+  local note = require('obsidian.api').current_note(bufnr)
+  if not note then
+    return nil, '❌ Файл не находится в директории заметок'
+  end
 
-      for _, line in ipairs(content) do
-        if line:match '^---$' then
-          in_yaml = not in_yaml
-        elseif in_yaml and line:match '^title:' then
-          title = line:match 'title:%s*["\']?(.*)["\']?$'
-          if title then
-            title = title:gsub('^["\'](.*)["\']$', '%1')
-          end
-          break
-        end
-      end
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  local sections = require('obsidian.section').parse(lines, {
+    start_row = note.frontmatter_end_line or 0,
+  })
 
-      if not title or title == '' then
-        title = vim.fn.fnamemodify(file, ':t:r')
-      end
-
-      table.insert(notes, {
-        path = file,
-        title = title,
-        filename = vim.fn.fnamemodify(file, ':t'),
-      })
+  -- Ближайший заголовок на уровне курсора или выше.
+  local row = vim.api.nvim_win_get_cursor(0)[1] - 1
+  local current_idx
+  for i, section in ipairs(sections) do
+    if section.header and section.heading_range.start_row <= row then
+      current_idx = i
     end
   end
 
-  return notes
-end
+  if not current_idx then
+    return nil, '❌ Не на заголовке или файл не является заметкой'
+  end
 
--- Получить данные текущего заголовка (исправленная версия с правильными индексами)
-local function get_current_heading_data()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local current_line = vim.api.nvim_win_get_cursor(0)[1] -- 1-based
-  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false) -- Lua table, 1-based
+  local section = sections[current_idx]
 
-  -- Ищем ближайший заголовок ВЫШЕ (включая текущую строку)
-  local start_line = current_line
-  local found_header = false
-
-  -- Проходим от текущей строки вверх
-  for i = current_line, 1, -1 do
-    if lines[i] and lines[i]:match '^#+ ' then
-      start_line = i
-      found_header = true
+  -- Конец секции: следующий заголовок того же или более высокого уровня.
+  local end_excl = #lines
+  for j = current_idx + 1, #sections do
+    local next_section = sections[j]
+    if next_section.level and next_section.level <= section.level then
+      end_excl = next_section.heading_range.start_row
       break
     end
   end
 
-  if not found_header then
-    return nil
-  end
+  local start_row = section.heading_range.start_row
 
-  -- Определяем уровень заголовка
-  local header_line = lines[start_line]
-  local header_level = header_line:match '^(#+)'
-  local header_text = header_line:match '^#+%s+(.+)$' or ''
-
-  -- Ищем конец раздела (следующий заголовок с таким же или меньшим уровнем)
-  local end_line = #lines
-
-  for i = start_line + 1, #lines do
-    local match = lines[i]:match '^(#+)%s+'
-    if match and #match <= #header_level then
-      end_line = i - 1 -- строка перед следующим заголовком
-      break
-    end
-  end
-
-  -- Собираем содержание
-  local content_lines = {}
-  for i = start_line, end_line do
-    table.insert(content_lines, lines[i])
-  end
-
-  -- start_line и end_line здесь 1-based индексы для строк в файле
   return {
-    heading = header_line,
-    heading_text = header_text,
-    content = table.concat(content_lines, '\n'),
-    content_lines = content_lines,
-    start_line = start_line, -- 1-based для файла
-    end_line = end_line, -- 1-based для файла
     bufnr = bufnr,
     lines = lines,
+    heading = lines[start_row + 1] or '',
+    heading_text = section.header or '',
+    level = section.level,
+    start_line = start_row + 1, -- 1-based, первая строка секции
+    end_line = end_excl, -- 1-based, последняя строка секции (включительно)
+    content_lines = vim.list_slice(lines, start_row + 1, end_excl),
   }
 end
 
--- Удалить блок из буфера (исправленная версия)
+--- Удалить секцию из буфера и сохранить файл.
 local function remove_block_from_buffer(heading_data)
-  local new_lines = {}
-  local block_start = heading_data.start_line -- 1-based
-  local block_end = heading_data.end_line -- 1-based
+  vim.api.nvim_buf_set_lines(heading_data.bufnr, heading_data.start_line - 1, heading_data.end_line, false, {})
 
-  -- Проходим по всем строкам файла (1-based)
-  for i = 1, #heading_data.lines do
-    -- Пропускаем строки в диапазоне [block_start, block_end]
-    if i < block_start or i > block_end then
-      table.insert(new_lines, heading_data.lines[i])
-    end
-  end
-
-  vim.api.nvim_buf_set_lines(heading_data.bufnr, 0, -1, false, new_lines)
-
-  -- Устанавливаем курсор на строку перед удаленным блоком
-  local new_cursor = math.min(block_start - 1, #new_lines)
-  if new_cursor < 1 then
-    new_cursor = 1
-  end
+  local line_count = vim.api.nvim_buf_line_count(heading_data.bufnr)
+  local new_cursor = math.max(1, math.min(heading_data.start_line - 1, line_count))
   vim.api.nvim_win_set_cursor(0, { new_cursor, 0 })
 
-  vim.cmd 'write'
+  write_buffer(heading_data.bufnr)
 end
 
--- Создание временного окна для ввода
+local function validate_heading_operation()
+  local heading_data, error_msg = get_current_section()
+  if not heading_data then
+    return nil, error_msg
+  end
+  return heading_data, nil
+end
+
+-- Временное окно для ввода ---------------------------------------------------
+
 local function create_temp_window(options)
   local defaults = {
     height_ratio = 0.2,
@@ -263,49 +218,8 @@ local function create_temp_window(options)
   }
 end
 
--- Проверить, можно ли выполнить операцию с текущим заголовком
-local function validate_heading_operation()
-  local heading_data = get_current_heading_data()
-
-  if not heading_data then
-    return nil, '❌ Не на заголовке или файл не является заметкой'
-  end
-
-  -- Проверяем, что файл находится в директории заметок
-  local current_file = vim.api.nvim_buf_get_name(heading_data.bufnr)
-  local notes_dir = expand_path(config.notes_dir)
-
-  if not current_file:match('^' .. notes_dir:gsub('%.', '%%.'):gsub('%-', '%%-')) then
-    return nil, '❌ Файл не находится в директории заметок'
-  end
-
-  return heading_data, nil
-end
-
--- Проверить, можно ли удалить файл
-local function validate_file_operation()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local file_path = vim.api.nvim_buf_get_name(bufnr)
-
-  -- Проверяем, что файл существует и это обычный файл (не unsaved buffer)
-  if file_path == '' or file_path:match '^term://' then
-    return nil, '❌ Не на сохраненном файле'
-  end
-
-  if not file_exists(file_path) then
-    return nil, '❌ Файл не существует на диске'
-  end
-
-  -- Проверяем, что файл находится в директории заметок (опционально)
-  local notes_dir = expand_path(config.notes_dir)
-  if not file_path:match('^' .. notes_dir:gsub('%.', '%%.'):gsub('%-', '%%-')) then
-    return file_path, '⚠️  Внимание: файл не находится в директории заметок'
-  end
-
-  return file_path, nil
-end
-
 -- Inbox Capture --------------------------------------------------------------
+
 function M.capture_to_inbox()
   local template = {
     '<!-- Введите заметку ниже -->',
@@ -345,6 +259,7 @@ function M.capture_to_inbox()
 end
 
 -- Review Inbox ---------------------------------------------------------------
+
 function M.review_inbox()
   local Snacks = require 'snacks'
   local inbox_path = get_inbox_path()
@@ -429,80 +344,62 @@ function M.review_inbox()
   }
 end
 
--- Refine Heading -------------------------------------------------------------
+-- Refile Heading -------------------------------------------------------------
+
 function M.refile_heading()
-  local Snacks = require 'snacks'
   local heading_data, error_msg = validate_heading_operation()
   if not heading_data then
     notify(error_msg, vim.log.levels.ERROR)
     return
   end
 
-  local notes = get_all_notes()
+  local source_path = vim.api.nvim_buf_get_name(heading_data.bufnr)
+  local inbox_path = get_inbox_path()
 
-  if #notes == 0 then
-    notify('❌ Нет заметок для перемещения', vim.log.levels.ERROR)
-    return
-  end
+  require('obsidian.picker').find_notes {
+    prompt_title = "Куда переместить '" .. heading_data.heading_text .. "'?",
+    no_default_mappings = true,
+    callback = function(paths)
+      local target_path = paths and paths[1]
+      if not target_path then
+        notify '❌ Отменено'
+        return
+      end
 
-  local items = {}
-  local longest_title = 0
+      if target_path == source_path or target_path == inbox_path then
+        notify('❌ Нельзя переместить в эту же заметку или в Inbox', vim.log.levels.WARN)
+        return
+      end
 
-  for i, note in ipairs(notes) do
-    table.insert(items, {
-      idx = i,
-      score = i,
-      text = note.title,
-      path = note.path,
-      file = note.path,
-      filename = note.filename,
-    })
+      local target = require('obsidian.note').from_file(target_path)
+      local target_name = target:display_name()
 
-    longest_title = math.max(longest_title, #note.title)
-  end
-
-  local display_width = math.min(longest_title, 60)
-
-  return Snacks.picker {
-    items = items,
-    format = function(item)
-      local formatted_title =
-        string.format('%-' .. display_width .. 's', #item.text > display_width and item.text:sub(1, display_width - 3) .. '...' or item.text)
-      return { { formatted_title, 'SnacksPickerLabel' } }
-    end,
-    preview = 'file',
-    confirm = function(picker, item)
-      picker:close()
-
-      local choice = vim.fn.confirm(string.format("Переместить '%s' в заметку '%s'?", heading_data.heading_text, item.text), '&Yes\n&No', 2)
-
+      local choice =
+        vim.fn.confirm(string.format("Переместить '%s' в заметку '%s'?", heading_data.heading_text, target_name), '&Yes\n&No', 2)
       if choice ~= 1 then
         notify '❌ Отменено'
         return
       end
 
-      -- Добавляем в целевую заметку
-      local target_lines = read_file(item.path)
-      table.insert(target_lines, '')
+      target:save {
+        update_content = function(lines)
+          if #lines > 0 and lines[#lines] ~= '' then
+            table.insert(lines, '')
+          end
+          vim.list_extend(lines, vim.deepcopy(heading_data.content_lines))
+          return lines
+        end,
+      }
 
-      for line in heading_data.content:gmatch '[^\n]+' do
-        table.insert(target_lines, line)
-      end
-
-      write_file(item.path, target_lines)
-
-      -- Удаляем из исходной
       remove_block_from_buffer(heading_data)
 
-      notify(string.format('✅ Перемещено в: %s', item.text))
+      notify(string.format('✅ Перемещено в: %s', target_name))
     end,
-    layout = { preset = 'ivy' },
-    prompt = "Куда переместить '" .. heading_data.heading_text .. "'?",
   }
 end
 
---
 -- Archive Heading ------------------------------------------------------------
+
 function M.archive_heading()
   local heading_data, error_msg = validate_heading_operation()
   if not heading_data then
@@ -510,424 +407,231 @@ function M.archive_heading()
     return
   end
 
-  -- Ищем дату выполнения
-  local completion_date = nil
+  -- Дата выполнения из метки `- Completion:`
+  local completion_date
   for _, line in ipairs(heading_data.content_lines) do
-    local completion_match = line:match '^- Completion: `([^`]+)`'
-    if completion_match then
-      completion_date = completion_match
+    local match = line:match '^- Completion: `([^`]+)`'
+    if match then
+      completion_date = match
       break
     end
   end
 
-  -- Определяем дату архивации
   local archive_date = completion_date or get_current_date()
   local archive_date_clean = archive_date:match '(%d%d%d%d%-%d%d%-%d%d)' or get_current_date()
 
-  -- Путь к daily заметке
-  local daily_path = get_daily_note_path(archive_date_clean)
+  -- Метка об архивации (если её ещё нет).
+  local marker_done = false
+  for _, line in ipairs(heading_data.content_lines) do
+    if line:match '^- Archived from:' or line:match '^- Архивировано:' then
+      marker_done = true
+      break
+    end
+  end
 
-  -- Создаем новый контент с меткой архивации после заголовка
+  local source_name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(heading_data.bufnr), ':t:r')
+  local archive_marker = '- Archived from: [[' .. source_name .. ']] on `' .. get_current_datetime() .. '`'
+
   local archived_content = {}
-  local source_filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(heading_data.bufnr), ':t:r')
-  local archive_marker = '- Archived from: [[' .. source_filename .. ']] on `' .. get_current_datetime() .. '`'
-  local found_header = false
-
-  -- Проходим по строкам и вставляем метку после первого найденного заголовка
   for _, line in ipairs(heading_data.content_lines) do
     table.insert(archived_content, line)
-
-    -- Если это заголовок и мы еще не вставляли метку
-    if not found_header and line:match '^#+ ' then
-      -- Проверяем, есть ли уже метка архивации в исходном контенте
-      local has_existing_marker = false
-      for _, content_line in ipairs(heading_data.content_lines) do
-        if content_line:match '^- Archived from:' or content_line:match '^- Архивировано:' then
-          has_existing_marker = true
-          break
-        end
-      end
-
-      -- Если нет существующей метки, добавляем новую
-      if not has_existing_marker then
-        table.insert(archived_content, archive_marker)
-      end
-
-      found_header = true
+    if not marker_done and line:match '^#+ ' then
+      table.insert(archived_content, archive_marker)
+      marker_done = true
     end
   end
 
-  -- Читаем существующую daily заметку
-  local daily_content = read_file(daily_path)
-
-  -- Проверяем, есть ли уже frontmatter в файле
-  local has_frontmatter = false
-  local frontmatter_end = 0
-
-  if #daily_content >= 3 and daily_content[1] == '---' then
-    for i = 2, #daily_content do
-      if daily_content[i] == '---' then
-        has_frontmatter = true
-        frontmatter_end = i
-        break
-      end
-    end
+  local parsed_date = require('obsidian.date').parse(archive_date_clean)
+  if not parsed_date then
+    notify('❌ Не удалось разобрать дату: ' .. archive_date_clean, vim.log.levels.ERROR)
+    return
   end
 
-  if #daily_content == 0 or not has_frontmatter then
-    -- Создаем новую daily заметку с frontmatter
-    daily_content = {
-      '---',
-      'title: ' .. archive_date_clean,
-      'created: ' .. get_current_datetime(),
-      'tags:',
-      '  - daily-note',
-      '---',
-      '',
-      '# ' .. archive_date_clean,
-      '',
-    }
+  local daily = require('obsidian.daily').daily { date = os.time(parsed_date) }
+  local date_heading = '# ' .. archive_date_clean
 
-    -- Добавляем существующий контент (если файл уже был)
-    if #daily_content > 0 and has_frontmatter then
-      -- Пропускаем frontmatter и заголовок даты в существующем файле
-      local skip_lines = frontmatter_end + 1
-      if daily_content[skip_lines] and daily_content[skip_lines]:match('^# ' .. archive_date_clean) then
-        skip_lines = skip_lines + 1
+  daily:write {
+    update_content = function(lines)
+      if not vim.list_contains(lines, date_heading) then
+        table.insert(lines, 1, date_heading)
+        table.insert(lines, 2, '')
       end
-
-      for i = skip_lines, #daily_content do
-        table.insert(daily_content, daily_content[i])
+      if #lines > 0 and lines[#lines] ~= '' then
+        table.insert(lines, '')
       end
-    end
-  else
-    -- Файл существует и имеет frontmatter
-    -- Проверяем, есть ли уже заголовок с датой после frontmatter
-    local has_date_header = false
-    local insert_position = frontmatter_end + 2 -- после "---" и пустой строки
+      vim.list_extend(lines, archived_content)
+      return lines
+    end,
+  }
 
-    -- Ищем заголовок с датой
-    for i = insert_position, #daily_content do
-      if daily_content[i] == '# ' .. archive_date_clean then
-        has_date_header = true
-        insert_position = i + 1
-        break
-      elseif daily_content[i]:match '^#+ ' then
-        -- Нашли другой заголовок, вставляем перед ним
-        insert_position = i
-        break
-      end
-    end
-
-    -- Если не нашли заголовок с датой, добавляем его
-    if not has_date_header then
-      table.insert(daily_content, insert_position, '')
-      table.insert(daily_content, insert_position + 1, '# ' .. archive_date_clean)
-      insert_position = insert_position + 2
-    end
-  end
-
-  -- Добавляем архивированный контент в конец файла
-  for _, line in ipairs(archived_content) do
-    table.insert(daily_content, line)
-  end
-
-  -- Записываем daily заметку
-  write_file(daily_path, daily_content)
-
-  -- Удаляем из исходного файла
   remove_block_from_buffer(heading_data)
 
-  -- Показываем результат
   local message = '📦 Архивировано в daily/' .. archive_date_clean .. '.md'
   if completion_date then
     message = message .. ' (дата выполнения: ' .. completion_date .. ')'
   end
-
   notify(message)
 end
 
--- Remove Current File --------------------------------------------------------
-function M.remove_current_file()
-  local file_path, warning_msg = validate_file_operation()
-  if not file_path then
-    notify(warning_msg, vim.log.levels.ERROR)
+-- Generate HUB page ----------------------------------------------------------
+
+--- Сгенерировать секцию "## Заметки" с обратными ссылками на текущий hub.
+---@param opts? { bufnr?: integer, silent?: boolean }
+function M.generate_hub_page(opts)
+  opts = opts or {}
+  local bufnr = opts.bufnr or vim.api.nvim_get_current_buf()
+
+  local note = require('obsidian.note').from_buffer(bufnr)
+  if not note or not note:has_tag 'hub' then
+    if not opts.silent then
+      notify("❌ Этот файл не помечен как hub (нет тега 'hub' в frontmatter)", vim.log.levels.WARN)
+    end
     return
   end
 
-  -- Если есть предупреждение, но файл валиден - показываем его
-  if warning_msg then
-    local choice = vim.fn.confirm(warning_msg .. '\nПродолжить удаление?', '&Yes\n&Нет', 2)
+  local api = require 'obsidian.api'
+  local notes_dir = tostring(api.resolve_workspace_dir())
+  local daily_dir = vim.fs.joinpath(notes_dir, config.daily_dir)
+  local hub_path = vim.api.nvim_buf_get_name(bufnr)
+  local hub_name = vim.fn.fnamemodify(hub_path, ':t:r')
 
-    if choice ~= 1 then
-      notify '❌ Удаление отменено'
-      return
+  -- Обратные ссылки на заметку (id/алиасы/путь), включая markdown-ссылки.
+  local matches = note:backlinks()
+
+  local lines_by_file = {}
+  for _, match in ipairs(matches) do
+    local path = tostring(match.path)
+    if path ~= hub_path and not vim.startswith(path, daily_dir) then
+      lines_by_file[path] = lines_by_file[path] or {}
+      table.insert(lines_by_file[path], match.line)
     end
   end
 
-  -- Получаем имя файла для подтверждения
-  local filename = vim.fn.fnamemodify(file_path, ':t')
+  local Section = require 'obsidian.section'
 
-  -- Запрос подтверждения
-  local choice = vim.fn.confirm(string.format("Удалить файл '%s' безвозвратно?", filename), '&Yes\n&No', 2)
-
-  if choice ~= 1 then
-    notify '❌ Удаление отменено'
-    return
-  end
-
-  local bufnr = vim.api.nvim_get_current_buf()
-
-  -- Удаляем файл с диска
-  local success = os.remove(file_path)
-
-  if success then
-    notify(string.format("✅ Файл '%s' удален", filename))
-
-    -- Удаляем буфер если он еще существует
-    if vim.api.nvim_buf_is_valid(bufnr) then
-      vim.api.nvim_buf_delete(bufnr, { force = true })
-    end
-  else
-    notify(string.format("❌ Не удалось удалить файл '%s'", filename), vim.log.levels.ERROR)
-  end
-
-  -- Закрываем все окна, использующие этот буфер
-  local windows = vim.api.nvim_list_wins()
-  for _, win_id in ipairs(windows) do
-    if vim.api.nvim_win_get_buf(win_id) == bufnr then
-      vim.api.nvim_win_close(win_id, true)
-    end
-  end
-end
-
--- 'rg -l "\\[.*%s.*\\]" --type md "%s"',
--- Generate HUB page
--- Вспомогательная функция: проверяет, есть ли у файла тег hub в frontmatter
-local function is_hub_file()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, 50, false) -- читаем первые 50 строк
-
-  local in_frontmatter = false
-  local in_tags = false
-
-  for _, line in ipairs(lines) do
-    if line == '---' then
-      if in_frontmatter then
-        break -- конец frontmatter
-      else
-        in_frontmatter = true
-      end
-    elseif in_frontmatter then
-      if line:match '^tags:' then
-        in_tags = true
-      elseif in_tags then
-        -- Ищем "- hub" с любым количеством пробелов
-        if line:match '^%s*-%s*hub%s*$' then
-          return true
-        end
-        -- Если строка не начинается с пробела или дефиса, выходим из тегов
-        if not line:match '^%s' then
-          in_tags = false
-        end
-      end
-    end
-  end
-
-  return false
-end
-
--- Основная функция: обновляет раздел "Заметки" в hub-файле
-function M.generate_hub_page()
-  -- Проверяем, что это hub-файл
-  if not is_hub_file() then
-    notify("❌ Этот файл не помечен как hub (нет тега 'hub' в frontmatter)", vim.log.levels.WARN)
-    return
-  end
-
-  local hub_name = vim.fn.expand '%:t:r'
-  local notes_dir = expand_path(config.notes_dir)
-  local bufnr = vim.api.nvim_get_current_buf()
-  local current_lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-
-  -- -- ДЕБАГ: Проверим что ищем
-  -- print("Ищем хаб с именем:", hub_name)
-  -- print("Директория заметок:", notes_dir)
-
-  -- Проверим существование директории
-  if vim.fn.isdirectory(notes_dir) == 0 then
-    notify('❌ Директория заметок не существует: ' .. notes_dir, vim.log.levels.ERROR)
-    return
-  end
-
-  -- Простая команда поиска (проверим сначала без экранирования)
-  local search_pattern = string.format('\\[\\[%s\\]\\]', hub_name)
-  local command = {
-    'rg',
-    '--files-with-matches',
-    '--glob',
-    '*.md',
-    '--glob',
-    '!**/daily/**',
-    search_pattern,
-    notes_dir,
-  }
-
-  -- print("Команда поиска:", command)
-
+  -- Оставляем только файлы, где ссылка встречается вне авто-секции "## Заметки"
+  -- (иначе хабы начинают ссылаться друг на друга каскадом).
   local files = {}
-  local success, result = pcall(function()
-    return vim.fn.systemlist(command)
+  for path, match_lines in pairs(lines_by_file) do
+    local handle = io.open(path, 'r')
+    if handle then
+      local file_lines = {}
+      for line in handle:lines() do
+        file_lines[#file_lines + 1] = line
+      end
+      handle:close()
+
+      local notes_section
+      for _, section in ipairs(Section.parse(file_lines)) do
+        if section.header and section.header:match '^Заметки' then
+          notes_section = section
+          break
+        end
+      end
+
+      for _, lnum in ipairs(match_lines) do
+        local row = lnum - 1
+        if not (notes_section and notes_section.range.start_row <= row and row < notes_section.range.end_row) then
+          files[#files + 1] = path
+          break
+        end
+      end
+    end
+  end
+
+  table.sort(files, function(a, b)
+    return vim.fn.fnamemodify(a, ':t:r') < vim.fn.fnamemodify(b, ':t:r')
   end)
 
-  if success and result then
-    files = result
-    -- print("Найдено файлов:", #files)
-    --   if #files > 0 then
-    --     print("Первый найденный файл:", files[1])
-    --   end
-    -- else
-    --   print("Ошибка при выполнении rg:", result)
-  end
-
-  -- Удаляем из списка сам hub-файл (чтобы он не ссылался на себя)
-  local hub_file_path = vim.api.nvim_buf_get_name(bufnr)
-  files = vim.tbl_filter(function(file)
-    return file ~= hub_file_path
-  end, files)
-
-  -- Игнорируем ссылки, которые встречаются только в авто-сгенерированном
-  -- разделе "## Заметки" других хабов. Иначе возникают циклы вида
-  -- Programming <-> Rust и в списке потомков оказывается родительский хаб.
-  local target = '[[' .. hub_name .. ']]'
-  files = vim.tbl_filter(function(file)
-    local in_notes_section = false
-    for _, line in ipairs(read_file(file)) do
-      if line:match '^## Заметки' then
-        in_notes_section = true
-      elseif in_notes_section and line:match '^## ' then
-        in_notes_section = false
-      end
-      if not in_notes_section and line:find(target, 1, true) then
-        return true
-      end
-    end
-    return false
-  end, files)
-
-  -- Находим и удаляем существующий раздел "Заметки"
-  local notes_section_start = 0
-  local notes_section_end = 0
-  local found_section = false
-
-  for i = 1, #current_lines do
-    local line = current_lines[i]
-
-    if not found_section and line:match '^## Заметки' then
-      notes_section_start = i
-      found_section = true
-    elseif found_section and notes_section_end == 0 then
-      -- Ищем конец раздела (следующий заголовок ## или конец файла)
-      if line:match '^## ' and i > notes_section_start then
-        notes_section_end = i - 1
-        break
-      elseif i == #current_lines then
-        notes_section_end = i
-        break
-      end
-    end
-  end
-
-  -- Создаем новые строки
-  local new_lines = {}
-
-  if notes_section_start > 0 then
-    -- Копируем всё ДО раздела "Заметки"
-    for i = 1, notes_section_start - 1 do
-      table.insert(new_lines, current_lines[i])
-    end
-  else
-    -- Если раздела нет, копируем весь файл
-    new_lines = vim.list_extend({}, current_lines)
-    notes_section_start = #new_lines + 1
-  end
-
-  -- Добавляем новый раздел "Заметки"
-  table.insert(new_lines, string.format('## Заметки (%d)', #files))
-  table.insert(new_lines, '')
-
+  local new_section = { string.format('## Заметки (%d)', #files), '' }
   if #files > 0 then
-    -- Сортируем заметки по алфавиту
-    table.sort(files, function(a, b)
-      return vim.fn.fnamemodify(a, ':t:r') < vim.fn.fnamemodify(b, ':t:r')
-    end)
-
-    for _, file in ipairs(files) do
-      local title = vim.fn.fnamemodify(file, ':t:r')
-      table.insert(new_lines, string.format('- [[%s]]', title))
+    for _, path in ipairs(files) do
+      table.insert(new_section, string.format('- [[%s]]', vim.fn.fnamemodify(path, ':t:r')))
     end
   else
-    table.insert(new_lines, '*Пока нет заметок в этом хабе*')
+    table.insert(new_section, '*Пока нет заметок в этом хабе*')
   end
+  table.insert(new_section, '')
 
-  table.insert(new_lines, '')
+  local current_lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
 
-  -- Добавляем всё ПОСЛЕ раздела "Заметки" (если он был)
-  if notes_section_end > 0 and notes_section_end < #current_lines then
-    for i = notes_section_end + 1, #current_lines do
-      table.insert(new_lines, current_lines[i])
+  local existing_section
+  for _, section in ipairs(Section.parse(current_lines)) do
+    if section.header and section.header:match '^Заметки' then
+      existing_section = section
+      break
     end
   end
 
-  -- Заменяем содержимое буфера
+  local new_lines = {}
+  if existing_section then
+    local replace_start = existing_section.range.start_row
+    local replace_end = existing_section.range.end_row
+    -- Поглощаем пустые строки после секции, чтобы замена была идемпотентной.
+    while replace_end < #current_lines and current_lines[replace_end + 1] == '' do
+      replace_end = replace_end + 1
+    end
+
+    if replace_start > 0 then
+      vim.list_extend(new_lines, current_lines, 1, replace_start)
+    end
+    vim.list_extend(new_lines, new_section)
+    if replace_end < #current_lines then
+      vim.list_extend(new_lines, current_lines, replace_end + 1, #current_lines)
+    end
+  else
+    vim.list_extend(new_lines, current_lines)
+    if #new_lines > 0 and new_lines[#new_lines] ~= '' then
+      table.insert(new_lines, '')
+    end
+    vim.list_extend(new_lines, new_section)
+  end
+
+  if vim.deep_equal(new_lines, current_lines) then
+    if not opts.silent then
+      notify(string.format("✅ Хаб '%s' актуален (%d заметок)", hub_name, #files))
+    end
+    return
+  end
+
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, new_lines)
+  write_buffer(bufnr)
 
-  -- Сохраняем файл
-  vim.cmd 'write'
-
-  notify(string.format("🔄 Хаб '%s' обновлён (%d заметок)", hub_name, #files))
+  if not opts.silent then
+    notify(string.format("🔄 Хаб '%s' обновлён (%d заметок)", hub_name, #files))
+  end
 end
 
--- Автокоманда для автоматического обновления hub-файлов при открытии
+--- Авто-обновление hub-заметок при входе в буфер.
 local function setup_hub_autocommand()
-  return vim.api.nvim_create_autocmd('BufRead', {
-    pattern = '*.md',
-    callback = function(args)
-      local bufnr = args.buf
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'ObsidianNoteEnter',
+    callback = function(ev)
+      if not vim.api.nvim_buf_is_valid(ev.buf) or vim.bo[ev.buf].modified then
+        return
+      end
 
-      -- Даем файлу время загрузиться
-      vim.defer_fn(function()
-        if vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_get_name(bufnr):match '%.md$' then
-          -- Временно переключаемся на буфер для проверки
-          local current_buf = vim.api.nvim_get_current_buf()
-          vim.api.nvim_set_current_buf(bufnr)
+      local ok, note = pcall(function()
+        return require('obsidian.note').from_buffer(ev.buf)
+      end)
+      if not ok or not note or not note:has_tag 'hub' then
+        return
+      end
 
-          if is_hub_file() then
-            -- Запускаем генерацию асинхронно
-            vim.defer_fn(function()
-              if vim.api.nvim_buf_is_valid(bufnr) then
-                -- Сохраняем текущий буфер
-                local prev_buf = vim.api.nvim_get_current_buf()
-                vim.api.nvim_set_current_buf(bufnr)
-
-                -- Вызываем функцию
-                M.generate_hub_page()
-
-                -- Возвращаемся к предыдущему буферу
-                vim.api.nvim_set_current_buf(prev_buf)
-              end
-            end, 100)
+      vim.schedule(function()
+        if vim.api.nvim_buf_is_valid(ev.buf) and not vim.bo[ev.buf].modified then
+          local ok, err = pcall(M.generate_hub_page, { bufnr = ev.buf, silent = true })
+          if not ok then
+            require('obsidian.log').warn('hub auto-update failed for %s: %s', vim.api.nvim_buf_get_name(ev.buf), err)
           end
-
-          -- Возвращаемся к исходному буферу
-          vim.api.nvim_set_current_buf(current_buf)
         end
-      end, 50)
+      end)
     end,
   })
 end
 
 -- Настройка команд и маппингов -----------------------------------------------
+
 function M.setup(user_config)
   if user_config then
     config = vim.tbl_extend('force', config, user_config)
@@ -952,11 +656,15 @@ function M.setup(user_config)
     desc = 'Archive current heading to daily note',
   })
 
-  vim.api.nvim_create_user_command('NoteRemoveFile', M.remove_current_file, {
+  vim.api.nvim_create_user_command('NoteRemoveFile', function()
+    require('obsidian.actions').delete_note()
+  end, {
     desc = 'Delete current note file from disk',
   })
 
-  vim.api.nvim_create_user_command('NoteHub', M.generate_hub_page, {
+  vim.api.nvim_create_user_command('NoteHub', function()
+    M.generate_hub_page()
+  end, {
     desc = 'Generate hub page',
   })
 
@@ -985,8 +693,7 @@ function M.setup(user_config)
     desc = 'Generate hub page',
   })
 
-  -- Plugins mappings
-  -- Основные маппинги для Obsidian
+  -- Obsidian mappings --------------------------------------------------------
 
   -- Новая заметка из шаблона
   vim.keymap.set('n', '<leader>nn', '<cmd>Obsidian new_from_template<cr>', {
@@ -1012,10 +719,6 @@ function M.setup(user_config)
     desc = 'Show backlinks',
   })
 
-  -- vim.keymap.set('n', '<leader>nb', '<cmd>ZkBacklinks<cr>', {
-  --   desc = 'Show backlinks'
-  -- })
-
   vim.keymap.set('n', '<leader>nI', '<cmd>e ~/Nextcloud/Notes/Inbox.md<cr>', {
     desc = 'Open Inbox',
   })
@@ -1030,21 +733,6 @@ function M.setup(user_config)
   end, {
     desc = 'Extract selection to new note',
   })
-
-  -- zk-nvim
-  -- vim.keymap.set('n', '<leader>nc', function()
-  --   local params = {
-  --     template = "todo.md",
-  --     insertContentAtLocation = {
-  --       uri = "~/Nextcloud/Notes/Inbox.md",
-  --       range = {
-  --         start = { line = vim.fn.line('.') - 1, character = 0 },
-  --         ['end'] = { line = vim.fn.line('.') - 1, character = 0 }
-  --       }
-  --     }
-  --   }
-  --   vim.cmd("ZkNew " .. vim.fn.shellescape(vim.fn.json_encode(params)))
-  -- end, { desc = "Insert zk template content at cursor" })
 end
 
 -- Автоматическая настройка при загрузке

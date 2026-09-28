@@ -26,11 +26,18 @@ in
       mangojuice
       sidequest
       jstest-gtk
-      # Lutris
+      # Lutris. Pull system Wine + winetricks into its FHS so Lutris can use
+      # them directly (Wine version "System") instead of downloading the
+      # Proton/umu/Sniper stack. Steam is enabled below, so keep steamSupport.
+      (pkgs.lutris.override {
+        extraPkgs = pkgs: [
+          pkgs.wineWowPackages.stable
+          pkgs.winetricks
+        ];
+      })
       # heroic
       protonup-qt
       protonup-rs
-      # lutris # there are alsow -unwrapped and -free versions available
       # cartridges # GTK4 + Libadwaita game launcher
       #retroarch-full
       ryubing

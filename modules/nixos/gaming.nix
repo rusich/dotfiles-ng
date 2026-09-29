@@ -7,6 +7,15 @@
 }:
 let
   cfg = config.nixos.profiles.gaming;
+  retroarchWithCores = pkgs.retroarch.withCores (
+    cores: with cores; [
+      fceumm
+      gambatte
+      genesis-plus-gx
+      nestopia
+      snes9x
+    ]
+  );
 in
 {
   options = {
@@ -62,10 +71,13 @@ in
       # heroic
       protonup-qt
       protonup-rs
-      # cartridges # GTK4 + Libadwaita game launcher
-      #retroarch-full
+      retroarchWithCores
       ryubing
+      rpcs3
+      nsz
       android-tools # need for qLoader
+      sdl-jstest
+      evtest
     ];
 
     programs.steam = {
@@ -81,6 +93,8 @@ in
 
     programs.gamemode.enable = true;
     programs.gamescope.enable = true;
+
+    services.udev.packages = [ pkgs.rpcs3 ];
 
     services.wivrn = {
       enable = true;

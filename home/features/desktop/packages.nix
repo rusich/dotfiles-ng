@@ -26,7 +26,7 @@ in
       grimblast
       vlc
       wl-clipboard
-      chatbox
+      # chatbox
       loupe
       papers
     ];

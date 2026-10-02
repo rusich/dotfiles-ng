@@ -1,6 +1,6 @@
 ---
 name: lutris-runner
-description: Use when adding, wiring, or fixing an emulator runner in Lutris on this NixOS dotfiles setup — "добавь эмулятор/раннер в Lutris", "раннер не виден в Lutris", "вместо работы кнопка Download", RPCS3/Ryujinx/Dolphin/PCSX2/DuckStation, или добавление ядра libretro.
+description: Use when adding, wiring, or fixing an emulator runner or a Wine game in Lutris on this NixOS dotfiles setup — "добавь эмулятор/раннер в Lutris", "раннер не виден в Lutris", "вместо работы кнопка Download", RPCS3/Ryujinx/Dolphin/PCSX2/DuckStation, добавление ядра libretro, или выбор пути Wine-префикса.
 ---
 
 # Lutris: подключение эмуляторов (раннеров)
@@ -35,6 +35,14 @@ Lutris считает раннер установленным, если суще
 
 ## Альтернатива без симлинка
 Advanced-опция раннера «Custom executable for the runner» (Preferences → Runners) → указать `/run/current-system/sw/bin/<bin>`. Stateful (GUI) и не покрывает вспомогательные каталоги (cores/info libretro, ключи Ryujinx).
+
+## Wine-префиксы
+У Lutris **нет** глобальной настройки дефолтного префикса: если у игры `prefix` не задан, берётся `$WINEPREFIX` или `find_prefix(exe)`, иначе виновский `~/.wine`. Поэтому у каждой Wine-записи префикс задаём **явно**:
+`~/.local/share/lutris/prefixes/<slug>` (один префикс на игру; для связанных приложений — общий, напр. DCS + updater + Kneeboard).
+- Не держать префиксы в `~/Games` рядом с папками игр; не на exfat/NTFS (нужны симлинки/права); лучше локальный ext4/btrfs.
+- В конфиге игры это `game.prefix` (Game options → Wine prefix).
+- Перенос префикса безопасен: `mv` + правка пути (`dosdevices` относительные).
+- Префиксы содержат сохранения/настройки — включать в бэкап.
 
 ## Частые ошибки
 - Нажали **Remove** у раннера — удалит наш каталог и симлинки. Не нажимать.

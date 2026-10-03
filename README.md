@@ -214,7 +214,8 @@ nixos-rebuild switch --flake .#<server>
 `rusich` (`initialHashedPassword` из поля `hashedPassword` в
 `home/users/rusich/user.nix`, сгенерирован `mkpasswd -m yescrypt`). Потеря
 ключей: локальная консоль (`virsh console`/Cockpit/физический доступ) → вход
-`rusich` → `sudo`. В планах — переход на `sops-nix`.
+`rusich` → `sudo`. Пароль остаётся только install-фоллбэком; секреты
+сервисов/пользователя — через `sops-nix` (см. раздел «Секреты»).
 
 Не запускать на сервере standalone `home-manager switch` — получится две
 конкурирующие генерации. Тот же файл доступен и как
@@ -245,6 +246,32 @@ nixos-rebuild switch --flake .#<server>
 - **Пользователь**: `user.<группа>.<имя>.enable` — группы `editors`, `cli`,
   `desktop`, `gui`, `pim`, `dev`, `opencode`; наборы —
   `user.bundle.{graphical,linux-desktop}.enable`.
+
+## Секреты (sops-nix)
+
+Секреты лежат **зашифрованными в git** (`secrets/`) и расшифровываются при
+активации. Ключ-редактор (личный `age`) — на десктопах в
+`~/.config/sops/age/keys.txt`; расшифрованные значения появляются в
+`~/.config/sops-nix/secrets/<name>` (симлинки в runtime-каталог).
+
+- **Реципиенты** задаются в `.sops.yaml`. Сейчас анкор `&admin` (личный ключ) —
+  единственный; машинные host-ключи добавляются по мере надобности
+  (`nix run nixpkgs#ssh-to-age -- < host.pub`, затем `sops updatekeys <file>`).
+- **Редактирование**: `sops secrets/users/rusich.yaml` (открывает `$EDITOR`).
+- **Раскладка**: `secrets/users/<user>.yaml` — пользовательские (HM, личный
+  ключ); `secrets/hosts/<host>/…` — хостовые (system, host-ключ + `&admin`).
+- **Потребители** (HM) читают `config.sops.secrets."<name>".path`: PIM
+  (Nextcloud), `opencode` (креды хаба), rofi `get_pass.sh` (пароль БД KeePassXC).
+- **KeePassXC**: база в Nextcloud, авто-unlock через `keepassxc-autounlock.service`
+  (`keepassxc --minimized --pw-stdin`, секрет `keepass/database-password`).
+  KeeShare вырезан git clean-фильтром (`.gitattributes` +
+  `scripts/strip-keeshare.sh`), чтобы его приватный ключ не попал в публичный
+  репозиторий.
+- Файлы секретов **должны быть в индексе git** (`git add`), иначе flake их не
+  видит.
+
+Серверные секреты (system-слой, host-key + `owner`) — по мере появления
+homelab.
 
 ## Устранение неполадок
 

@@ -1,0 +1,3 @@
+# Strip KeeShare (incl. its RSA private key) from keepassxc.ini before it is
+# committed. The clean filter is registered in home/common/git.nix.
+home/features/gui/keepassxc/keepassxc.ini filter=strip-keeshare

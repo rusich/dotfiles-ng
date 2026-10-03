@@ -1,4 +1,4 @@
-{ primaryUser, ... }:
+{ primaryUser, config, ... }:
 {
   programs.lazygit.enable = true;
 
@@ -33,6 +33,12 @@
         "nvimdiff2" = {
           trustExitCode = false;
         };
+      };
+      # Strip the KeeShare private key from keepassxc.ini before committing.
+      # Inert unless .gitattributes marks a file with filter=strip-keeshare.
+      filter."strip-keeshare" = {
+        clean = "sh ${config.dotfilesPath}/scripts/strip-keeshare.sh";
+        smudge = "cat";
       };
     };
   };

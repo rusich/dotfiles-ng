@@ -145,8 +145,9 @@ in
     services.upower.enable = true;
     services.power-profiles-daemon.enable = true;
 
-    # Disable gnome keyring for KeepassXC
-    # services.gnome.gnome-keyring = pkgs.lib.mkForce { enable = false; };
+    # NOTE: gnome-keyring is NOT disabled system-wide (other users rely on it).
+    # For rusich it is masked per-user in home/features/gui/keepassxc, where
+    # KeePassXC is the Secret Service provider (org.freedesktop.secrets).
 
     # packaages
 

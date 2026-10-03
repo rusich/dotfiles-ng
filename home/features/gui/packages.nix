@@ -25,6 +25,12 @@ in
       libnotify
     ];
 
-    services.remmina.enable = true;
+    # Applet runs via Remmina's own XDG autostart. The module's systemd unit
+    # starts `remmina --icon` without a display env on niri and loops, so use
+    # the standard option to turn it off.
+    services.remmina = {
+      enable = true;
+      systemdService.enable = false;
+    };
   };
 }

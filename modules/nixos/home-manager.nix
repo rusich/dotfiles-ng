@@ -28,6 +28,11 @@ in
     home-manager = {
       useGlobalPkgs = true;
       useUserPackages = true;
+      # Expose the sops-nix HM options to integrated users too (inert unless
+      # user.secrets.enable / sops.* is set). Mirrors the standalone mkHome.
+      sharedModules = [
+        inputs.sops-nix.homeManagerModules.sops
+      ];
       extraSpecialArgs = {
         inherit inputs hostname;
         primaryUser = primaryUser;

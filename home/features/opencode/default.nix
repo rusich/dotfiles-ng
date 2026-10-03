@@ -7,24 +7,12 @@
 let
   cfg = config.user.opencode;
   cfgServer = config.user.opencode.server;
-  # Общая логика: пароль и имя пользователя хаба извлекаются из KeePassXC
-  # (Secret Service) в рантайме через secret-tool. Ждём разблокировки базы
-  # (retry-цикл), т.к. сервис может стартовать раньше KeePassXC.
+  # Basic-auth credentials for the web-UI hub, read from sops-nix user secrets
+  # (~/.config/sops-nix/secrets/opencode/...). No keyring or retry loop needed:
+  # the service starts after sops-nix.service (see the unit below).
   fetchHubCreds = ''
-    PASS=""
-    USERNAME=""
-    for _ in $(seq 1 60); do
-      [ -n "$PASS" ] || PASS="$(${pkgs.libsecret}/bin/secret-tool lookup short OPENCODE_SERVER_PASSWORD 2>/dev/null)"
-      [ -n "$USERNAME" ] || USERNAME="$(${pkgs.libsecret}/bin/secret-tool lookup short OPENCODE_SERVER_USERNAME 2>/dev/null)"
-      [ -n "$PASS" ] && [ -n "$USERNAME" ] && break
-      sleep 2
-    done
-    if [ -z "$PASS" ]; then
-      echo "opencode: OPENCODE_SERVER_PASSWORD unavailable via secret-tool" >&2
-      exit 1
-    fi
-    export OPENCODE_SERVER_PASSWORD="$PASS"
-    export OPENCODE_SERVER_USERNAME="''${USERNAME:-opencode}"
+    export OPENCODE_SERVER_USERNAME="$(cat ${config.sops.secrets."opencode/server-username".path})"
+    export OPENCODE_SERVER_PASSWORD="$(cat ${config.sops.secrets."opencode/server-password".path})"
   '';
 
   # Служба-хаб: headless сервер для веб-UI (телефон через traefik), защищён
@@ -155,7 +143,10 @@ in
     systemd.user.services.opencode-web = lib.mkIf cfgServer.enable {
       Unit = {
         Description = "opencode server (web UI for phone via traefik)";
-        After = [ "graphical-session.target" ];
+        After = [
+          "graphical-session.target"
+          "sops-nix.service"
+        ];
       };
       Service = {
         ExecStart = "${opencode-web}";

@@ -1,0 +1,13 @@
+keys:
+  # Personal age key (age-keygen) at ~/.config/sops/age/keys.txt on the
+  # desktops. Recipient of every secret so secrets can always be edited and
+  # re-wrapped from the workstation, and so home-manager can decrypt user
+  # secrets. Machine (host) keys are added per-host in later iterations.
+  - &admin age1729n9gxec4tn434z3duqdf0xhxmy7y3zdh4g5ksphw2ne8srfypsmj5jcl
+
+creation_rules:
+  # Home-manager secrets, decrypted with the personal age key.
+  - path_regex: secrets/users/.*\.(yaml|json|env)$
+    key_groups:
+      - age:
+          - *admin

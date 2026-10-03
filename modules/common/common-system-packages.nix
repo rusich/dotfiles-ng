@@ -13,6 +13,11 @@ let
     openssl
     curl
     wget
+    # Secrets: sops to edit/decrypt (age-backed); age/ssh-to-age to manage
+    # recipients (derive host age keys from SSH host keys).
+    sops
+    age
+    ssh-to-age
     htop
     btop
     git

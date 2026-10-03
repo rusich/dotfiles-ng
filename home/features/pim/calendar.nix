@@ -50,10 +50,8 @@ in
       remote = {
         type = "caldav";
         passwordCommand = [
-          "secret-tool"
-          "lookup"
-          "short"
-          "NEXTCLOUD_PASSWORD"
+          "${pkgs.coreutils}/bin/cat"
+          config.sops.secrets."nextcloud/password".path
         ];
       };
 
@@ -73,18 +71,18 @@ in
         ];
 
         urlCommand = [
-          "secret-tool"
-          "lookup"
-          "short"
-          "NEXTCLOUD_URL"
+          "${pkgs.coreutils}/bin/cat"
+          config.sops.secrets."nextcloud/url".path
         ];
         userNameCommand = [
-          "secret-tool"
-          "lookup"
-          "short"
-          "NEXTCLOUD_USERNAME"
+          "${pkgs.coreutils}/bin/cat"
+          config.sops.secrets."nextcloud/username".path
         ];
       };
     };
+
+    # sops-nix decrypts user secrets in sops-nix.service; wait for it before
+    # vdirsyncer reads the password/url/username files.
+    systemd.user.services.vdirsyncer.Unit.After = [ "sops-nix.service" ];
   };
 }

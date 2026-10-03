@@ -53,8 +53,8 @@ let
     unstable = import inputs.nixpkgs-unstable {
       system = prev.stdenv.hostPlatform.system;
       config.allowUnfree = true;
-      # overlays = [
-      # ];
+      # noctalia pinned to 5.2.1 (tray/Secret-Service deadlock fix); see flake.nix.
+      overlays = [ inputs.noctalia.overlays.default ];
     };
   };
 in

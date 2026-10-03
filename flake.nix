@@ -33,6 +33,22 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # sops-nix: declarative secret provisioning (age). Secrets live encrypted
+    # in git (secrets/) and are decrypted at activation: user secrets via the
+    # personal age key (home-manager), system secrets via the host SSH key.
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # noctalia 5.2.1 pinned: nixpkgs-unstable (2026-10-01) still ships 5.2.0,
+    # whose tray deadlocks during Secret Service probing (KeePassXC tray icon
+    # freezes the shell). Drop this pin once nixpkgs-unstable catches up.
+    noctalia = {
+      url = "github:noctalia-dev/noctalia/v5.2.1";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs =
@@ -95,6 +111,7 @@
           modules = [
             overlayModule
             ./modules/common
+            inputs.sops-nix.homeManagerModules.sops
             (homeFile user host)
             # inputs.stylix.homeModules.stylix
           ];

@@ -14,7 +14,13 @@
       "/etc/agenix": "deny",
       "/etc/agenix/**": "deny",
       "/home/rusich/.config/sops": "deny",
-      "/home/rusich/.config/sops/**": "deny"
+      "/home/rusich/.config/sops/**": "deny",
+      "/home/rusich/.config/sops-nix": "deny",
+      "/home/rusich/.config/sops-nix/**": "deny",
+      "/run/user/*/secrets.d": "deny",
+      "/run/user/*/secrets.d/**": "deny",
+      "/run/secrets-for-users": "deny",
+      "/run/secrets-for-users/**": "deny"
     },
     "list": {
       "*": "allow",
@@ -29,7 +35,13 @@
       "/etc/agenix": "deny",
       "/etc/agenix/**": "deny",
       "/home/rusich/.config/sops": "deny",
-      "/home/rusich/.config/sops/**": "deny"
+      "/home/rusich/.config/sops/**": "deny",
+      "/home/rusich/.config/sops-nix": "deny",
+      "/home/rusich/.config/sops-nix/**": "deny",
+      "/run/user/*/secrets.d": "deny",
+      "/run/user/*/secrets.d/**": "deny",
+      "/run/secrets-for-users": "deny",
+      "/run/secrets-for-users/**": "deny"
     },
     "glob": {
       "*": "allow",
@@ -44,7 +56,13 @@
       "/etc/agenix": "deny",
       "/etc/agenix/**": "deny",
       "/home/rusich/.config/sops": "deny",
-      "/home/rusich/.config/sops/**": "deny"
+      "/home/rusich/.config/sops/**": "deny",
+      "/home/rusich/.config/sops-nix": "deny",
+      "/home/rusich/.config/sops-nix/**": "deny",
+      "/run/user/*/secrets.d": "deny",
+      "/run/user/*/secrets.d/**": "deny",
+      "/run/secrets-for-users": "deny",
+      "/run/secrets-for-users/**": "deny"
     },
     "grep": {
       "*": "allow",
@@ -59,7 +77,13 @@
       "/etc/agenix": "deny",
       "/etc/agenix/**": "deny",
       "/home/rusich/.config/sops": "deny",
-      "/home/rusich/.config/sops/**": "deny"
+      "/home/rusich/.config/sops/**": "deny",
+      "/home/rusich/.config/sops-nix": "deny",
+      "/home/rusich/.config/sops-nix/**": "deny",
+      "/run/user/*/secrets.d": "deny",
+      "/run/user/*/secrets.d/**": "deny",
+      "/run/secrets-for-users": "deny",
+      "/run/secrets-for-users/**": "deny"
     },
     "edit": {
       "*": "allow",
@@ -74,7 +98,13 @@
       "/etc/agenix": "deny",
       "/etc/agenix/**": "deny",
       "/home/rusich/.config/sops": "deny",
-      "/home/rusich/.config/sops/**": "deny"
+      "/home/rusich/.config/sops/**": "deny",
+      "/home/rusich/.config/sops-nix": "deny",
+      "/home/rusich/.config/sops-nix/**": "deny",
+      "/run/user/*/secrets.d": "deny",
+      "/run/user/*/secrets.d/**": "deny",
+      "/run/secrets-for-users": "deny",
+      "/run/secrets-for-users/**": "deny"
     },
     "external_directory": {
       "*": "allow",
@@ -89,7 +119,13 @@
       "/etc/agenix": "deny",
       "/etc/agenix/**": "deny",
       "/home/rusich/.config/sops": "deny",
-      "/home/rusich/.config/sops/**": "deny"
+      "/home/rusich/.config/sops/**": "deny",
+      "/home/rusich/.config/sops-nix": "deny",
+      "/home/rusich/.config/sops-nix/**": "deny",
+      "/run/user/*/secrets.d": "deny",
+      "/run/user/*/secrets.d/**": "deny",
+      "/run/secrets-for-users": "deny",
+      "/run/secrets-for-users/**": "deny"
     },
     "bash": {
       "*": "allow",
@@ -97,7 +133,8 @@
       "*/run/agenix*": "deny",
       "*/var/lib/sops-nix*": "deny",
       "*/etc/agenix*": "deny",
-      "*.config/sops*": "deny"
+      "*.config/sops*": "deny",
+      "*/run/user/*/secrets.d*": "deny"
     }
   },
   "lsp": {
